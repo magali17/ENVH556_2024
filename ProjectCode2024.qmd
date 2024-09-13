@@ -1,0 +1,254 @@
+---
+title: "Term Project Code"
+author: "Lianne Sheppard, Magali Blanco for ENVH 556"
+date: "Autumn 2024; Updated `r format(Sys.time(), '%d %B, %Y')`"
+output: 
+    html_document:
+        df_print: "paged"
+        fig_caption: yes
+        toc: true
+        toc_depth: 3
+        number_sections: true
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+#-----setup-----
+
+# set knitr options
+knitr::opts_chunk$set(echo = FALSE)
+
+# clear work space of all objects and unload all extra (non-base) packages
+rm(list = ls(all = TRUE))
+if (!is.null(sessionInfo()$otherPkgs)) {
+    res <- suppressWarnings(
+            lapply(paste('package:', names(sessionInfo()$otherPkgs), sep=""),
+                   detach, character.only=TRUE, unload=TRUE, force=TRUE)) 
+    rm(res)
+}
+
+# Load pacman into memory, installing as needed
+my_repo <- 'http://cran.r-project.org'
+if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
+
+# Load the other packages, installing as needed.
+pacman::p_load(knitr, dplyr, tidyr, forcats, stringr, purrr, ggplot2, Hmisc)
+
+```
+
+```{r directory.organization.and.read.data, echo=FALSE, warning=FALSE}
+#-----directory organization and read data-----
+
+# where data is/will be stored
+data_path <- file.path("..", "data", "mobile monitoring", "original")
+
+# create "Datasets" directory if one does not already exist    
+if(!dir.exists(data_path)){dir.create(data_path, showWarnings=FALSE, recursive = TRUE)}
+
+# read in files
+## annual average air pollution concentrations from mobile monitoring
+annual <- read.csv(file.path(data_path, "annual_data_and_predictions.csv"))
+
+mm_covariates <- read.csv(file.path(data_path, "covariates", "dr0311_mobile_covars.csv"))
+
+# covarites for prediction locations of interest
+grid_covariates <- read.csv(file.path(data_path, "covariates", "dr0311_grid_covars.csv"))
+block_covariates <- read.csv(file.path(data_path, "covariates", "block10_intpts_wa.csv"))
+
+```
+
+# Objectives
+
+The objective of this script is to provide you with an example workflow and code to completet the term project.
+
+# Identify a Research Questions
+
+Example question: What is the distribution of nitrogen dioxide (NO2) levels in the greater Seattle area?
+
+# Draft an Analysis
+
+# Describe the Data
+
+Let's start by describing the data. What pollutants are included? How many observations are there?
+
+-   pollutants \_\_\_\_
+
+```{r}
+
+
+```
+
+generate a summary table describing the distribution of pollutant concentrations (Min, Q25, median, mean, Q75, Max)\
+here's an example
+
+```{r}
+
+```
+
+summarize these the distribution of pollutant concentrations, for example using scatterplots, histograms, boxpots
+
+here's a density plot looking at the distribution of the measurements
+
+```{r}
+
+
+```
+
+Let's make a map! Visualizing environmental data can help us detect spatial patterns that may otherwise be missed. **what else**
+
+What do you see? Where are the highest and lowest concentrations? Are they what you expected to see?
+
+```{r}
+
+
+
+```
+
+\_\_compare levels near and away major AP source locations\_\_\_
+
+```{r}
+
+
+```
+
+# Fit a simple prediction model
+
+plot predictors against your pollutant of interest
+
+```{r}
+
+```
+
+we'll develop a simple linear regression model
+
+```{r}
+
+
+```
+
+## Evaluate the out-of-sample model predictions
+
+--\> explain why important
+
+Let's calculate the $R^2_{CV}$ to evaluate how well the model predicts
+
+```{r}
+
+```
+
+The $RMSE$ will tell us the average error in the predictions.
+
+How does it look?
+
+```{r}
+
+```
+
+Let's visualize and map the residuals ( **briefly define** ) to evaluate whether there locations where predictions are more accurate. What do you think?
+
+```{r}
+
+
+
+```
+
+Overall, how well does this model predict? What are the potential limitations of using a simplified model in exposure assessment? How might you improve it?
+
+## Improve the model fit
+
+Your turn! Based on the prior observations, refit the model to improve the predictions. You might consider adding other covariates, interaction terms, non-linear relationships.
+
+```{r}
+
+
+
+```
+
+what was your rational for selecting the covariates you selected? Which were identified by the model as being most important?
+
+Calculate new model performance statistics, as before. What do these tell you? How are these different from our base model?
+
+# Predict at new locations
+
+You have several options to choose from:
+
+-   Census blocks/**tracts**
+    -   \--\> clean up MM area only
+-   predefined grid points ( **??500 m resolution** )
+
+```{r}
+
+
+
+```
+
+## Let's map these
+
+visualizing exposure predictions and their errors (residuals) can help us identify spatial patterns or discrepancies in model performances
+
+what do we learn from these maps that we did not before?
+
+Where are the highest and lowest predicted areas of air pollution? Is this what you expected
+
+How do these predictions compare to the earlier base model?
+
+```{r}
+
+
+
+
+```
+
+# Discussion
+
+Summarize what you did and your findings
+
+# Optional Advanced Topics
+
+## --\> add basic ML? kriging, random forest, Lasso
+
+```{r}
+
+
+```
+
+## optional: make a smooth map
+
+To do this, we'll take predictions from a grid and smooth these out
+
+```{r}
+
+
+
+```
+
+# Appendix
+
+## Session information
+
+```{r session.info}
+#-----session information-----
+
+# print R session information
+sessionInfo()
+
+```
+
+## Embedded code
+
+```{r code.appendix, ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE, , include=TRUE}
+#-----code appendix-----
+```
+
+## Functions defined
+
+```{r functions, eval = TRUE}
+#-----functions-----
+
+# Show the names of all functions defined in the .Rmd
+# (e.g. loaded in the environment)
+lsf.str()
+
+# Show the definitions of all functions loaded into the current environment  
+lsf.str() %>% set_names() %>% map(get, .GlobalEnv)
+
+```
