@@ -11,9 +11,7 @@ output:
 
 ---
 
-Note:  The code in the following three chunks should typically appear at the beginning of
-each R Markdown file.  We display them during this first lab so you can see them
-in the output.  Ordinarily we would not show them.
+Note:  The code in the following three chunks should typically appear at the beginning of each R Markdown file.  We display them during this first lab so you can see them in the output.  Ordinarily we would not show them.
 
 ```{r setup, include=TRUE}
 #-----setup-------------
@@ -94,23 +92,16 @@ pacman::p_load(tidyverse, knitr, Hmisc, EnvStats)
 
 # Goal
 
-The goal of this lab is to help everyone become familiar with R, R Studio, and R
-Markdown through the context of the course content.  This is also your first
-opportunity to develop a lab write-up for ENVH 556 using R Markdown.
+The goal of this lab is to help everyone become familiar with R, R Studio, and R Markdown through the context of the course content.  This is also your first opportunity to develop a lab write-up for ENVH 556 using R Markdown.
 
-Note:  It is in your best interest to learn modern R tools, such as those
-included in the [`tidyverse`](https://www.tidyverse.org).  In this class we tend 
-to prioritize `tidyvrese` approaches, but recognize there are often many packages 
-and options to accomplish the same task. We want to deliver course materials 
-without getting too bogged down in the debate about the "best" or "highest 
-performing" packages.
+Note:  It is in your best interest to learn modern R tools, such as those included in the [`tidyverse`](https://www.tidyverse.org).  In this class we tend 
+to prioritize `tidyvrese` approaches, but recognize there are often many packages and options to accomplish the same task. We want to deliver course materials without getting too bogged down in the debate about the "best" or "highest performing" packages.
 
 ---
 
 # Practice Session
 
-This section covers basic practice to be completed during the lab.  It will
-introduce you to multiple useful commands and help you get a basic understanding
+This section covers basic practice to be completed during the lab.  It will introduce you to multiple useful commands and help you get a basic understanding
 of the dataset.
 
 The underlying data to be used in the lab is from the DEMS study and is

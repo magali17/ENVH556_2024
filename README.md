@@ -48,7 +48,7 @@ This repository contains the code scripts for the ENVH 556 Quantitative Exposure
 
 ### 3.2. Download the Data
 
-The corresponding datasets can be found at the following locations:
+The corresponding datasets can be found at the following locations. The scripts automatically download these. Alternatively, you can manually download them and place them in the correct directories. 
 
 -   [Seattle mobile monitoring campaign](https://zenodo.org/records/13761282)
 -   --\> TO DO: ADD OTHERS
