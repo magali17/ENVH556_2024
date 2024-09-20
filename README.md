@@ -17,7 +17,10 @@ This repository contains the code scripts for the ENVH 556 Quantitative Exposure
 
 1.  Open your terminal or command prompt.
 2.  Navigate to the directory where you want to store the project.
-3.  Run the following command: `bash     git clone https://github.com/magali17/ENVH556_2024.git`
+3.  Run the following command: 
+    ```bash     
+    git clone https://github.com/magali17/ENVH556_2024.git
+    ```
 4.  Use your GitHub credentials when prompted.
 5.  Open the cloned directory as an R Project in RStudio:
     -   In RStudio, go to File \> New Project \> Existing Directory.
