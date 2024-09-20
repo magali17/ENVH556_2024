@@ -18,7 +18,7 @@ The corresponding datasets can be found at the following locations:
 
 ## Getting Started
 
-### A. Get the Scripts
+### A. Download the Code Scripts
 
 #### Option 1: Clone the Repository
 
@@ -29,7 +29,7 @@ The corresponding datasets can be found at the following locations:
 3.  Run the following command:
 
     ```         
-    git clone https://github.com/username/ENVH556_2024.git
+    git clone https://github.com/magali17/ENVH556_2024.git
     ```
 
 4.  Use your GitHub credentials when prompted
@@ -48,7 +48,7 @@ The corresponding datasets can be found at the following locations:
     -   Choose a location for your project
     -   Click "Create Project"
 2.  Download the course files and place these in your new project:
-    -   Go to the GitHub repository page: <https://github.com/username/ENVH556_2024>
+    -   Go to the GitHub repository page: https://github.com/magali17/ENVH556_2024 
     -   Click the green "Code" button and select "Download ZIP"
     -   Extract the zipped files
     -   Paste these files into your newly created R project directory
