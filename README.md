@@ -17,20 +17,17 @@ This repository contains the code scripts for the ENVH 556 Quantitative Exposure
 
 1.  Open your terminal or command prompt.
 2.  Navigate to the directory where you want to store the project.
-3.  Run the following command:
-    ```bash
-    git clone https://github.com/magali17/ENVH556_2024.git
-    ```
+3.  Run the following command: `bash     git clone https://github.com/magali17/ENVH556_2024.git`
 4.  Use your GitHub credentials when prompted.
 5.  Open the cloned directory as an R Project in RStudio:
-    -   In RStudio, go to File > New Project > Existing Directory.
+    -   In RStudio, go to File \> New Project \> Existing Directory.
     -   Navigate to the cloned ENVH556_2024 directory and click "Create Project."
 
 #### 3.1.2. Option 2: Create a New R Project and Copy Files
 
 1.  Create a new R Project:
     -   Open RStudio.
-    -   Go to File > New Project > New Directory.
+    -   Go to File \> New Project \> New Directory.
     -   Choose "New Project."
     -   Enter a name for your project (e.g., "ENVH556_2024").
     -   Choose a location for your project.
@@ -60,3 +57,24 @@ Run the `install_packages.R` script to install required dependencies.
 ## 4. Contributing
 
 If you find any issues or have suggestions for improvements, please open an issue.
+
+## 4. Version Control
+
+It's a good practice to check for updates regularly to ensure you have the latest scripts for the course. If updates are made to any scripts in the repository, you can retrieve the latest versions by following these steps:
+
+1. If you have made changes to your local copy of any scripts, **rename your copy** or save it in a different location to avoid losing your work.
+2. You have two options to retrieve the latest updates:
+
+   **Option 1: Pull Updates via Terminal**
+   - Navigate to the cloned repository in your terminal.
+   - Run the following command to pull the latest changes:
+     ```bash
+     git pull origin main  
+     ```
+   - This command will update your local copy with the most recent changes from the remote repository. After pulling the updates, you may need to manually merge any changes if there are conflicts.
+
+   **Option 2: Copy/Download from GitHub**
+   - Alternatively, you can copy or download individual scripts directly from the GitHub repository:
+     - Navigate to the specific file you want to update.
+     - Click on the file to open it, then select the "Download Raw File" button to download the script.
+
