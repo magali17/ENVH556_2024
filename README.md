@@ -63,21 +63,11 @@ If you find any issues or have suggestions for improvements, please open an issu
 
 ## 4. Version Control
 
-It's a good practice to check for updates regularly to ensure you have the latest scripts for the course. If updates are made to any scripts in the repository, you can retrieve the latest versions by following these steps:
+It's a good practice to check for updates regularly to ensure you have the latest scripts for the course. If updates are made to any scripts in the repository, you can retrieve the latest versions with little GitHub knowledge, by following these steps:
 
 1. If you have made changes to your local copy of any scripts, **rename your copy** or save it in a different location to avoid losing your work.
-2. You have two options to retrieve the latest updates:
-
-   **Option 1: Pull Updates via Terminal**
-   - Navigate to the cloned repository in your terminal.
-   - Run the following command to pull the latest changes:
-     ```bash
-     git pull origin main  
-     ```
-   - This command will update your local copy with the most recent changes from the remote repository. After pulling the updates, you may need to manually merge any changes if there are conflicts.
-
-   **Option 2: Copy/Download from GitHub**
-   - Alternatively, you can copy or download individual scripts directly from the GitHub repository:
+2. Download individual scripts directly from the GitHub repository:
      - Navigate to the specific file you want to update.
      - Click on the file to open it, then select the "Download Raw File" button to download the script.
+3. Replace the existing file in their project directory with the new one.
 
