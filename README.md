@@ -51,17 +51,32 @@ This repository contains the code scripts for the ENVH 556 Quantitative Exposure
 The corresponding datasets can be found at the following locations. The scripts will automatically download these datasets. Alternatively, you can manually download them and place them in the appropriate directories.
 
 -   [Seattle mobile monitoring campaign](https://zenodo.org/records/13761282)
--   --\> TO DO: ADD OTHERS
+-   [Other datasets](https://faculty.washington.edu/sheppard/envh556/Datasets/)
 
 ### 3.3. Install Dependencies
 
 Run the `install_packages.R` script to install required dependencies.
 
-## 4. Contributing
+You may need to install additional packages during this process. 
+
+
+## 4. Familiarize Yourself With R and RStudio
+
+You will need to understand the basics of R and RStudio for this course. If you need help, here are a few resources:
+
+1. [Swirl Tutorial Program](https://swirlstats.com/students.html): Swirl provides a step-by-step guide to downloading and setting up R and RStudio. The initial lessons cover the "Basics of R Programming" to help beginners get started.
+
+2. [R for Data Science (R4DS)](https://r4ds.had.co.nz/) by Hadley Wickham and Garrett Grolemund: A comprehensive book for learning R and data science.
+
+3. [R Onramp](https://github.com/deohs/r_onramp/blob/master/README.md) by the DEOHS [Coders Group](https://github.com/deohs/coders): A beginner-friendly resource that includes a [Resources and Getting Help](https://github.com/deohs/r_onramp/blob/master/r_resources_and_getting_help.md) section with additional tutorials, courses, and books.
+
+
+## 5. Contributing
 
 If you find any issues or have suggestions for improvements, please open an issue.
 
-## 4. Version Control
+
+## 6. Version Control
 
 It's a good practice to check for updates regularly to ensure you have the latest scripts for the course. If updates are made to any scripts in the repository, you can retrieve the latest versions with little GitHub knowledge, by following these steps:
 
