@@ -35,53 +35,20 @@ if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
 # Load the other packages, installing as needed.
 pacman::p_load(knitr, dplyr, tidyr, forcats, stringr, purrr, ggplot2, Hmisc)
 
+
+# load functions we'll use throughout the course
+source("global_functions.R")
+
 ```
 
 ```{r directory.organization.and.read.data, echo=FALSE, warning=FALSE}
 #-----directory organization and read data-----
 
 # where data is/will be stored
-data_path <- c(file.path("Datasets", "mobile monitoring", "original")#,
-               #file.path("Datasets", "mobile monitoring", "modified")
-               )
+data_path <- c(file.path("Datasets", "mobile monitoring"))
 
- 
 # create directories if they do not already exist    
 if(!dir.exists(data_path)){dir.create(data_path, showWarnings=FALSE, recursive = TRUE)}
-
-# lapply(data_path, function(x){
-#     if(!dir.exists(x)){dir.create(x, showWarnings=FALSE, recursive = TRUE)}    
-# })
-
-
-# function to download & read in csv or rda file 
-download_and_read_file <- function(data_url, output_file_path) {
-  
-  # Check if the file already exists in the specified path
-  if (!file.exists(output_file_path)) {
-    # If the file doesn't exist, download it 
-    download.file(data_url, destfile = output_file_path, method = "auto")
-    message("File downloaded successfully.")
-  } else {
-    message("File already exists in the directory.")
-  }
-  
-  # Automatically detect file type based on the file extension
-  file_ext <- tolower(tools::file_ext(output_file_path))
-  
-  message("Reading in file.")
-  # read in file
-  if (file_ext == "csv") {
-    data <- read.csv(output_file_path)
-  } else if (file_ext %in% c("rds", "rda")) {
-    data <- readRDS(output_file_path)
-  } else {
-    stop(paste("Unsupported file type:", file_ext, ". Please handle manually."))
-  }
-  
-  return(data)
-}
-
 
 # read in files
 ## annual average air pollution concentrations from mobile monitoring

@@ -6,20 +6,27 @@ output:
         toc: true
         toc_depth: 3
         number_sections: true
+execute:
+  echo: true
+  cache: false
+  echo.comments: false
+  message: false
+  warning: false
+  tidy: false
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
 ------------------------------------------------------------------------
 
-Note: The code in the following three chunks should typically appear at the beginning of each R Markdown file. We display them during this first lab so you can see them in the output. Ordinarily we would not show them.
+Note: The code in the following three chunks should typically appear at the beginning of each Markdown file. We display them during this first lab so you can see them in the output. Ordinarily we would not show them.
 
 ```{r setup, include=TRUE}
+# this "hash pipe" format also works with quatro
+#| include: true
+
 #-----setup-------------
 
-# This chunk won't appear in your output when knitting because include=FALSE
-# (which hides everything).
-#
 # We are showing the code in this chunk in the first lab; ordinarily
 # we will choose to hide it with the option echo=FALSE. 
 #
@@ -32,16 +39,8 @@ Note: The code in the following three chunks should typically appear at the begi
 # the index (boldfaced) and print in your appendix.  This facilitates review of
 # the code. I recommend using chunk names and putting them at least as a
 # comment at the beginning of the chunk.
-#
-# For more about `knitr` chunk options see: https://yihui.org/knitr/options/
 
-knitr::opts_chunk$set(
-    echo = TRUE,
-    cache = FALSE,
-    cache.comments = FALSE,
-    message = FALSE,
-    warning = FALSE
-)
+# the yaml header includes global options
 
 ```
 
@@ -87,13 +86,15 @@ if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
 # EnvStats: geoMean, geoSD, probability plotting functions
 pacman::p_load(tidyverse, knitr, Hmisc, EnvStats)
 
+source("global_functions.R")
+
 ```
 
 ------------------------------------------------------------------------
 
 # Goal
 
-The goal of this lab is to help everyone become familiar with R, R Studio, and R Markdown through the context of the course content. This is also your first opportunity to develop a lab write-up for ENVH 556 using R Markdown.
+The goal of this lab is to help everyone become familiar with R, R Studio, and Markdown through the context of the course content. This is also your first opportunity to develop a lab write-up for ENVH 556 using Markdown.
 
 Note: It is in your best interest to learn modern R tools, such as those included in the [`tidyverse`](https://www.tidyverse.org). In this class we tend to prioritize `tidyvrese` approaches, but recognize there are often many packages and options to accomplish the same task. We want to deliver course materials without getting too bogged down in the debate about the "best" or "highest performing" packages.
 
@@ -103,7 +104,7 @@ Note: It is in your best interest to learn modern R tools, such as those include
 
 This section covers basic practice to be completed during the lab. It will introduce you to multiple useful commands and help you get a basic understanding of the dataset.
 
-The underlying data to be used in the lab is from the DEMS study and is described in [Coble et al 2010](https://academic.oup.com/annweh/article/54/7/747/202635). We are focusing on the personal data collected by NIOSH between 1998 and 2001. In this lab we will mostly use the `ecdata` variable which is a measurement of exposure to respirable elemental carbon, also called REC. The data were collected from workers from a cross-section of jobs at the seven mines open during the data collection. For further information on this dataset, see the document: *DEMS Personal Data overview* available on the class Canvas site.
+The underlying data to be used in the lab is from the Seattle Mobile Monitoring study and is described in [Blanco et al. 2022](https://pubs.acs.org/doi/full/10.1021/acs.est.2c01077), as discussed in class. We are focusing on the annual average site concentration data here.  
 
 A big part of data science is data management and ideally you will also learn basic data management in conjunction with your work. This class will not emphasize data management, although you will do some during your term project. Note that some of the habits we stress, including those we discuss in this lab, are very useful for both data management and data analyses.
 
@@ -112,30 +113,26 @@ A big part of data science is data management and ideally you will also learn ba
 Complete the following steps to set up the lab
 
 -   Start a new R project in R Studio.
-    -   Note: Put your project for this course (and lab) in a sensible directory.\
-    -   Create a subdirectory of that directory with a name such as `Datasets` and copy the R dataset *DEMSCombinedPersonal.rds* into it. (This lab assumes your data directory is named `Datasets`.)
-    -   Copy this lab's `.Rmd` file, *Week1Lab.Rmd* into your project directory and open it into RStudio.
-    -   Note: Often you will open a new `.Rmd` (R Markdown) file and populate it with code and text for this course, such as from the *LabReportGuidelines.Rmd* file.
--   In the R Markdown file you are using for this lab make sure you have your file paths set up (see *set file paths* chunk below).
-    -   First assign your current path to a variable name.\
+    -   Note: Put your project for this course (and lab) in a sensible directory.
+    -   Copy this lab's `.qmd` file, *Week1Lab.qmd* into your project directory and open it into RStudio.
+    -   Note: Often you will open a new `.qmd` (Markdown) file and populate it with code and text for this course, such as from the *LabReportGuidelines.qmd* file.
+-   In the Markdown file you are using for this lab make sure you have your file paths set up (see *set file paths* chunk below).
+    -   First assign your current path to a variable name.
     -   Then tell R where your data reside. The `dir.create()` command will make a directory if it doesn't exist. The `file.path()` command allows you to refer easily to paths across operating systems.
 
 ```{r set.file.paths}
 #-----set file paths--------
 
-# create a variable for the project path
-project_path <- getwd()
+# where data is/will be stored
+data_path <- c(file.path("Datasets", "mobile monitoring"))
 
-# create a variable for the data path
-data_path <- file.path(project_path, "Datasets")
+# create directories if they do not already exist    
+if(!dir.exists(data_path)){dir.create(data_path, showWarnings=FALSE, recursive = TRUE)}
 
-# create directory, if one does not already exist
-dir.create(data_path, showWarnings = FALSE, recursive = TRUE)
 
 ```
 
 -   Read in the data
-    -   The data we will use have already been converted to an R dataset. Make sure the "DEMSCombinedPersonal.rds" dataset is in your Datasets directory defined by `data_path`.
 
 ```{r read.data, eval=FALSE, error=TRUE}
 #-----read data--------
@@ -153,27 +150,14 @@ DEMS <- readRDS(file.path(data_path, "DEMSCombinedPersonal.rds"))
 
 As an alternative, the following code checks to see if the file is already present, and if not, downloads the data from a web site before reading it in:
 
-```{r read.data.from.a.website, eval=TRUE}
+```{r read.data.from.a.website}
 #-----read data from a website--------
 
-# first, specify file name and path
-DEMS_file <- "DEMSCombinedPersonal.rds"
-DEMS_path <- file.path(data_path, DEMS_file)
-
-# Only download the file if it's not already present
-if (!file.exists(DEMS_path)) {
-    url <- paste("https://faculty.washington.edu/sheppard/envh556/Datasets", 
-                 DEMS_file, sep = '/')
-    download.file(url = url, destfile = DEMS_path)
-}
-
-# Output a warning message if the file cannot be found
-if (file.exists(DEMS_path)) {
-    DEMS <- readRDS(file = DEMS_path)
-} else warning(paste("Can't find", DEMS_file, "!"))
-
-# remove temporary variables
-rm(url, DEMS_file, DEMS_path)
+# read in annual average air pollution concentrations from mobile monitoring
+# download it from the web and save locallyif the file does not already exist
+annual <- download_and_read_file(data_url = "https://zenodo.org/record/13761282/files/annual_data_and_predictions.csv?download=1",
+                                 # where new file will be saved if it does not already exist or read in from if it does
+                                 output_file_path = file.path(data_path, "annual_data_and_predictions.csv"))
 
 ```
 
@@ -192,17 +176,12 @@ Here are some basic questions you should ask every time you read in a new datase
 
 From base R:
 
--   `class(DEMS)` tells you what class the object DEMS belongs to
--   `names(DEMS)` lists the variable names\
--   `dim(DEMS)` gives the dimensions of DEMS
--   `sapply(DEMS, class)` tells you the class of every variable (column)
--   `typeof(DEMS)` says what is the storage mode or R internal type of this object
--   `View(DEMS)` to open a browser to look at the entire dataset
-
-From `tidyverse`:
-
--   `(DEMS <- as_tibble(DEMS))` create a tibble version and look at DEMS in the tibble format
--   `select(DEMS, facilityno, ecdata, nodata, no2data)` allows you to zoom in on specific variables in the DEMS tibble.
+-   `class(my_dataset)` tells you what class the dataset belongs to
+-   `names(my_dataset)` lists the variable names
+-   `dim(my_dataset)` gives the dimensions of the dataset
+-   `sapply(my_dataset, class)` tells you the class of every variable (column)
+-   `typeof(my_dataset)` says what is the storage mode or R internal type of this object
+-   `View(my_dataset)` to open a browser to look at the entire dataset
 
 Replace the comment in the chunk below with some of these commands.
 
@@ -211,32 +190,32 @@ Replace the comment in the chunk below with some of these commands.
 
 # STUDENTS may want to edit this chunk to look at the data differently
 
-# Here is a first pass at commands to use to check your data we expect this to 
-# be a data frame
-class(DEMS) 
+# Here is a first pass at commands to use to check your data we expect this to be a data frame
+class(annual) 
 
-# We expect this to have 1275 rows and 17 columns
-dim(DEMS) 
+# rows and columns in the dataset
+dim(annual) 
 
-# This list should correspond to the list in the data summary document:
-names(DEMS) 
+# column names
+names(annual) 
 
 # This gives us details on the type of each variable in the dataset
-sapply(DEMS, class) 
+sapply(annual, class) 
 
 # Now for a tidyverse option.  We will also save this version in case we want to
 # use tidverse commands.
 
-# Now lets make the DEMS data frame into a tibble Tibbles are tidyverse 
+# Now lets make the data frame into a tibble Tibbles are tidyverse 
 # dataframes with some extra functionality and a friendly display. Occasionally 
 # you will run into functions that will work with "data.frame" objects but not 
 # "tibble" objects. 
 # (The parentheses surrounding the command tell R to print the result of the 
 #assignment.)
-(DEMS <- as_tibble(DEMS)) 
+(annual <- as_tibble(annual)) 
 
-# Our application of select zooms in to focus on the key exposure data
-select(DEMS, facilityno, u_s, ecdata, nodata, no2data) 
+# select a subset of relevant columns
+annual <- annual %>%
+  select(location, variable, value) 
 
 ```
 
@@ -244,29 +223,28 @@ select(DEMS, facilityno, u_s, ecdata, nodata, no2data)
 
 Here are some commands:
 
--   `head(DEMS)` shows the first 6 rows of the dataset
--   `tail(DEMS, 1)` shows the last row of the dataset
--   `head(DEMS$facilityno, 20)` shows the first 20 rows of a subset of variables
--   `summary(DEMS)` gives a basic summary of each variable
--   `describe(DEMS)` is another useful basic summary of the dataset, from the Hmisc package ("a concise statistical description")
--   `xtabs(~facilityno, data=DEMS)` Note: `faciltyno` is a factor, ordered by facility number
--   `xtabs(~facilityid, data=DEMS)` Note: `facilityid` is a character variable, ordered by facility letter
+-   `head(my_dataset)` shows the first 6 rows of the dataset
+-   `head(my_dataset$facilityno, 20)` shows the first 20 rows of a subset of variables
+-   `tail(my_dataset, 1)` shows the last row of the dataset
+-   `summary(my_dataset)` gives a basic summary of each variable
+-   `describe(my_dataset)` is another useful basic summary of the dataset, from the Hmisc package ("a concise statistical description")
+-   `xtabs(~variable_of_interest, data=my_dataset)` tally the number of observations a variable
 
 ```{r data.description.2}
 #-----data description 2-------
 
 # Here is a first pass at commands for students to try to better understand the data
 # # first 6 rows and ALL variables (columns):
-head(DEMS) 
+head(annual) 
 
 # a basic summary of each variable
-summary(DEMS) 
+summary(annual) 
 
 # a different basic summary of each variable from `Hmisc`
-describe(DEMS) 
+describe(annual) 
 
-# tallies of the number of observations by facilityno
-xtabs( ~ facilityno, data = DEMS) 
+# tallies of the number of observations for 'variable' (pollutant)
+xtabs( ~ variable, data = annual) 
 
 ```
 
@@ -285,7 +263,7 @@ The specifics of what you evaluate depend upon the context of the problem. In ou
 # STUDENTS ADD code to look at the data:
 # Which commands from above will allow you to verify observation numbers and
 # missing value counts?
-# In this dataset it is important to understand summaries within mines.  Which
+# In this dataset it is important to understand summaries by pollutant.  Which
 # commands from above will facilitate that?  (We will learn more below too.)
 
 ```
@@ -296,111 +274,103 @@ Once you have a basic understanding of your data and believe they were read in c
 
 ### Tables and computing descriptive statistics
 
--   What do you observe about the distribution?\
+-   What do you observe about the distribution?
 -   Do the descriptive statistics vary by facility?
 
 Here are some commands:
 
--   `min(DEMS$ecdata,na.rm=TRUE)` is the minimum after missing values omitted
--   `mean(DEMS$ecdata,na.rm=TRUE)` is the mean after missing values omitted
--   `sd(DEMS$ecdata,na.rm=TRUE)` is the standard deviation after missing values omitted
--   `summaryFull(DEMS[,c("ecdata","nodata","no2data")])` is a full set of summary statistics from the EnvStats package. It only works for numeric variables.
--   `fivenum(DEMS$ecdata)` shows the five number summary of ecdata (min, lower hinge (close to the 25th percentile), median, upper hinge, maximum). Note no need to tell it to remove missing missing values here. Five number summaries are used in box plots and give you a basic understanding of the distribution of a variable.
--   From the EnvStats package, `geoMean(ecdata,na.rm=TRUE)` gives the geometric mean while `geoSD(ecdata,na.rm=TRUE)` gives the GSD.
+-   `min(my_dataset$variable_name,na.rm=TRUE)` is the minimum after missing values omitted
+-   `mean(my_dataset$variable_name,na.rm=TRUE)` is the mean after missing values omitted
+-   `sd(my_dataset$variable_name,na.rm=TRUE)` is the standard deviation after missing values omitted
+-   `summaryFull(my_dataset[,c("variable1", "variable2)])` is a full set of summary statistics from the EnvStats package. It only works for numeric variables.
+-   `fivenum(my_dataset$variable_name)` shows the five number summary of a dataset (min, lower hinge (close to the 25th percentile), median, upper hinge, maximum). Note no need to tell it to remove missing missing values here. Five number summaries are used in box plots and give you a basic understanding of the distribution of a variable.
+-   From the EnvStats package, `geoMean(my_dataset,na.rm=TRUE)` gives the geometric mean while `geoSD(my_dataset,na.rm=TRUE)` gives the GSD.
 
-To produce summary statistics by facility: Here are two ideas. Which do you prefer and why?
-
--   A simple table of summary statistics using `tapply` and `cbind`. Note the extra attention needed to handle missing data for the sample size. (What do you notice about the sample sizes here vs. when you just counted observations? What is the cause of the difference?)
-
-```{r simple.table, echo=FALSE}
-#-----simple.table using tapply and cbind ----------
-
-#This uses facilityno, a factor variable
-xbar <- tapply(DEMS$ecdata, DEMS$facilityno, mean, na.rm=TRUE)
-sd  <- tapply(DEMS$ecdata, DEMS$facilityno, sd, na.rm=TRUE)
-n <- tapply(DEMS$ecdata[!is.na(DEMS$ecdata)], 
-             DEMS$facilityno[!is.na(DEMS$ecdata)], length)
-cbind(mean=xbar, SD=sd, N=n)
-
-# Note you can present this table in a slightly nicer format using kable from
-# the knitr package:
-kable(cbind(mean=xbar, SD=sd, N=n))
-
-```
-
--   Here is a `tidyverse` option using `dplyr`:
+To produce summary statistics, here is a `tidyverse` option using `dplyr`:
 
 ```{r table.with.dplyr}
 #-----table with dplyr------
 
-# dplyr uses verbs for function names. You'll get more comfortable with them 
-# as you practice. Also, watch spelling, for instance, `summarise()` versus 
-# `summarize()`. In this case summarize()` may call the `Hmisc` function 
-# rather than the `dplyr` function.
-facility_ec <- DEMS %>% 
-  group_by(facilityno) %>% 
-  summarise(N = sum(!is.na(ecdata)),
-            Nmiss = sum(is.na(ecdata)),
-            mean = mean(ecdata, na.rm = TRUE),
-            sd = sd(ecdata, na.rm = TRUE),
+# dplyr uses verbs for function names. You'll get more comfortable with them as you practice. Also, watch spelling, for instance, `summarise()` versus `summarize()`. In this case summarize()` may call the `Hmisc` function rather than the `dplyr` function. Note: there are many ways to summarize data. This is one approach. 
+
+annual_summary <- annual %>% 
+  group_by(variable) %>% 
+  summarise(N = sum(!is.na(value)),
+            Nmiss = sum(is.na(value)),
+            mean = mean(value, na.rm = TRUE),
+            sd = sd(value, na.rm = TRUE),
             se = sd/sqrt(N)
-    )
+            )
 
 # show tibble
-facility_ec
+annual_summary
 
 # And here is the same result printed using kable
-kable(facility_ec)
+kable(annual_summary, 
+      # only show 2 digits
+      digits = 2)
 ```
 
-Note: One reason to do computations in multiple ways is to help you make sure you are reporting the correct values and that you completely understand your output. When multiple approaches to the same summary give the same answer, you can be more confident that your answer is correct.
+Note: Consider estimating these values in multiple ways is to help you make sure you are reporting the correct values and that you completely understand your output. When multiple approaches to the same summary give the same answer, you can be more confident that your answer is correct.
 
 ### Plots: Histograms
 
-#### Make a histogram of ecdata. Add a density curve to the histogram.
+#### Make a histogram of concentrations. Add a density curve to the histogram.
 
 `ggplot2` (part of `tidyverse`) has great tools for plotting. First we show a basic histogram. Then we switch to the density scale and overlay a normal density with the same mean and variance as the data. Finally we overlay a density plot.
 
 See chunk comments and the notes following the chunk for option suggestions.
 
-`ggplot` gives warnings about omitted data and messages about better options to choose. You can prevent these messages from showing up in your rendered document by using the chunk option `warning=FALSE` and `message=FALSE`. They will show up in the R Markdown console instead if you set these to `FALSE`. (Note: We set these options globally in our setup chunk above so we don't need to repeat them below.)
+`ggplot` gives warnings about omitted data and messages about better options to choose. You can prevent these messages from showing up in your rendered document by using the chunk option `warning=FALSE` and `message=FALSE`. They will show up in the Markdown console instead if you set these to `FALSE`. (Note: We set these options globally in our setup chunk above so we don't need to repeat them below.)
 
 ```{r hist.in.tidyverse, warning=FALSE, message=FALSE}
 #-----hist in tidyverse---------
 
 # Plot 1 with histogram only and count on the y axis (the default) the default
-# binwidth is 30 and often you will want to change it; see plot 2 for a narrower
-# binwidth.
-ggplot(data=DEMS, aes(ecdata, na.rm=TRUE)) +
-    geom_histogram(colour="black", fill="white")
+# binwidth is 30 and often you will want to change it 
+annual %>%
+  filter(variable== "no2") %>%
+  ggplot(data=., aes(x=value, na.rm=TRUE), ) +
+  geom_histogram(position = "dodge", fill = "purple")
 
-# Plot 2 with density base plot, just the histogram, now assigned to object 
+# Plot 2 of density base plot 
 # named 'p' for ease of re-use and a different theme:
-p <- ggplot(data=DEMS, aes(ecdata, na.rm=TRUE)) + 
-    geom_histogram(aes(y=..density..), colour="black", fill="white", 
-                   binwidth=20) + 
-    theme_classic()
+p <- annual %>%
+  filter(variable == "no2") %>%
+  ggplot(aes(x = value, na.rm = TRUE)) +
+  # Add the density curve with some transparency
+  geom_density(alpha = 0.5, color = "purple") +  
+  theme_classic()
 
-# To overlay a normal density plot, we need to create some variables first
-N <- sum(!is.na(DEMS$ecdata))
+p
 
-# Divide the range 0-1000 into N equal increments
-x <- seq(0, 1000, length.out=N) 
-df <- with(DEMS[!is.na(DEMS$ecdata), ], 
-           data.frame(x, y = dnorm(x, mean(ecdata), sd(ecdata))))
 
-# add normal plot to histogram
-p + geom_line(data = df, aes(x = x, y = y), color = "red")
+# Calculate the mean and standard deviation of the 'value' column
+mean_value <- mean(annual$value[annual$variable == "no2"], na.rm = TRUE)
+sd_value <- sd(annual$value[annual$variable == "no2"], na.rm = TRUE)
 
-# Plot 3 now also overlays a kernel density plot.  The alpha parameter (range
-# 0-1) controls the degree of transparency, while the `fill="red"` ensures the
-# overlaid density is a specific color.  We are using the default bandwidth (bw)
-# here.  We've also included a few style options, such as axis expansion so the 
-# bars aren't "floating" and an overall theme.
-p +  geom_line(data = df, aes(x = x, y = y), color = "red") +
-  geom_density(alpha=.2, fill="red") + 
-  scale_y_continuous(expand = expand_scale(mult = c(0, .1))) +
-  theme_bw()
+# Create the density plot with the normal distribution overlay
+# The purple line is a kernel density estimate representing the true shape of your data, while the red dashed line assumes a perfect normal distribution with the same mean and standard deviation.
+p <- annual %>%
+  filter(variable == "no2") %>%
+  ggplot(aes(x = value, na.rm = TRUE)) +
+  # Add the density curve with some transparency
+  geom_density(alpha = 0.5, color = "purple") +
+  # Add the normal distribution curve using stat_function
+  stat_function(fun = dnorm, args = list(mean = mean_value, sd = sd_value), 
+                color = "red", size = 1, linetype = "dashed") +
+  geom_vline(xintercept = mean_value, linetype = "dotted") +
+  theme_classic()
+
+# Display the plot
+p  
+
+ 
+
+#  a few style options, such as axis expansion so the bars aren't "floating" and an overall theme.
+p +
+  scale_y_continuous(expand = expand_scale(mult = c(0, .1))) 
+
 
 ```
 
@@ -408,25 +378,24 @@ Note: In contrast to the normal density which overlays a probability distributio
 
 To set the amount of smoothing (i.e. the bandwidth) in the kernel density, use the `bw` option. Kernels are scaled so that `bw` is the standard deviation of the smoothing kernel. To choose the smoothing kernel, use the `kernel` option, e.g. `kernel="gaussian"` (which is the default).
 
-## Create and work with transformed data
+## Create transformed data
 
 Typically exposure data appear to be log-normally distributed. In this section we transform and plot the transformed data.
 
 ### Logarithmic transformations using `dplyr`:
 
--   `mutate( DEMS, ln_ecdata = log(ecdata) )` creates the natural log-transformed variable in the DEMS data frame.
--   `mutate( DEMS, log10_ecdata = log10(ecdata) )` creates the base 10 log-transformed variable in the DEMS data frame.
+-   `mutate(my_dataset, ln_variable = log(variable) )` creates the natural log-transformed variable in the DEMS data frame.
+-   `mutate(my_dataset, log10_variable = log10(variable) )` creates the base 10 log-transformed variable in the DEMS data frame.
 
 Note that `mutate` adds the new variables to the end of the dataset. For more functions you can use with `mutate` to create new variables, see R4DS pp. 56-58.
 
 ```{r transform.vars}
 #-----transform vars------
 
-# The following two variables will be added to the DEMS dataframe at the end of
-# the data frame:
-DEMS <- DEMS %>% 
-  mutate(ln_ecdata = log(ecdata), 
-         log10_ecdata = log10(ecdata) )
+# The following two variables will be added to the dataset at the end. We are not saving these here, just showing the output
+annual %>% 
+  mutate(ln_value = log(value), 
+         log10_value = log10(value) )
 
 ```
 
@@ -459,76 +428,64 @@ where the added pieces are `<STAT>`: statistics to put on the plot, `<POSITION>`
 
 For more details on `ggplot` see R4DS, the [R for Data Science](https://r4ds.had.co.nz/data-visualisation.html) book by Hadley Wickham and Garrett Grolemund.
 
-### Scatterplots: Now plot the relationship between NO (nodata) and REC (ecdata).
+### Scatterplots: Plot the relationship between NO2 and PM2.5
 
 `ggplot2` makes this easy:
 
 ```{r scatterplot.in.tidyverse, echo=TRUE, warning=FALSE, message=FALSE}
 #-----scatterplot in tidyverse------------
 
+# make each pollutant of interest its own column, for easier plotting
+annual_wide <- annual %>%
+  filter(variable %in% c("no2", "pm2.5_ug_m3")) %>%
+  pivot_wider(names_from = variable, values_from = value)
+
+
 # Plot 1: simple way to use ggplot to ask for a scatterplot
-qplot(nodata, ecdata, data=DEMS) 
+qplot(no2, pm2.5_ug_m3, data=annual_wide) 
 
 # Plot 2 is the same plot, now using standard ggplot notation
-ggplot(data = DEMS, aes(nodata, ecdata, na.rm = TRUE)) + geom_point()
+ggplot(data = annual_wide, aes(no2, pm2.5_ug_m3, na.rm = TRUE)) + 
+  geom_point()
 
-# Plot 3 adds a best fit line added without its 95% CI (se=FALSE option). We
+# Plot 3 adds a best fit linear fit added without its 95% CI (se=FALSE option). We
 # also add a title and axis labels
-ggplot(data = DEMS, aes(nodata, ecdata, na.rm = TRUE)) +
-    geom_point() + stat_smooth(method = lm, se = FALSE) +
-    labs(title = "Scatterplot of the DEMS NO (ppm) vs. REC (ug/m3) data",  
-         x = "NO (ppm)",
-         y = "REC (ug/m3)")
+ggplot(data = annual_wide, aes(no2, pm2.5_ug_m3, na.rm = TRUE)) + 
+  geom_point() + 
+  stat_smooth(method = lm, se = FALSE) +
+    labs(title = "Scatterplot of the NO2 (ppb) vs. PM2.5 (ug/m3) data",  
+         x = "NO2 (ppm)",
+         y = "PM2.5 (ug/m3)")
 
-# Plot 4 replaces the best fit line with a smooth loess curve added and its 95%
+# Plot 4 adds a smooth loess curve added and its 95%
 # CI (the default smoother is gam for large datasets and loess when there are
 # less than 1,000 observations)
-ggplot(data = DEMS, aes(nodata, ecdata, na.rm = TRUE)) +
-    geom_point() + stat_smooth(method = "loess") +
-    labs(title = "Scatterplot of the DEMS NO (ppm) vs. REC (ug/m3) data",
-        x = "NO (ppm)",
-        y = "REC (ug/m3)" ) 
+ggplot(data = annual_wide, aes(no2, pm2.5_ug_m3, na.rm = TRUE)) + 
+  geom_point() + 
+  stat_smooth(method = lm, se = FALSE) +
+  stat_smooth(method = "loess", col="green") +
+    labs(title = "Scatterplot of the NO2 (ppb) vs. PM2.5 (ug/m3) data",  
+         x = "NO2 (ppm)",
+         y = "PM2.5 (ug/m3)")
 
-# Plot 5 adds different colors and smoothers for underground vs. surface data
-ggplot(data = DEMS, aes(nodata, ecdata, na.rm = TRUE)) +
-    geom_point(mapping = aes(color = u_snum)) +
-    geom_smooth(method = "loess", aes(color = u_snum)) +
-    labs(
-    title = paste(
-        "Scatterplot of the DEMS NO (ppm) vs. REC (ug/m3) data\n",
-        "colored by where measurements were taken"
-    ),
-    x = "NO (ppm)",
-    y = "REC (ug/m3)",
-    color = "Measurement\nlocation"
-    )
-    
-# Plot 6 adds facets to plot 1 + a new color theme for underground vs surface 
-# Note 1:  the scales="free" option allows a different scale for each plot.  In
-# this case it makes the individual plots more informative. 
-# Note 2:  the smoother for facility E is behaving strangely because so many 
-# of the values are equal to zero. 
-# Note 3: with facets, you see facility D21 has no `nodata`
-ggplot(data = DEMS, aes(nodata, ecdata, color = u_snum)) +
-    geom_point() +
-    facet_wrap(~ facilityno, nrow = 2, scales = "free") + 
-    geom_smooth(se = FALSE) +
-    labs(
-    title = paste(
-        "Scatterplot of the DEMS NO (ppm) vs. REC (ug/m3) data \n",
-        "separately by facility and colored by where the" ,
-        "measurements were taken"
-    ),
-    x = "NO (ppm)",
-    y = "REC (ug/m3)",
-    color = "Measurement\nlocation"
-    ) + 
-  scale_color_brewer(palette = "Dark2") +
-  theme_bw()
+ 
+# Plot 6 adds facets + a new color theme for site type
+# Note 1:  if you wanted, the scales="free" option in facet_wrap() allows a different scale for each plot, which sometimes
+# can help plots be more informative. 
+annual_wide %>%
+  # create a new variable to indicate if the location was a stop site or specifically a collocation site for quality control purpuses
+  mutate(site_type = ifelse(grepl("MS", location), "stop site",
+                       ifelse(grepl("MC", location), "collocation site", NA))) %>%
+  
+  ggplot(data = ., aes(no2, pm2.5_ug_m3, col=site_type)) + 
+  geom_point() + 
+  facet_wrap(~site_type) +
+  stat_smooth(method = "loess", se = FALSE) +
+    labs(title = "Scatterplot of the NO2 (ppb) vs. PM2.5 (ug/m3) data",  
+         x = "NO (ppm)",
+         y = "PM2.5 (ug/m3)")
     
 ```
-
-Note: If you make such scatterplots by facility with data on the log base 10 scale and the axes swapped, you should be able to produce plots that look like the results in Figure 2 of [Coble et al 2010](https://academic.oup.com/annweh/article/54/7/747/202635).
 
 ------------------------------------------------------------------------
 
@@ -536,58 +493,23 @@ Note: If you make such scatterplots by facility with data on the log base 10 sca
 
 Note: Refer to the lab write-up guidelines *LabReportGuidelines.html* posted on Canvas for the format and content of your lab report.
 
-(1) Make table(s) summarizing four exposure variables in this dataset: Nitrogen oxide, nitrogen dioxide, respirable organic carbon, and respirable elemental carbon (variables: nodata no2data ocdata ecdata). Include the arithmetic mean (AM), arithmetic standard deviation (ASD), geometric mean (GM), and geometric standard deviation (GSD). Show these summaries both overall and at the facility level. Write a few sentences describing the results in the table. (Challenge version: How closely can you replicate Tables 1, 2, and 3?)
+(1) Make table(s) summarizing each pollutant ('variable') in this dataset. Include the arithmetic mean (AM), arithmetic standard deviation (ASD), geometric mean (GM), and geometric standard deviation (GSD) of each pollutant. Write a few sentences describing the results in the table. 
 
-    (a) Note: You can't take the log of 0 so you need to decide how to handle the 0's in the nitrogen oxide and organic carbon data. Summary statistics from the reduced dataset, i.e. a dataset created by omitting the 0's, will be misleading. A simple alternative is to create a new variable that adds a constant to every observation and use this variable when taking logs. However, the purpose of your analysis matters since adding a constant is not always the appropriate way to handle this challenge. If you do add a constant, choose the constant to add thoughtfully. How big should it be? Should it be the same for NO and OC? Make sure to document the change to the variables in your lab write-up.
+    (a) Note: This is not a concern in this dataset, but 0 values are common in many environmental datasets. You can't take the log of 0 so you would need to decide how to handle the 0's. Summary statistics from the reduced dataset, i.e. a dataset created by omitting the 0's, will be misleading. A simple alternative is to create a new variable that adds a constant to every observation and use this variable when taking logs. However, the purpose of your analysis matters since adding a constant is not always the appropriate way to handle this challenge. If you do add a constant, choose the constant to add thoughtfully. How big should it be? Should it be the same for all pollutants? Make sure to document any changes to the variables in your lab write-up.
 
     (b) Getting GM and/or GSD in a table in R: This lab doesn't show how to get the GM and GSD using `tidyverse`; for example using `dplyr` `group_by()` and `mutate()` functions though you could (and may wish to). Instead, for demonstration, we show how to use the `EnvStats` package with `tapply` and `cbind`. To get the AM, ASD, GM, GSD, N in order:
 
-```{r table.with.GM+GSD}
-#-----table with GM+GSD using tapply and cbind----------
+Repeat this exercise for normal stop versus collocation sites (see example code above for creating this variable).  
 
-#This uses facilityno, a factor variable
-xbar <- tapply(DEMS$ecdata, DEMS$facilityno, mean,    na.rm=TRUE)
-sd   <- tapply(DEMS$ecdata, DEMS$facilityno, sd,      na.rm=TRUE)
-gm   <- tapply(DEMS$ecdata, DEMS$facilityno, geoMean, na.rm=TRUE)
-gsd  <- tapply(DEMS$ecdata, DEMS$facilityno, geoSD,   na.rm=TRUE)
-n    <- tapply(DEMS$ecdata[!is.na(DEMS$ecdata)],
-               DEMS$facilityno[!is.na(DEMS$ecdata)], length)
-cbind(AM=xbar, SD=sd, GM=gm, GSD=gsd, N=n)
 
-# we can make this prettier using rounding and kable:
-kable(round(cbind(AM=xbar, SD=sd, GM=gm, GSD=gsd, N=n), 2))
+(2) Make some figures to show the distribution of the air pollution measurements ('value'). (Challenge version: Can you do this separately by site_type?) Write a few sentences describing what you see in the figures.
 
-```
-
-And repeat this exercise for underground only: (Allows checking against Coble Table 1, and the numbers are similar but not identical. Without the partitioning by location, the GSD for mine B is enormous and not that believable. However, I think this is the huge range of the data and not an error.)
-
-```{r UGtable.with.GM+GSD}
-#-----UGtable.with.GM+GSD using tapply and cbind----------
-
-# This uses facilityno, a factor variable
-DEMSu <- DEMS[DEMS$u_s == "u", ]
-xbar  <- tapply(DEMSu$ecdata, DEMSu$facilityno, mean,    na.rm=TRUE)
-sd    <- tapply(DEMSu$ecdata, DEMSu$facilityno, sd,      na.rm=TRUE)
-gm    <- tapply(DEMSu$ecdata, DEMSu$facilityno, geoMean, na.rm=TRUE)
-gsd   <- tapply(DEMSu$ecdata, DEMSu$facilityno, geoSD,   na.rm=TRUE)
-n     <- tapply(DEMSu$ecdata[!is.na(DEMSu$ecdata)],
-                DEMSu$facilityno[!is.na(DEMSu$ecdata)], length)
-cbind(AM=xbar, SD=sd, GM=gm, GSD=gsd, N=n)
-
-# we can make this prettier using rounding and kable:
-kable(round(cbind(AM=xbar, SD=sd, GM=gm, GSD=gsd, N=n), 2))
-
-```
-
-(2) Make some figures to show the distribution of the REC data. (Challenge version: Can you do this separately by facility and location? Can you replicate Figure 1 of Coble?) Write a few sentences describing what you see in the figures.
-
-(3) Can you replicate the key information shown in Figure 2 of Coble? What are your ideas for enhancing the plots? (Support your graphical presentation with some brief discussion of what you see in the plots.)
 
 ------------------------------------------------------------------------
 
 # Appendix: Session Information, Code, and Functions {.unnumbered}
 
-The next three chunks should be included in the appendix of every R Markdown so that you document your session information, code, and functions defined in the document. This supports the reproducibility of your work.
+The next three chunks should be included in the appendix of every Markdown so that you document your session information, code, and functions defined in the document. This supports the reproducibility of your work.
 
 ```{r session.info}
 #-----session information: beginning of Appendix -----------
@@ -602,10 +524,10 @@ sessionInfo()
 #-----appendix------------
 ```
 
-```{r functions.defined.in.this.Rmd, eval = TRUE}
+```{r functions.defined.in.this.qmd, eval = TRUE}
 #-----functions defined in this Rmd ------------
 
-# Show the names of all functions defined in the .Rmd
+# Show the names of all functions defined in the .qmd
 # (e.g. loaded in the environment)
 lsf.str()
 

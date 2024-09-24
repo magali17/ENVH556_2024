@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="ENVH 556 Autumn 2024 Instructors">
+
+<title>Week 1 Lab: Becoming familiar with R, RStudio, RMarkdown</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Week1Lab_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Week1Lab_files/libs/quarto-html/quarto.js"></script>
+<script src="Week1Lab_files/libs/quarto-html/popper.min.js"></script>
+<script src="Week1Lab_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Week1Lab_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Week1Lab_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Week1Lab_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Week1Lab_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Week1Lab_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Week1Lab_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Week 1 Lab: Becoming familiar with R, RStudio, RMarkdown</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>ENVH 556 Autumn 2024 Instructors </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>This document was rendered on September 24, 2024.</p>
+<hr>
+<p>Note: The code in the following three chunks should typically appear at the beginning of each Markdown file. We display them during this first lab so you can see them in the output. Ordinarily we would not show them.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this "hash pipe" format also works with quatro</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: true</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#-----setup-------------</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># We are showing the code in this chunk in the first lab; ordinarily</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># we will choose to hide it with the option echo=FALSE. </span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Note about naming chunks:</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># The chunk name is useful for reading code, for the index you can choose to</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># show in RStudio to the right of the script editor, and for more advanced</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># purposes.  The chunk name will not show up in your Appendix code compilation</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># however.  The comment with the chunk name between dashes will both show up in</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># the index (boldfaced) and print in your appendix.  This facilitates review of</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># the code. I recommend using chunk names and putting them at least as a</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># comment at the beginning of the chunk.</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># the yaml header includes global options</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----clear workspace------------</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Clear the environment without clearing knitr</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># This chunk is useful for code development because it simulates the knitr</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># environment. Run it as a code chunk when testing. When knitr is run, it uses a</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fresh, clean environment, so we set eval=FALSE to disable this chunk when</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># rendering.</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Clear workspace of all objects and unload all extra (non-base) packages</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>(<span class="at">all =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">sessionInfo</span>()<span class="sc">$</span>otherPkgs)) {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lapply</span>(<span class="fu">paste</span>(<span class="st">'package:'</span>, <span class="fu">names</span>(<span class="fu">sessionInfo</span>()<span class="sc">$</span>otherPkgs), <span class="at">sep=</span><span class="st">""</span>),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>               detach, <span class="at">character.only=</span><span class="cn">TRUE</span>, <span class="at">unload=</span><span class="cn">TRUE</span>, <span class="at">force=</span><span class="cn">TRUE</span>))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----load packages with pacman--------------</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ordinarily we set the chunk header to include=FALSE for this chunk; just </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># showing it for the first lab.</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load pacman into memory, installing as needed</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>my_repo <span class="ot">&lt;-</span> <span class="st">'http://cran.r-project.org'</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) {<span class="fu">install.packages</span>(<span class="st">"pacman"</span>, <span class="at">repos =</span> my_repo)}</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the other packages, installing as needed.  As you progress, it is good</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># practice to load specific packages, but for now we'll load all of the </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># `tidyverse` for convenience. Some reasons for packages:</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># knitr:  kable()</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot2: Don't load:  part of tidyverse</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># readr:   Don't load:  part of tidyverse</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># dplyr:   Don't load:  part of tidyverse</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Hmisc:  Miscellaneous functions helpful for data analysis</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># EnvStats: geoMean, geoSD, probability plotting functions</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, knitr, Hmisc, EnvStats)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"global_functions.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<section id="goal" class="level1">
+<h1>Goal</h1>
+<p>The goal of this lab is to help everyone become familiar with R, R Studio, and Markdown through the context of the course content. This is also your first opportunity to develop a lab write-up for ENVH 556 using Markdown.</p>
+<p>Note: It is in your best interest to learn modern R tools, such as those included in the <a href="https://www.tidyverse.org"><code>tidyverse</code></a>. In this class we tend to prioritize <code>tidyvrese</code> approaches, but recognize there are often many packages and options to accomplish the same task. We want to deliver course materials without getting too bogged down in the debate about the “best” or “highest performing” packages.</p>
+<hr>
+</section>
+<section id="practice-session" class="level1">
+<h1>Practice Session</h1>
+<p>This section covers basic practice to be completed during the lab. It will introduce you to multiple useful commands and help you get a basic understanding of the dataset.</p>
+<p>The underlying data to be used in the lab is from the Seattle Mobile Monitoring study and is described in <a href="https://pubs.acs.org/doi/full/10.1021/acs.est.2c01077">Blanco et al.&nbsp;2022</a>, as discussed in class. We are focusing on the annual average site concentration data here.</p>
+<p>A big part of data science is data management and ideally you will also learn basic data management in conjunction with your work. This class will not emphasize data management, although you will do some during your term project. Note that some of the habits we stress, including those we discuss in this lab, are very useful for both data management and data analyses.</p>
+<section id="set-up-a-rstudio-project-file-paths-and-read-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-a-rstudio-project-file-paths-and-read-the-data">Set up a RStudio project, file paths, and read the data</h2>
+<p>Complete the following steps to set up the lab</p>
+<ul>
+<li>Start a new R project in R Studio.
+<ul>
+<li>Note: Put your project for this course (and lab) in a sensible directory.</li>
+<li>Copy this lab’s <code>.qmd</code> file, <em>Week1Lab.qmd</em> into your project directory and open it into RStudio.</li>
+<li>Note: Often you will open a new <code>.qmd</code> (Markdown) file and populate it with code and text for this course, such as from the <em>LabReportGuidelines.qmd</em> file.</li>
+</ul></li>
+<li>In the Markdown file you are using for this lab make sure you have your file paths set up (see <em>set file paths</em> chunk below).
+<ul>
+<li>First assign your current path to a variable name.</li>
+<li>Then tell R where your data reside. The <code>dir.create()</code> command will make a directory if it doesn’t exist. The <code>file.path()</code> command allows you to refer easily to paths across operating systems.</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----set file paths--------</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># where data is/will be stored</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">file.path</span>(<span class="st">"Datasets"</span>, <span class="st">"mobile monitoring"</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># create directories if they do not already exist    </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(data_path)){<span class="fu">dir.create</span>(data_path, <span class="at">showWarnings=</span><span class="cn">FALSE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Read in the data</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----read data--------</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Note 1:  for simplicity of typing in this lab we're calling the dataset DEMS,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># even though it is only one of several DEMS datasets we will use in this</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># course. </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Note 2: In this chunk heading eval = FALSE so that if it is run, we don't get an </span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># error if the file is not present in the "Datasets" folder. This would work if </span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># the `.rds` file were already downloaded and is a bit simpler compared to the </span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># more robust but more complicated code below.  </span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>DEMS <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(data_path, <span class="st">"DEMSCombinedPersonal.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As an alternative, the following code checks to see if the file is already present, and if not, downloads the data from a web site before reading it in:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----read data from a website--------</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># read in annual average air pollution concentrations from mobile monitoring</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># download it from the web and save locallyif the file does not already exist</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>annual <span class="ot">&lt;-</span> <span class="fu">download_and_read_file</span>(<span class="at">data_url =</span> <span class="st">"https://zenodo.org/record/13761282/files/annual_data_and_predictions.csv?download=1"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                                 <span class="co"># where new file will be saved if it does not already exist or read in from if it does</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">output_file_path =</span> <span class="fu">file.path</span>(data_path, <span class="st">"annual_data_and_predictions.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="check-your-data-first" class="level2">
+<h2 class="anchored" data-anchor-id="check-your-data-first">Check your data first!</h2>
+<p>An essential part of any data analysis is making sure the data you are analyzing are as you expect. Before you start any new data analysis, make sure your data have been read in correctly and get a basic understanding of their structure.</p>
+<section id="check-to-make-sure-your-data-have-been-read-in-correctly" class="level3">
+<h3 class="anchored" data-anchor-id="check-to-make-sure-your-data-have-been-read-in-correctly">Check to make sure your data have been read in correctly</h3>
+<p>Here are some basic questions you should ask every time you read in a new dataset:</p>
+<ul>
+<li>How many observations are in your dataset? Does this number correspond to the originating dataset?</li>
+<li>What are the variable names in the file? How are they formatted?</li>
+</ul>
+<section id="here-are-some-commands-that-will-allow-you-to-answer-these-questions" class="level4">
+<h4 class="anchored" data-anchor-id="here-are-some-commands-that-will-allow-you-to-answer-these-questions">Here are some commands that will allow you to answer these questions:</h4>
+<p>From base R:</p>
+<ul>
+<li><code>class(my_dataset)</code> tells you what class the dataset belongs to</li>
+<li><code>names(my_dataset)</code> lists the variable names</li>
+<li><code>dim(my_dataset)</code> gives the dimensions of the dataset</li>
+<li><code>sapply(my_dataset, class)</code> tells you the class of every variable (column)</li>
+<li><code>typeof(my_dataset)</code> says what is the storage mode or R internal type of this object</li>
+<li><code>View(my_dataset)</code> to open a browser to look at the entire dataset</li>
+</ul>
+<p>Replace the comment in the chunk below with some of these commands.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----data description 1---------- </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># STUDENTS may want to edit this chunk to look at the data differently</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Here is a first pass at commands to use to check your data we expect this to be a data frame</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(annual) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rows and columns in the dataset</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(annual) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2472    7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># column names</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(annual) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "location"   "longitude"  "latitude"   "variable"   "annual"    
+[6] "value"      "prediction"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This gives us details on the type of each variable in the dataset</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(annual, class) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   location   longitude    latitude    variable      annual       value 
+"character"   "numeric"   "numeric" "character" "character"   "numeric" 
+ prediction 
+  "numeric" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now for a tidyverse option.  We will also save this version in case we want to</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># use tidverse commands.</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Now lets make the data frame into a tibble Tibbles are tidyverse </span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># dataframes with some extra functionality and a friendly display. Occasionally </span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># you will run into functions that will work with "data.frame" objects but not </span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># "tibble" objects. </span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># (The parentheses surrounding the command tell R to print the result of the </span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#assignment.)</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>(annual <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(annual)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2,472 × 7
+   location longitude latitude variable     annual              value prediction
+   &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;               &lt;dbl&gt;      &lt;dbl&gt;
+ 1 MC0126       -122.     47.6 co2_umol_mol mean_of_win_medians  430.       435.
+ 2 MS0007       -122.     47.6 co2_umol_mol mean_of_win_medians  427.       427.
+ 3 MS0028       -122.     47.6 co2_umol_mol mean_of_win_medians  433.       431.
+ 4 MS0097       -122.     47.6 co2_umol_mol mean_of_win_medians  431.       434.
+ 5 MS0116       -122.     47.6 co2_umol_mol mean_of_win_medians  434.       436.
+ 6 MS0128       -122.     47.6 co2_umol_mol mean_of_win_medians  440.       449.
+ 7 MS0132       -122.     47.6 co2_umol_mol mean_of_win_medians  433.       428.
+ 8 MS0160       -122.     47.7 co2_umol_mol mean_of_win_medians  429.       432.
+ 9 MS0178       -122.     47.8 co2_umol_mol mean_of_win_medians  435.       422.
+10 MS0182       -122.     47.7 co2_umol_mol mean_of_win_medians  438.       431.
+# ℹ 2,462 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># select a subset of relevant columns</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>annual <span class="ot">&lt;-</span> annual <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(location, variable, value) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="get-some-basic-understanding-of-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="get-some-basic-understanding-of-the-data">Get some basic understanding of the data</h3>
+<p>Here are some commands:</p>
+<ul>
+<li><code>head(my_dataset)</code> shows the first 6 rows of the dataset</li>
+<li><code>head(my_dataset$facilityno, 20)</code> shows the first 20 rows of a subset of variables</li>
+<li><code>tail(my_dataset, 1)</code> shows the last row of the dataset</li>
+<li><code>summary(my_dataset)</code> gives a basic summary of each variable</li>
+<li><code>describe(my_dataset)</code> is another useful basic summary of the dataset, from the Hmisc package (“a concise statistical description”)</li>
+<li><code>xtabs(~variable_of_interest, data=my_dataset)</code> tally the number of observations a variable</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----data description 2-------</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Here is a first pass at commands for students to try to better understand the data</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># # first 6 rows and ALL variables (columns):</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(annual) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  location variable     value
+  &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;
+1 MC0126   co2_umol_mol  430.
+2 MS0007   co2_umol_mol  427.
+3 MS0028   co2_umol_mol  433.
+4 MS0097   co2_umol_mol  431.
+5 MS0116   co2_umol_mol  434.
+6 MS0128   co2_umol_mol  440.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a basic summary of each variable</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(annual) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   location           variable             value         
+ Length:2472        Length:2472        Min.   :    3.26  
+ Class :character   Class :character   1st Qu.:  208.30  
+ Mode  :character   Mode  :character   Median : 1642.98  
+                                       Mean   : 3866.86  
+                                       3rd Qu.: 7243.48  
+                                       Max.   :34944.94  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a different basic summary of each variable from `Hmisc`</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(annual) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>annual 
+
+ 3  Variables      2472  Observations
+--------------------------------------------------------------------------------
+location 
+       n  missing distinct 
+    2472        0      309 
+
+lowest : MC0002 MC0003 MC0120 MC0126 MC0406, highest: MS0488 MS0489 MS0490 MS0505 MS0601
+--------------------------------------------------------------------------------
+variable 
+       n  missing distinct 
+    2472        0        8 
+                                                                  
+Value       co2_umol_mol  ma200_ir_bc1           no2 ns_total_conc
+Frequency            309           309           309           309
+Proportion         0.125         0.125         0.125         0.125
+                                                                  
+Value        pm2.5_ug_m3 pmdisc_number  pnc_noscreen    pnc_screen
+Frequency            309           309           309           309
+Proportion         0.125         0.125         0.125         0.125
+--------------------------------------------------------------------------------
+value 
+        n   missing  distinct      Info      Mean       Gmd       .05       .10 
+     2472         0      2472         1      3867      4727     4.429     5.121 
+      .25       .50       .75       .90       .95 
+  208.304  1642.979  7243.478 10099.227 11635.437 
+
+lowest : 3.2552  3.32214 3.36208 3.43281 3.44834
+highest: 26998.7 29636.9 30127.2 30341.8 34944.9
+--------------------------------------------------------------------------------</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tallies of the number of observations for 'variable' (pollutant)</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>( <span class="sc">~</span> variable, <span class="at">data =</span> annual) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>variable
+ co2_umol_mol  ma200_ir_bc1           no2 ns_total_conc   pm2.5_ug_m3 
+          309           309           309           309           309 
+pmdisc_number  pnc_noscreen    pnc_screen 
+          309           309           309 </code></pre>
+</div>
+</div>
+</section>
+<section id="verify-your-data-correspond-to-what-you-expect" class="level3">
+<h3 class="anchored" data-anchor-id="verify-your-data-correspond-to-what-you-expect">Verify your data correspond to what you expect</h3>
+<p>The specifics of what you evaluate depend upon the context of the problem. In our case we have published papers we can rely upon to determine whether our data are what we expect. Here are some questions for the DEMS personal data:</p>
+<ul>
+<li>How many observations are in your dataset overall and by facility? Do these numbers correspond to the originating datasets? (You can check against the papers.)</li>
+<li>Note that there are missing data in this dataset. As you proceed, you will want to verify whether they are consistent with your expectations. Presence of missing data requires additional attention to how you will handle these values in R.
+<ul>
+<li>Which variables have missing values?</li>
+<li>Which variable(s) have the most missing data?</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----data description 3------------------</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># STUDENTS ADD code to look at the data:</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Which commands from above will allow you to verify observation numbers and</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># missing value counts?</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># In this dataset it is important to understand summaries by pollutant.  Which</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># commands from above will facilitate that?  (We will learn more below too.)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="basic-data-description" class="level2">
+<h2 class="anchored" data-anchor-id="basic-data-description">Basic data description</h2>
+<p>Once you have a basic understanding of your data and believe they were read in correctly, you can focus on quantities of interest. We will focus on creating a few basic summaries of <code>ecdata</code> in this lab. Next week you will get more experience with other tools such as transformations and checking the distirbution of variables.</p>
+<section id="tables-and-computing-descriptive-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="tables-and-computing-descriptive-statistics">Tables and computing descriptive statistics</h3>
+<ul>
+<li>What do you observe about the distribution?</li>
+<li>Do the descriptive statistics vary by facility?</li>
+</ul>
+<p>Here are some commands:</p>
+<ul>
+<li><code>min(my_dataset$variable_name,na.rm=TRUE)</code> is the minimum after missing values omitted</li>
+<li><code>mean(my_dataset$variable_name,na.rm=TRUE)</code> is the mean after missing values omitted</li>
+<li><code>sd(my_dataset$variable_name,na.rm=TRUE)</code> is the standard deviation after missing values omitted</li>
+<li><code>summaryFull(my_dataset[,c("variable1", "variable2)])</code> is a full set of summary statistics from the EnvStats package. It only works for numeric variables.</li>
+<li><code>fivenum(my_dataset$variable_name)</code> shows the five number summary of a dataset (min, lower hinge (close to the 25th percentile), median, upper hinge, maximum). Note no need to tell it to remove missing missing values here. Five number summaries are used in box plots and give you a basic understanding of the distribution of a variable.</li>
+<li>From the EnvStats package, <code>geoMean(my_dataset,na.rm=TRUE)</code> gives the geometric mean while <code>geoSD(my_dataset,na.rm=TRUE)</code> gives the GSD.</li>
+</ul>
+<p>To produce summary statistics, here is a <code>tidyverse</code> option using <code>dplyr</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----table with dplyr------</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dplyr uses verbs for function names. You'll get more comfortable with them as you practice. Also, watch spelling, for instance, `summarise()` versus `summarize()`. In this case summarize()` may call the `Hmisc` function rather than the `dplyr` function. Note: there are many ways to summarize data. This is one approach. </span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>annual_summary <span class="ot">&lt;-</span> annual <span class="sc">%&gt;%</span> </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(value)),</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">Nmiss =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(value)),</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd =</span> <span class="fu">sd</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">se =</span> sd<span class="sc">/</span><span class="fu">sqrt</span>(N)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co"># show tibble</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>annual_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 6
+  variable          N Nmiss     mean       sd       se
+  &lt;chr&gt;         &lt;int&gt; &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1 co2_umol_mol    309     0   430.      5.98    0.340 
+2 ma200_ir_bc1    309     0   552.    159.      9.06  
+3 no2             309     0     9.24    2.62    0.149 
+4 ns_total_conc   309     0 10278.   2988.    170.    
+5 pm2.5_ug_m3     309     0     4.63    0.571   0.0325
+6 pmdisc_number   309     0  9322.   4089.    233.    
+7 pnc_noscreen    309     0  7191.   2389.    136.    
+8 pnc_screen      309     0  3148.    879.     50.0   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># And here is the same result printed using kable</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(annual_summary, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>      <span class="co"># only show 2 digits</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">variable</th>
+<th style="text-align: right;">N</th>
+<th style="text-align: right;">Nmiss</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">se</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">co2_umol_mol</td>
+<td style="text-align: right;">309</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">430.18</td>
+<td style="text-align: right;">5.98</td>
+<td style="text-align: right;">0.34</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ma200_ir_bc1</td>
+<td style="text-align: right;">309</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">552.10</td>
+<td style="text-align: right;">159.22</td>
+<td style="text-align: right;">9.06</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">no2</td>
+<td style="text-align: right;">309</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">9.24</td>
+<td style="text-align: right;">2.62</td>
+<td style="text-align: right;">0.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ns_total_conc</td>
+<td style="text-align: right;">309</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">10277.60</td>
+<td style="text-align: right;">2988.00</td>
+<td style="text-align: right;">169.98</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pm2.5_ug_m3</td>
+<td style="text-align: right;">309</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4.63</td>
+<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">0.03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">pmdisc_number</td>
+<td style="text-align: right;">309</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">9321.85</td>
+<td style="text-align: right;">4088.94</td>
+<td style="text-align: right;">232.61</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pnc_noscreen</td>
+<td style="text-align: right;">309</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7191.41</td>
+<td style="text-align: right;">2388.53</td>
+<td style="text-align: right;">135.88</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">pnc_screen</td>
+<td style="text-align: right;">309</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3147.83</td>
+<td style="text-align: right;">878.60</td>
+<td style="text-align: right;">49.98</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Note: Consider estimating these values in multiple ways is to help you make sure you are reporting the correct values and that you completely understand your output. When multiple approaches to the same summary give the same answer, you can be more confident that your answer is correct.</p>
+</section>
+<section id="plots-histograms" class="level3">
+<h3 class="anchored" data-anchor-id="plots-histograms">Plots: Histograms</h3>
+<section id="make-a-histogram-of-concentrations.-add-a-density-curve-to-the-histogram." class="level4">
+<h4 class="anchored" data-anchor-id="make-a-histogram-of-concentrations.-add-a-density-curve-to-the-histogram.">Make a histogram of concentrations. Add a density curve to the histogram.</h4>
+<p><code>ggplot2</code> (part of <code>tidyverse</code>) has great tools for plotting. First we show a basic histogram. Then we switch to the density scale and overlay a normal density with the same mean and variance as the data. Finally we overlay a density plot.</p>
+<p>See chunk comments and the notes following the chunk for option suggestions.</p>
+<p><code>ggplot</code> gives warnings about omitted data and messages about better options to choose. You can prevent these messages from showing up in your rendered document by using the chunk option <code>warning=FALSE</code> and <code>message=FALSE</code>. They will show up in the Markdown console instead if you set these to <code>FALSE</code>. (Note: We set these options globally in our setup chunk above so we don’t need to repeat them below.)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----hist in tidyverse---------</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1 with histogram only and count on the y axis (the default) the default</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># binwidth is 30 and often you will want to change it </span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>annual <span class="sc">%&gt;%</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable<span class="sc">==</span> <span class="st">"no2"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data=</span>., <span class="fu">aes</span>(<span class="at">x=</span>value, <span class="at">na.rm=</span><span class="cn">TRUE</span>), ) <span class="sc">+</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">fill =</span> <span class="st">"purple"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week1Lab_files/figure-html/hist.in.tidyverse-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2 of density base plot </span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># named 'p' for ease of re-use and a different theme:</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> annual <span class="sc">%&gt;%</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"no2"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the density curve with some transparency</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"purple"</span>) <span class="sc">+</span>  </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week1Lab_files/figure-html/hist.in.tidyverse-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mean and standard deviation of the 'value' column</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>mean_value <span class="ot">&lt;-</span> <span class="fu">mean</span>(annual<span class="sc">$</span>value[annual<span class="sc">$</span>variable <span class="sc">==</span> <span class="st">"no2"</span>], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>sd_value <span class="ot">&lt;-</span> <span class="fu">sd</span>(annual<span class="sc">$</span>value[annual<span class="sc">$</span>variable <span class="sc">==</span> <span class="st">"no2"</span>], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the density plot with the normal distribution overlay</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co"># The purple line is a kernel density estimate representing the true shape of your data, while the red dashed line assumes a perfect normal distribution with the same mean and standard deviation.</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> annual <span class="sc">%&gt;%</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"no2"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the density curve with some transparency</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the normal distribution curve using stat_function</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dnorm, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">mean =</span> mean_value, <span class="at">sd =</span> sd_value), </span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> mean_value, <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the plot</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>p  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week1Lab_files/figure-html/hist.in.tidyverse-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">#  a few style options, such as axis expansion so the bars aren't "floating" and an overall theme.</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expand_scale</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">1</span>))) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week1Lab_files/figure-html/hist.in.tidyverse-4.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Note: In contrast to the normal density which overlays a probability distribution of a specific form, kernel density smoothers give you smooth curve that track the data. The smooth curve will be rougher for smaller bandwidths.</p>
+<p>To set the amount of smoothing (i.e.&nbsp;the bandwidth) in the kernel density, use the <code>bw</code> option. Kernels are scaled so that <code>bw</code> is the standard deviation of the smoothing kernel. To choose the smoothing kernel, use the <code>kernel</code> option, e.g.&nbsp;<code>kernel="gaussian"</code> (which is the default).</p>
+</section>
+</section>
+</section>
+<section id="create-transformed-data" class="level2">
+<h2 class="anchored" data-anchor-id="create-transformed-data">Create transformed data</h2>
+<p>Typically exposure data appear to be log-normally distributed. In this section we transform and plot the transformed data.</p>
+<section id="logarithmic-transformations-using-dplyr" class="level3">
+<h3 class="anchored" data-anchor-id="logarithmic-transformations-using-dplyr">Logarithmic transformations using <code>dplyr</code>:</h3>
+<ul>
+<li><code>mutate(my_dataset, ln_variable = log(variable) )</code> creates the natural log-transformed variable in the DEMS data frame.</li>
+<li><code>mutate(my_dataset, log10_variable = log10(variable) )</code> creates the base 10 log-transformed variable in the DEMS data frame.</li>
+</ul>
+<p>Note that <code>mutate</code> adds the new variables to the end of the dataset. For more functions you can use with <code>mutate</code> to create new variables, see R4DS pp.&nbsp;56-58.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----transform vars------</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># The following two variables will be added to the dataset at the end. We are not saving these here, just showing the output</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>annual <span class="sc">%&gt;%</span> </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ln_value =</span> <span class="fu">log</span>(value), </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">log10_value =</span> <span class="fu">log10</span>(value) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2,472 × 5
+   location variable     value ln_value log10_value
+   &lt;chr&gt;    &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;
+ 1 MC0126   co2_umol_mol  430.     6.06        2.63
+ 2 MS0007   co2_umol_mol  427.     6.06        2.63
+ 3 MS0028   co2_umol_mol  433.     6.07        2.64
+ 4 MS0097   co2_umol_mol  431.     6.07        2.63
+ 5 MS0116   co2_umol_mol  434.     6.07        2.64
+ 6 MS0128   co2_umol_mol  440.     6.09        2.64
+ 7 MS0132   co2_umol_mol  433.     6.07        2.64
+ 8 MS0160   co2_umol_mol  429.     6.06        2.63
+ 9 MS0178   co2_umol_mol  435.     6.07        2.64
+10 MS0182   co2_umol_mol  438.     6.08        2.64
+# ℹ 2,462 more rows</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="more-plots" class="level2">
+<h2 class="anchored" data-anchor-id="more-plots">More plots</h2>
+<section id="overview-of-ggplot-basics" class="level3">
+<h3 class="anchored" data-anchor-id="overview-of-ggplot-basics">Overview of <code>ggplot</code> basics</h3>
+<p>Here is the basic format of <code>ggplot</code>:</p>
+<pre><code>ggplot(data = &lt;DATA&gt; ) +
+    &lt;GEOM_FUNCTION&gt;(mapping = aes(&lt;MAPPINGS&gt;))</code></pre>
+<p>where <code>&lt;DATA&gt;</code> is your dataset, <code>aes</code> is the aesthetic for the mapping or the visual properties of the objects in the plot, such as size, shape, and color of points. The <code>mapping</code> is how you apply the variables in the dataset to the aesthetics. Finally, the <code>&lt;GEOM_FUNCTION&gt;</code> is how the mapping will be presented. Examples are <code>geom_point</code> and <code>geom_line</code>. <code>ggplot</code> is very expandable, allowing you to layer aspects into your plots, such as to overlay density plots on top of histograms as we did above. More generally, the layered grammar of <code>ggplot</code> is:</p>
+<pre><code>ggplot(data = &lt;DATA&gt; ) +
+    &lt;GEOM_FUNCTION&gt;(
+        mapping = aes(&lt;MAPPINGS&gt;),
+        stat = &lt;STAT&gt;,
+        position = &lt;POSITION&gt;
+    ) +
+    &lt;COORDINATE_FUNCTION&gt; +
+    &lt;FACET_FUNCTION&gt; +
+    &lt;LABEL_FUNCTION&gt;</code></pre>
+<p>where the added pieces are <code>&lt;STAT&gt;</code>: statistics to put on the plot, <code>&lt;POSITION&gt;</code> to locate your object (such as <code>"jitter"</code>“), <code>&lt;COORDINATE_FUNCTION&gt;</code> to specify the coordinate system to plot under (e.g.&nbsp;polar coordinates), <code>&lt;FACET_FUNCTION&gt;</code> to allow you to divide the plot into subplots, and <code>&lt;LABEL_FUNCTION&gt;</code> in order to add titles, axis labels, etc.</p>
+<p>For more details on <code>ggplot</code> see R4DS, the <a href="https://r4ds.had.co.nz/data-visualisation.html">R for Data Science</a> book by Hadley Wickham and Garrett Grolemund.</p>
+</section>
+<section id="scatterplots-plot-the-relationship-between-no2-and-pm2.5" class="level3">
+<h3 class="anchored" data-anchor-id="scatterplots-plot-the-relationship-between-no2-and-pm2.5">Scatterplots: Plot the relationship between NO2 and PM2.5</h3>
+<p><code>ggplot2</code> makes this easy:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----scatterplot in tidyverse------------</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># make each pollutant of interest its own column, for easier plotting</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>annual_wide <span class="ot">&lt;-</span> annual <span class="sc">%&gt;%</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"no2"</span>, <span class="st">"pm2.5_ug_m3"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> value)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1: simple way to use ggplot to ask for a scatterplot</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="fu">qplot</span>(no2, pm2<span class="fl">.5</span>_ug_m3, <span class="at">data=</span>annual_wide) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week1Lab_files/figure-html/scatterplot.in.tidyverse-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2 is the same plot, now using standard ggplot notation</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> annual_wide, <span class="fu">aes</span>(no2, pm2<span class="fl">.5</span>_ug_m3, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week1Lab_files/figure-html/scatterplot.in.tidyverse-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 3 adds a best fit linear fit added without its 95% CI (se=FALSE option). We</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co"># also add a title and axis labels</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> annual_wide, <span class="fu">aes</span>(no2, pm2<span class="fl">.5</span>_ug_m3, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span> </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scatterplot of the NO2 (ppb) vs. PM2.5 (ug/m3) data"</span>,  </span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"NO2 (ppm)"</span>,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"PM2.5 (ug/m3)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week1Lab_files/figure-html/scatterplot.in.tidyverse-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 4 adds a smooth loess curve added and its 95%</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="co"># CI (the default smoother is gam for large datasets and loess when there are</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="co"># less than 1,000 observations)</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> annual_wide, <span class="fu">aes</span>(no2, pm2<span class="fl">.5</span>_ug_m3, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span> </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">col=</span><span class="st">"green"</span>) <span class="sc">+</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scatterplot of the NO2 (ppb) vs. PM2.5 (ug/m3) data"</span>,  </span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"NO2 (ppm)"</span>,</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"PM2.5 (ug/m3)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week1Lab_files/figure-html/scatterplot.in.tidyverse-4.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 6 adds facets + a new color theme for site type</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Note 1:  if you wanted, the scales="free" option in facet_wrap() allows a different scale for each plot, which sometimes</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co"># can help plots be more informative. </span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>annual_wide <span class="sc">%&gt;%</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create a new variable to indicate if the location was a stop site or specifically a collocation site for quality control purpuses</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site_type =</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">"MS"</span>, location), <span class="st">"stop site"</span>,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">"MC"</span>, location), <span class="st">"collocation site"</span>, <span class="cn">NA</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> ., <span class="fu">aes</span>(no2, pm2<span class="fl">.5</span>_ug_m3, <span class="at">col=</span>site_type)) <span class="sc">+</span> </span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site_type) <span class="sc">+</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scatterplot of the NO2 (ppb) vs. PM2.5 (ug/m3) data"</span>,  </span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"NO (ppm)"</span>,</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"PM2.5 (ug/m3)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week1Lab_files/figure-html/scatterplot.in.tidyverse-5.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="homework-exercises" class="level1">
+<h1>Homework exercises</h1>
+<p>Note: Refer to the lab write-up guidelines <em>LabReportGuidelines.html</em> posted on Canvas for the format and content of your lab report.</p>
+<ol type="1">
+<li><p>Make table(s) summarizing each pollutant (‘variable’) in this dataset. Include the arithmetic mean (AM), arithmetic standard deviation (ASD), geometric mean (GM), and geometric standard deviation (GSD) of each pollutant. Write a few sentences describing the results in the table.</p>
+<ol type="a">
+<li><p>Note: This is not a concern in this dataset, but 0 values are common in many environmental datasets. You can’t take the log of 0 so you would need to decide how to handle the 0’s. Summary statistics from the reduced dataset, i.e.&nbsp;a dataset created by omitting the 0’s, will be misleading. A simple alternative is to create a new variable that adds a constant to every observation and use this variable when taking logs. However, the purpose of your analysis matters since adding a constant is not always the appropriate way to handle this challenge. If you do add a constant, choose the constant to add thoughtfully. How big should it be? Should it be the same for all pollutants? Make sure to document any changes to the variables in your lab write-up.</p></li>
+<li><p>Getting GM and/or GSD in a table in R: This lab doesn’t show how to get the GM and GSD using <code>tidyverse</code>; for example using <code>dplyr</code> <code>group_by()</code> and <code>mutate()</code> functions though you could (and may wish to). Instead, for demonstration, we show how to use the <code>EnvStats</code> package with <code>tapply</code> and <code>cbind</code>. To get the AM, ASD, GM, GSD, N in order:</p></li>
+</ol></li>
+</ol>
+<p>Repeat this exercise for normal stop versus collocation sites (see example code above for creating this variable).</p>
+<ol start="2" type="1">
+<li>Make some figures to show the distribution of the air pollution measurements (‘value’). (Challenge version: Can you do this separately by site_type?) Write a few sentences describing what you see in the figures.</li>
+</ol>
+<hr>
+</section>
+<section id="appendix-session-information-code-and-functions" class="level1 unnumbered">
+<h1 class="unnumbered">Appendix: Session Information, Code, and Functions</h1>
+<p>The next three chunks should be included in the appendix of every Markdown so that you document your session information, code, and functions defined in the document. This supports the reproducibility of your work.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----session information: beginning of Appendix -----------</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co"># This promotes reproducibility by documenting the version of R and every package</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># you used.</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.3.1 (2023-06-16)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS Sonoma 14.6.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Los_Angeles
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] EnvStats_3.0.0  Hmisc_5.1-3     knitr_1.48      lubridate_1.9.3
+ [5] forcats_1.0.0   stringr_1.5.1   dplyr_1.1.4     purrr_1.0.2    
+ [9] readr_2.1.5     tidyr_1.3.1     tibble_3.2.1    ggplot2_3.5.1  
+[13] tidyverse_2.0.0 pacman_0.5.1   
+
+loaded via a namespace (and not attached):
+ [1] utf8_1.2.4        generics_0.1.3    lattice_0.22-6    stringi_1.8.4    
+ [5] hms_1.1.3         digest_0.6.37     magrittr_2.0.3    evaluate_0.24.0  
+ [9] grid_4.3.1        timechange_0.3.0  fastmap_1.2.0     Matrix_1.6-1     
+[13] jsonlite_1.8.8    backports_1.5.0   nnet_7.3-19       Formula_1.2-5    
+[17] gridExtra_2.3     mgcv_1.9-1        fansi_1.0.6       scales_1.3.0     
+[21] cli_3.6.3         rlang_1.1.4       splines_4.3.1     munsell_0.5.1    
+[25] base64enc_0.1-3   withr_3.0.1       yaml_2.3.10       tools_4.3.1      
+[29] tzdb_0.4.0        checkmate_2.3.2   htmlTable_2.4.3   colorspace_2.1-1 
+[33] vctrs_0.6.5       R6_2.5.1          rpart_4.1.23      lifecycle_1.0.4  
+[37] htmlwidgets_1.6.4 foreign_0.8-87    cluster_2.1.6     pkgconfig_2.0.3  
+[41] pillar_1.9.0      gtable_0.3.5      data.table_1.15.4 glue_1.7.0       
+[45] xfun_0.47         tidyselect_1.2.1  rstudioapi_0.16.0 farver_2.1.2     
+[49] nlme_3.1-166      htmltools_0.5.8.1 labeling_0.4.3    rmarkdown_2.28   
+[53] compiler_4.3.1   </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this "hash pipe" format also works with quatro</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: true</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co">#-----setup-------------</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="co"># We are showing the code in this chunk in the first lab; ordinarily</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="co"># we will choose to hide it with the option echo=FALSE. </span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Note about naming chunks:</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="co"># The chunk name is useful for reading code, for the index you can choose to</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="co"># show in RStudio to the right of the script editor, and for more advanced</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="co"># purposes.  The chunk name will not show up in your Appendix code compilation</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a><span class="co"># however.  The comment with the chunk name between dashes will both show up in</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="co"># the index (boldfaced) and print in your appendix.  This facilitates review of</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="co"># the code. I recommend using chunk names and putting them at least as a</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="co"># comment at the beginning of the chunk.</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a><span class="co"># the yaml header includes global options</span></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="co">#-----clear workspace------------</span></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Clear the environment without clearing knitr</span></span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a><span class="co"># This chunk is useful for code development because it simulates the knitr</span></span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a><span class="co"># environment. Run it as a code chunk when testing. When knitr is run, it uses a</span></span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a><span class="co"># fresh, clean environment, so we set eval=FALSE to disable this chunk when</span></span>
+<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a><span class="co"># rendering.</span></span>
+<span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-30"><a href="#cb45-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Clear workspace of all objects and unload all extra (non-base) packages</span></span>
+<span id="cb45-31"><a href="#cb45-31" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>(<span class="at">all =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb45-32"><a href="#cb45-32" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">sessionInfo</span>()<span class="sc">$</span>otherPkgs)) {</span>
+<span id="cb45-33"><a href="#cb45-33" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(</span>
+<span id="cb45-34"><a href="#cb45-34" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lapply</span>(<span class="fu">paste</span>(<span class="st">'package:'</span>, <span class="fu">names</span>(<span class="fu">sessionInfo</span>()<span class="sc">$</span>otherPkgs), <span class="at">sep=</span><span class="st">""</span>),</span>
+<span id="cb45-35"><a href="#cb45-35" aria-hidden="true" tabindex="-1"></a>               detach, <span class="at">character.only=</span><span class="cn">TRUE</span>, <span class="at">unload=</span><span class="cn">TRUE</span>, <span class="at">force=</span><span class="cn">TRUE</span>))</span>
+<span id="cb45-36"><a href="#cb45-36" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb45-37"><a href="#cb45-37" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb45-38"><a href="#cb45-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-39"><a href="#cb45-39" aria-hidden="true" tabindex="-1"></a><span class="co">#-----load packages with pacman--------------</span></span>
+<span id="cb45-40"><a href="#cb45-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-41"><a href="#cb45-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Ordinarily we set the chunk header to include=FALSE for this chunk; just </span></span>
+<span id="cb45-42"><a href="#cb45-42" aria-hidden="true" tabindex="-1"></a><span class="co"># showing it for the first lab.</span></span>
+<span id="cb45-43"><a href="#cb45-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-44"><a href="#cb45-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Load pacman into memory, installing as needed</span></span>
+<span id="cb45-45"><a href="#cb45-45" aria-hidden="true" tabindex="-1"></a>my_repo <span class="ot">&lt;-</span> <span class="st">'http://cran.r-project.org'</span></span>
+<span id="cb45-46"><a href="#cb45-46" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) {<span class="fu">install.packages</span>(<span class="st">"pacman"</span>, <span class="at">repos =</span> my_repo)}</span>
+<span id="cb45-47"><a href="#cb45-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-48"><a href="#cb45-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the other packages, installing as needed.  As you progress, it is good</span></span>
+<span id="cb45-49"><a href="#cb45-49" aria-hidden="true" tabindex="-1"></a><span class="co"># practice to load specific packages, but for now we'll load all of the </span></span>
+<span id="cb45-50"><a href="#cb45-50" aria-hidden="true" tabindex="-1"></a><span class="co"># `tidyverse` for convenience. Some reasons for packages:</span></span>
+<span id="cb45-51"><a href="#cb45-51" aria-hidden="true" tabindex="-1"></a><span class="co"># knitr:  kable()</span></span>
+<span id="cb45-52"><a href="#cb45-52" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot2: Don't load:  part of tidyverse</span></span>
+<span id="cb45-53"><a href="#cb45-53" aria-hidden="true" tabindex="-1"></a><span class="co"># readr:   Don't load:  part of tidyverse</span></span>
+<span id="cb45-54"><a href="#cb45-54" aria-hidden="true" tabindex="-1"></a><span class="co"># dplyr:   Don't load:  part of tidyverse</span></span>
+<span id="cb45-55"><a href="#cb45-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Hmisc:  Miscellaneous functions helpful for data analysis</span></span>
+<span id="cb45-56"><a href="#cb45-56" aria-hidden="true" tabindex="-1"></a><span class="co"># EnvStats: geoMean, geoSD, probability plotting functions</span></span>
+<span id="cb45-57"><a href="#cb45-57" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, knitr, Hmisc, EnvStats)</span>
+<span id="cb45-58"><a href="#cb45-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-59"><a href="#cb45-59" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"global_functions.R"</span>)</span>
+<span id="cb45-60"><a href="#cb45-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-61"><a href="#cb45-61" aria-hidden="true" tabindex="-1"></a><span class="co">#-----set file paths--------</span></span>
+<span id="cb45-62"><a href="#cb45-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-63"><a href="#cb45-63" aria-hidden="true" tabindex="-1"></a><span class="co"># where data is/will be stored</span></span>
+<span id="cb45-64"><a href="#cb45-64" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">file.path</span>(<span class="st">"Datasets"</span>, <span class="st">"mobile monitoring"</span>))</span>
+<span id="cb45-65"><a href="#cb45-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-66"><a href="#cb45-66" aria-hidden="true" tabindex="-1"></a><span class="co"># create directories if they do not already exist    </span></span>
+<span id="cb45-67"><a href="#cb45-67" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(data_path)){<span class="fu">dir.create</span>(data_path, <span class="at">showWarnings=</span><span class="cn">FALSE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)}</span>
+<span id="cb45-68"><a href="#cb45-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-69"><a href="#cb45-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-70"><a href="#cb45-70" aria-hidden="true" tabindex="-1"></a><span class="co">#-----read data--------</span></span>
+<span id="cb45-71"><a href="#cb45-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-72"><a href="#cb45-72" aria-hidden="true" tabindex="-1"></a><span class="co"># Note 1:  for simplicity of typing in this lab we're calling the dataset DEMS,</span></span>
+<span id="cb45-73"><a href="#cb45-73" aria-hidden="true" tabindex="-1"></a><span class="co"># even though it is only one of several DEMS datasets we will use in this</span></span>
+<span id="cb45-74"><a href="#cb45-74" aria-hidden="true" tabindex="-1"></a><span class="co"># course. </span></span>
+<span id="cb45-75"><a href="#cb45-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Note 2: In this chunk heading eval = FALSE so that if it is run, we don't get an </span></span>
+<span id="cb45-76"><a href="#cb45-76" aria-hidden="true" tabindex="-1"></a><span class="co"># error if the file is not present in the "Datasets" folder. This would work if </span></span>
+<span id="cb45-77"><a href="#cb45-77" aria-hidden="true" tabindex="-1"></a><span class="co"># the `.rds` file were already downloaded and is a bit simpler compared to the </span></span>
+<span id="cb45-78"><a href="#cb45-78" aria-hidden="true" tabindex="-1"></a><span class="co"># more robust but more complicated code below.  </span></span>
+<span id="cb45-79"><a href="#cb45-79" aria-hidden="true" tabindex="-1"></a>DEMS <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(data_path, <span class="st">"DEMSCombinedPersonal.rds"</span>))</span>
+<span id="cb45-80"><a href="#cb45-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-81"><a href="#cb45-81" aria-hidden="true" tabindex="-1"></a><span class="co">#-----read data from a website--------</span></span>
+<span id="cb45-82"><a href="#cb45-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-83"><a href="#cb45-83" aria-hidden="true" tabindex="-1"></a><span class="co"># read in annual average air pollution concentrations from mobile monitoring</span></span>
+<span id="cb45-84"><a href="#cb45-84" aria-hidden="true" tabindex="-1"></a><span class="co"># download it from the web and save locallyif the file does not already exist</span></span>
+<span id="cb45-85"><a href="#cb45-85" aria-hidden="true" tabindex="-1"></a>annual <span class="ot">&lt;-</span> <span class="fu">download_and_read_file</span>(<span class="at">data_url =</span> <span class="st">"https://zenodo.org/record/13761282/files/annual_data_and_predictions.csv?download=1"</span>,</span>
+<span id="cb45-86"><a href="#cb45-86" aria-hidden="true" tabindex="-1"></a>                                 <span class="co"># where new file will be saved if it does not already exist or read in from if it does</span></span>
+<span id="cb45-87"><a href="#cb45-87" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">output_file_path =</span> <span class="fu">file.path</span>(data_path, <span class="st">"annual_data_and_predictions.csv"</span>))</span>
+<span id="cb45-88"><a href="#cb45-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-89"><a href="#cb45-89" aria-hidden="true" tabindex="-1"></a><span class="co">#-----data description 1---------- </span></span>
+<span id="cb45-90"><a href="#cb45-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-91"><a href="#cb45-91" aria-hidden="true" tabindex="-1"></a><span class="co"># STUDENTS may want to edit this chunk to look at the data differently</span></span>
+<span id="cb45-92"><a href="#cb45-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-93"><a href="#cb45-93" aria-hidden="true" tabindex="-1"></a><span class="co"># Here is a first pass at commands to use to check your data we expect this to be a data frame</span></span>
+<span id="cb45-94"><a href="#cb45-94" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(annual) </span>
+<span id="cb45-95"><a href="#cb45-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-96"><a href="#cb45-96" aria-hidden="true" tabindex="-1"></a><span class="co"># rows and columns in the dataset</span></span>
+<span id="cb45-97"><a href="#cb45-97" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(annual) </span>
+<span id="cb45-98"><a href="#cb45-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-99"><a href="#cb45-99" aria-hidden="true" tabindex="-1"></a><span class="co"># column names</span></span>
+<span id="cb45-100"><a href="#cb45-100" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(annual) </span>
+<span id="cb45-101"><a href="#cb45-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-102"><a href="#cb45-102" aria-hidden="true" tabindex="-1"></a><span class="co"># This gives us details on the type of each variable in the dataset</span></span>
+<span id="cb45-103"><a href="#cb45-103" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(annual, class) </span>
+<span id="cb45-104"><a href="#cb45-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-105"><a href="#cb45-105" aria-hidden="true" tabindex="-1"></a><span class="co"># Now for a tidyverse option.  We will also save this version in case we want to</span></span>
+<span id="cb45-106"><a href="#cb45-106" aria-hidden="true" tabindex="-1"></a><span class="co"># use tidverse commands.</span></span>
+<span id="cb45-107"><a href="#cb45-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-108"><a href="#cb45-108" aria-hidden="true" tabindex="-1"></a><span class="co"># Now lets make the data frame into a tibble Tibbles are tidyverse </span></span>
+<span id="cb45-109"><a href="#cb45-109" aria-hidden="true" tabindex="-1"></a><span class="co"># dataframes with some extra functionality and a friendly display. Occasionally </span></span>
+<span id="cb45-110"><a href="#cb45-110" aria-hidden="true" tabindex="-1"></a><span class="co"># you will run into functions that will work with "data.frame" objects but not </span></span>
+<span id="cb45-111"><a href="#cb45-111" aria-hidden="true" tabindex="-1"></a><span class="co"># "tibble" objects. </span></span>
+<span id="cb45-112"><a href="#cb45-112" aria-hidden="true" tabindex="-1"></a><span class="co"># (The parentheses surrounding the command tell R to print the result of the </span></span>
+<span id="cb45-113"><a href="#cb45-113" aria-hidden="true" tabindex="-1"></a><span class="co">#assignment.)</span></span>
+<span id="cb45-114"><a href="#cb45-114" aria-hidden="true" tabindex="-1"></a>(annual <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(annual)) </span>
+<span id="cb45-115"><a href="#cb45-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-116"><a href="#cb45-116" aria-hidden="true" tabindex="-1"></a><span class="co"># select a subset of relevant columns</span></span>
+<span id="cb45-117"><a href="#cb45-117" aria-hidden="true" tabindex="-1"></a>annual <span class="ot">&lt;-</span> annual <span class="sc">%&gt;%</span></span>
+<span id="cb45-118"><a href="#cb45-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(location, variable, value) </span>
+<span id="cb45-119"><a href="#cb45-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-120"><a href="#cb45-120" aria-hidden="true" tabindex="-1"></a><span class="co">#-----data description 2-------</span></span>
+<span id="cb45-121"><a href="#cb45-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-122"><a href="#cb45-122" aria-hidden="true" tabindex="-1"></a><span class="co"># Here is a first pass at commands for students to try to better understand the data</span></span>
+<span id="cb45-123"><a href="#cb45-123" aria-hidden="true" tabindex="-1"></a><span class="co"># # first 6 rows and ALL variables (columns):</span></span>
+<span id="cb45-124"><a href="#cb45-124" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(annual) </span>
+<span id="cb45-125"><a href="#cb45-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-126"><a href="#cb45-126" aria-hidden="true" tabindex="-1"></a><span class="co"># a basic summary of each variable</span></span>
+<span id="cb45-127"><a href="#cb45-127" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(annual) </span>
+<span id="cb45-128"><a href="#cb45-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-129"><a href="#cb45-129" aria-hidden="true" tabindex="-1"></a><span class="co"># a different basic summary of each variable from `Hmisc`</span></span>
+<span id="cb45-130"><a href="#cb45-130" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(annual) </span>
+<span id="cb45-131"><a href="#cb45-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-132"><a href="#cb45-132" aria-hidden="true" tabindex="-1"></a><span class="co"># tallies of the number of observations for 'variable' (pollutant)</span></span>
+<span id="cb45-133"><a href="#cb45-133" aria-hidden="true" tabindex="-1"></a><span class="fu">xtabs</span>( <span class="sc">~</span> variable, <span class="at">data =</span> annual) </span>
+<span id="cb45-134"><a href="#cb45-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-135"><a href="#cb45-135" aria-hidden="true" tabindex="-1"></a><span class="co">#-----data description 3------------------</span></span>
+<span id="cb45-136"><a href="#cb45-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-137"><a href="#cb45-137" aria-hidden="true" tabindex="-1"></a><span class="co"># STUDENTS ADD code to look at the data:</span></span>
+<span id="cb45-138"><a href="#cb45-138" aria-hidden="true" tabindex="-1"></a><span class="co"># Which commands from above will allow you to verify observation numbers and</span></span>
+<span id="cb45-139"><a href="#cb45-139" aria-hidden="true" tabindex="-1"></a><span class="co"># missing value counts?</span></span>
+<span id="cb45-140"><a href="#cb45-140" aria-hidden="true" tabindex="-1"></a><span class="co"># In this dataset it is important to understand summaries by pollutant.  Which</span></span>
+<span id="cb45-141"><a href="#cb45-141" aria-hidden="true" tabindex="-1"></a><span class="co"># commands from above will facilitate that?  (We will learn more below too.)</span></span>
+<span id="cb45-142"><a href="#cb45-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-143"><a href="#cb45-143" aria-hidden="true" tabindex="-1"></a><span class="co">#-----table with dplyr------</span></span>
+<span id="cb45-144"><a href="#cb45-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-145"><a href="#cb45-145" aria-hidden="true" tabindex="-1"></a><span class="co"># dplyr uses verbs for function names. You'll get more comfortable with them as you practice. Also, watch spelling, for instance, `summarise()` versus `summarize()`. In this case summarize()` may call the `Hmisc` function rather than the `dplyr` function. Note: there are many ways to summarize data. This is one approach. </span></span>
+<span id="cb45-146"><a href="#cb45-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-147"><a href="#cb45-147" aria-hidden="true" tabindex="-1"></a>annual_summary <span class="ot">&lt;-</span> annual <span class="sc">%&gt;%</span> </span>
+<span id="cb45-148"><a href="#cb45-148" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable) <span class="sc">%&gt;%</span> </span>
+<span id="cb45-149"><a href="#cb45-149" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">N =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(value)),</span>
+<span id="cb45-150"><a href="#cb45-150" aria-hidden="true" tabindex="-1"></a>            <span class="at">Nmiss =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(value)),</span>
+<span id="cb45-151"><a href="#cb45-151" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean =</span> <span class="fu">mean</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb45-152"><a href="#cb45-152" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd =</span> <span class="fu">sd</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb45-153"><a href="#cb45-153" aria-hidden="true" tabindex="-1"></a>            <span class="at">se =</span> sd<span class="sc">/</span><span class="fu">sqrt</span>(N)</span>
+<span id="cb45-154"><a href="#cb45-154" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb45-155"><a href="#cb45-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-156"><a href="#cb45-156" aria-hidden="true" tabindex="-1"></a><span class="co"># show tibble</span></span>
+<span id="cb45-157"><a href="#cb45-157" aria-hidden="true" tabindex="-1"></a>annual_summary</span>
+<span id="cb45-158"><a href="#cb45-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-159"><a href="#cb45-159" aria-hidden="true" tabindex="-1"></a><span class="co"># And here is the same result printed using kable</span></span>
+<span id="cb45-160"><a href="#cb45-160" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(annual_summary, </span>
+<span id="cb45-161"><a href="#cb45-161" aria-hidden="true" tabindex="-1"></a>      <span class="co"># only show 2 digits</span></span>
+<span id="cb45-162"><a href="#cb45-162" aria-hidden="true" tabindex="-1"></a>      <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb45-163"><a href="#cb45-163" aria-hidden="true" tabindex="-1"></a><span class="co">#-----hist in tidyverse---------</span></span>
+<span id="cb45-164"><a href="#cb45-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-165"><a href="#cb45-165" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1 with histogram only and count on the y axis (the default) the default</span></span>
+<span id="cb45-166"><a href="#cb45-166" aria-hidden="true" tabindex="-1"></a><span class="co"># binwidth is 30 and often you will want to change it </span></span>
+<span id="cb45-167"><a href="#cb45-167" aria-hidden="true" tabindex="-1"></a>annual <span class="sc">%&gt;%</span></span>
+<span id="cb45-168"><a href="#cb45-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable<span class="sc">==</span> <span class="st">"no2"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb45-169"><a href="#cb45-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data=</span>., <span class="fu">aes</span>(<span class="at">x=</span>value, <span class="at">na.rm=</span><span class="cn">TRUE</span>), ) <span class="sc">+</span></span>
+<span id="cb45-170"><a href="#cb45-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">fill =</span> <span class="st">"purple"</span>)</span>
+<span id="cb45-171"><a href="#cb45-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-172"><a href="#cb45-172" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2 of density base plot </span></span>
+<span id="cb45-173"><a href="#cb45-173" aria-hidden="true" tabindex="-1"></a><span class="co"># named 'p' for ease of re-use and a different theme:</span></span>
+<span id="cb45-174"><a href="#cb45-174" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> annual <span class="sc">%&gt;%</span></span>
+<span id="cb45-175"><a href="#cb45-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"no2"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb45-176"><a href="#cb45-176" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span></span>
+<span id="cb45-177"><a href="#cb45-177" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the density curve with some transparency</span></span>
+<span id="cb45-178"><a href="#cb45-178" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"purple"</span>) <span class="sc">+</span>  </span>
+<span id="cb45-179"><a href="#cb45-179" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb45-180"><a href="#cb45-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-181"><a href="#cb45-181" aria-hidden="true" tabindex="-1"></a>p</span>
+<span id="cb45-182"><a href="#cb45-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-183"><a href="#cb45-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-184"><a href="#cb45-184" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mean and standard deviation of the 'value' column</span></span>
+<span id="cb45-185"><a href="#cb45-185" aria-hidden="true" tabindex="-1"></a>mean_value <span class="ot">&lt;-</span> <span class="fu">mean</span>(annual<span class="sc">$</span>value[annual<span class="sc">$</span>variable <span class="sc">==</span> <span class="st">"no2"</span>], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb45-186"><a href="#cb45-186" aria-hidden="true" tabindex="-1"></a>sd_value <span class="ot">&lt;-</span> <span class="fu">sd</span>(annual<span class="sc">$</span>value[annual<span class="sc">$</span>variable <span class="sc">==</span> <span class="st">"no2"</span>], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb45-187"><a href="#cb45-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-188"><a href="#cb45-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the density plot with the normal distribution overlay</span></span>
+<span id="cb45-189"><a href="#cb45-189" aria-hidden="true" tabindex="-1"></a><span class="co"># The purple line is a kernel density estimate representing the true shape of your data, while the red dashed line assumes a perfect normal distribution with the same mean and standard deviation.</span></span>
+<span id="cb45-190"><a href="#cb45-190" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> annual <span class="sc">%&gt;%</span></span>
+<span id="cb45-191"><a href="#cb45-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"no2"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb45-192"><a href="#cb45-192" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span></span>
+<span id="cb45-193"><a href="#cb45-193" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the density curve with some transparency</span></span>
+<span id="cb45-194"><a href="#cb45-194" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb45-195"><a href="#cb45-195" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the normal distribution curve using stat_function</span></span>
+<span id="cb45-196"><a href="#cb45-196" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dnorm, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">mean =</span> mean_value, <span class="at">sd =</span> sd_value), </span>
+<span id="cb45-197"><a href="#cb45-197" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb45-198"><a href="#cb45-198" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> mean_value, <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span></span>
+<span id="cb45-199"><a href="#cb45-199" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb45-200"><a href="#cb45-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-201"><a href="#cb45-201" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the plot</span></span>
+<span id="cb45-202"><a href="#cb45-202" aria-hidden="true" tabindex="-1"></a>p  </span>
+<span id="cb45-203"><a href="#cb45-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-204"><a href="#cb45-204" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb45-205"><a href="#cb45-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-206"><a href="#cb45-206" aria-hidden="true" tabindex="-1"></a><span class="co">#  a few style options, such as axis expansion so the bars aren't "floating" and an overall theme.</span></span>
+<span id="cb45-207"><a href="#cb45-207" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span></span>
+<span id="cb45-208"><a href="#cb45-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expand_scale</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">1</span>))) </span>
+<span id="cb45-209"><a href="#cb45-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-210"><a href="#cb45-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-211"><a href="#cb45-211" aria-hidden="true" tabindex="-1"></a><span class="co">#-----transform vars------</span></span>
+<span id="cb45-212"><a href="#cb45-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-213"><a href="#cb45-213" aria-hidden="true" tabindex="-1"></a><span class="co"># The following two variables will be added to the dataset at the end. We are not saving these here, just showing the output</span></span>
+<span id="cb45-214"><a href="#cb45-214" aria-hidden="true" tabindex="-1"></a>annual <span class="sc">%&gt;%</span> </span>
+<span id="cb45-215"><a href="#cb45-215" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ln_value =</span> <span class="fu">log</span>(value), </span>
+<span id="cb45-216"><a href="#cb45-216" aria-hidden="true" tabindex="-1"></a>         <span class="at">log10_value =</span> <span class="fu">log10</span>(value) )</span>
+<span id="cb45-217"><a href="#cb45-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-218"><a href="#cb45-218" aria-hidden="true" tabindex="-1"></a><span class="co">#-----scatterplot in tidyverse------------</span></span>
+<span id="cb45-219"><a href="#cb45-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-220"><a href="#cb45-220" aria-hidden="true" tabindex="-1"></a><span class="co"># make each pollutant of interest its own column, for easier plotting</span></span>
+<span id="cb45-221"><a href="#cb45-221" aria-hidden="true" tabindex="-1"></a>annual_wide <span class="ot">&lt;-</span> annual <span class="sc">%&gt;%</span></span>
+<span id="cb45-222"><a href="#cb45-222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"no2"</span>, <span class="st">"pm2.5_ug_m3"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb45-223"><a href="#cb45-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> value)</span>
+<span id="cb45-224"><a href="#cb45-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-225"><a href="#cb45-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-226"><a href="#cb45-226" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1: simple way to use ggplot to ask for a scatterplot</span></span>
+<span id="cb45-227"><a href="#cb45-227" aria-hidden="true" tabindex="-1"></a><span class="fu">qplot</span>(no2, pm2<span class="fl">.5</span>_ug_m3, <span class="at">data=</span>annual_wide) </span>
+<span id="cb45-228"><a href="#cb45-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-229"><a href="#cb45-229" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2 is the same plot, now using standard ggplot notation</span></span>
+<span id="cb45-230"><a href="#cb45-230" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> annual_wide, <span class="fu">aes</span>(no2, pm2<span class="fl">.5</span>_ug_m3, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span> </span>
+<span id="cb45-231"><a href="#cb45-231" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span>
+<span id="cb45-232"><a href="#cb45-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-233"><a href="#cb45-233" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 3 adds a best fit linear fit added without its 95% CI (se=FALSE option). We</span></span>
+<span id="cb45-234"><a href="#cb45-234" aria-hidden="true" tabindex="-1"></a><span class="co"># also add a title and axis labels</span></span>
+<span id="cb45-235"><a href="#cb45-235" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> annual_wide, <span class="fu">aes</span>(no2, pm2<span class="fl">.5</span>_ug_m3, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span> </span>
+<span id="cb45-236"><a href="#cb45-236" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb45-237"><a href="#cb45-237" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb45-238"><a href="#cb45-238" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scatterplot of the NO2 (ppb) vs. PM2.5 (ug/m3) data"</span>,  </span>
+<span id="cb45-239"><a href="#cb45-239" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"NO2 (ppm)"</span>,</span>
+<span id="cb45-240"><a href="#cb45-240" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"PM2.5 (ug/m3)"</span>)</span>
+<span id="cb45-241"><a href="#cb45-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-242"><a href="#cb45-242" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 4 adds a smooth loess curve added and its 95%</span></span>
+<span id="cb45-243"><a href="#cb45-243" aria-hidden="true" tabindex="-1"></a><span class="co"># CI (the default smoother is gam for large datasets and loess when there are</span></span>
+<span id="cb45-244"><a href="#cb45-244" aria-hidden="true" tabindex="-1"></a><span class="co"># less than 1,000 observations)</span></span>
+<span id="cb45-245"><a href="#cb45-245" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> annual_wide, <span class="fu">aes</span>(no2, pm2<span class="fl">.5</span>_ug_m3, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span> </span>
+<span id="cb45-246"><a href="#cb45-246" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb45-247"><a href="#cb45-247" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb45-248"><a href="#cb45-248" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">col=</span><span class="st">"green"</span>) <span class="sc">+</span></span>
+<span id="cb45-249"><a href="#cb45-249" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scatterplot of the NO2 (ppb) vs. PM2.5 (ug/m3) data"</span>,  </span>
+<span id="cb45-250"><a href="#cb45-250" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"NO2 (ppm)"</span>,</span>
+<span id="cb45-251"><a href="#cb45-251" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"PM2.5 (ug/m3)"</span>)</span>
+<span id="cb45-252"><a href="#cb45-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-253"><a href="#cb45-253" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb45-254"><a href="#cb45-254" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 6 adds facets + a new color theme for site type</span></span>
+<span id="cb45-255"><a href="#cb45-255" aria-hidden="true" tabindex="-1"></a><span class="co"># Note 1:  if you wanted, the scales="free" option in facet_wrap() allows a different scale for each plot, which sometimes</span></span>
+<span id="cb45-256"><a href="#cb45-256" aria-hidden="true" tabindex="-1"></a><span class="co"># can help plots be more informative. </span></span>
+<span id="cb45-257"><a href="#cb45-257" aria-hidden="true" tabindex="-1"></a>annual_wide <span class="sc">%&gt;%</span></span>
+<span id="cb45-258"><a href="#cb45-258" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create a new variable to indicate if the location was a stop site or specifically a collocation site for quality control purpuses</span></span>
+<span id="cb45-259"><a href="#cb45-259" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">site_type =</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">"MS"</span>, location), <span class="st">"stop site"</span>,</span>
+<span id="cb45-260"><a href="#cb45-260" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">"MC"</span>, location), <span class="st">"collocation site"</span>, <span class="cn">NA</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb45-261"><a href="#cb45-261" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb45-262"><a href="#cb45-262" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> ., <span class="fu">aes</span>(no2, pm2<span class="fl">.5</span>_ug_m3, <span class="at">col=</span>site_type)) <span class="sc">+</span> </span>
+<span id="cb45-263"><a href="#cb45-263" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb45-264"><a href="#cb45-264" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>site_type) <span class="sc">+</span></span>
+<span id="cb45-265"><a href="#cb45-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb45-266"><a href="#cb45-266" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scatterplot of the NO2 (ppb) vs. PM2.5 (ug/m3) data"</span>,  </span>
+<span id="cb45-267"><a href="#cb45-267" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"NO (ppm)"</span>,</span>
+<span id="cb45-268"><a href="#cb45-268" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"PM2.5 (ug/m3)"</span>)</span>
+<span id="cb45-269"><a href="#cb45-269" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb45-270"><a href="#cb45-270" aria-hidden="true" tabindex="-1"></a><span class="co">#-----session information: beginning of Appendix -----------</span></span>
+<span id="cb45-271"><a href="#cb45-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-272"><a href="#cb45-272" aria-hidden="true" tabindex="-1"></a><span class="co"># This promotes reproducibility by documenting the version of R and every package</span></span>
+<span id="cb45-273"><a href="#cb45-273" aria-hidden="true" tabindex="-1"></a><span class="co"># you used.</span></span>
+<span id="cb45-274"><a href="#cb45-274" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb45-275"><a href="#cb45-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-276"><a href="#cb45-276" aria-hidden="true" tabindex="-1"></a><span class="co">#-----appendix------------</span></span>
+<span id="cb45-277"><a href="#cb45-277" aria-hidden="true" tabindex="-1"></a><span class="co">#-----functions defined in this Rmd ------------</span></span>
+<span id="cb45-278"><a href="#cb45-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-279"><a href="#cb45-279" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the names of all functions defined in the .qmd</span></span>
+<span id="cb45-280"><a href="#cb45-280" aria-hidden="true" tabindex="-1"></a><span class="co"># (e.g. loaded in the environment)</span></span>
+<span id="cb45-281"><a href="#cb45-281" aria-hidden="true" tabindex="-1"></a><span class="fu">lsf.str</span>()</span>
+<span id="cb45-282"><a href="#cb45-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-283"><a href="#cb45-283" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the definitions of all functions loaded into the current environment  </span></span>
+<span id="cb45-284"><a href="#cb45-284" aria-hidden="true" tabindex="-1"></a><span class="fu">lsf.str</span>() <span class="sc">%&gt;%</span> <span class="fu">set_names</span>() <span class="sc">%&gt;%</span> purrr<span class="sc">::</span><span class="fu">map</span>(get, .GlobalEnv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----functions defined in this Rmd ------------</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the names of all functions defined in the .qmd</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (e.g. loaded in the environment)</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="fu">lsf.str</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>download_and_read_file : function (data_url, output_file_path)  
+has_annotations : function (input)  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the definitions of all functions loaded into the current environment  </span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lsf.str</span>() <span class="sc">%&gt;%</span> <span class="fu">set_names</span>() <span class="sc">%&gt;%</span> purrr<span class="sc">::</span><span class="fu">map</span>(get, .GlobalEnv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$download_and_read_file
+function (data_url, output_file_path) 
+{
+    if (!file.exists(output_file_path)) {
+        download.file(data_url, destfile = output_file_path, 
+            method = "auto")
+        message("File downloaded successfully.")
+    }
+    else {
+        message("File already exists in the directory.")
+    }
+    file_ext &lt;- tolower(tools::file_ext(output_file_path))
+    message("Reading in file.")
+    if (file_ext == "csv") {
+        data &lt;- read.csv(output_file_path)
+    }
+    else if (file_ext %in% c("rds", "rda")) {
+        data &lt;- readRDS(output_file_path)
+    }
+    else {
+        stop(paste("Unsupported file type:", file_ext, ". Please handle manually."))
+    }
+    return(data)
+}
+
+$has_annotations
+function (input) 
+{
+    inputLines &lt;- readLines(input)
+    chunkStarts &lt;- grep(knitr::all_patterns$md$chunk.begin, inputLines)
+    chunkEnds &lt;- grep(knitr::all_patterns$md$chunk.end, inputLines)
+    annotations &lt;- grep(".*\\Q#\\E\\s*&lt;[0-9]+&gt;\\s*", inputLines)
+    hasAnnotations &lt;- FALSE
+    if (length(chunkStarts) &gt; 0 &amp;&amp; length(annotations) &gt; 0) {
+        lastLine &lt;- max(max(chunkEnds), max(chunkStarts), max(annotations))
+        chunkMap &lt;- rep(FALSE, lastLine)
+        for (x in 1:length(chunkStarts)) {
+            start &lt;- chunkStarts[x]
+            end &lt;- chunkEnds[x]
+            for (y in start:end) {
+                if (y &gt; start &amp;&amp; y &lt; end) {
+                  chunkMap[y] = TRUE
+                }
+            }
+        }
+        for (a in annotations) {
+            if (chunkMap[a] == TRUE) {
+                hasAnnotations &lt;- TRUE
+                break
+            }
+        }
+    }
+    hasAnnotations
+}</code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
