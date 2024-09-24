@@ -1,7 +1,6 @@
 ---
 title: "Term Project Code"
-author: "Lianne Sheppard, Magali Blanco for ENVH 556"
-date: "Autumn 2024; Updated `r format(Sys.time(), '%d %B, %Y')`"
+author: "ENVH 556 Autumn 2024 Instructors"
 output: 
     html_document:
         df_print: "paged"
@@ -10,6 +9,9 @@ output:
         toc_depth: 3
         number_sections: true
 ---
+
+This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
+
 
 ```{r setup, include=FALSE, echo=FALSE}
 #-----setup-----

@@ -1,6 +1,6 @@
 ---
 title: "Week5Lecture: Variance Components"
-author: "Lianne Sheppard for ENVH 556"
+author: "Lianne Sheppard for ENVH 556 Autumn 2024"
 date: "Winter 2021; Updated `r format(Sys.time(), '%d %B, %Y')`"
 output: 
     html_document:
@@ -9,6 +9,9 @@ output:
         toc_depth: 3
         number_sections: true
 ---
+
+This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
+
 
 ```{r setup, include=FALSE}
 #-----setup-----

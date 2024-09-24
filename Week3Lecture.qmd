@@ -1,11 +1,13 @@
 ---
 title: "Week3Lecture"
-author: "Lianne Sheppard"
-date: "Revised for Winter 2021; Updated `r format(Sys.time(), '%d %B, %Y')`"
+author: "Lianne Sheppard for ENVH 556 Autumn 2024"
 output:
   html_document:
     df_print: paged
 ---
+
+This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
+
 
 <!--Basic document set-up goes here  -->
 ```{r setup, include=FALSE}

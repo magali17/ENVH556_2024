@@ -1,7 +1,6 @@
 ---
 title: "Week 2 Lab:  Compliance -- Descriptive Statistics and exceedance Probabilities"
-author: "Lianne Sheppard for ENVH 556"
-date: "Created Winter 2021; Updated `r format(Sys.time(), '%d %B, %Y')`"
+author: "Lianne Sheppard for ENVH 556 Autumn 2024"
 output: 
     html_document:
         toc: true
@@ -9,6 +8,7 @@ output:
         number_sections: true
 ---
 
+This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
 ```{r knitr.setup, include=FALSE, echo=FALSE}
 #----knitr.setup-------------

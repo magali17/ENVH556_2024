@@ -55,8 +55,21 @@ The corresponding datasets can be found at the following locations. The scripts 
 
 ### 3.3. Install Dependencies
 
-Run the `install_packages.R` script to install required dependencies.
+Run the `install_packages.R` script to install required dependencies following one of the two options:
 
+1. **Using R or RStudio:**
+   - Open your R or RStudio environment.
+   - Run the `install_packages.R` script by entering the following command in your R console:
+     ```r
+     source("install_packages.R")
+     ```
+
+2. **Using the Terminal:**
+   - Navigate to the directory containing the `install_packages.R` script.
+   - Run the script by executing the following command:
+     ```bash
+     Rscript install_packages.R
+     ```
 You may need to install additional packages during this process. 
 
 

@@ -1,13 +1,14 @@
 ---
-title: "ENVH 556 Week 1 Lab:  Becoming familiar with R, RStudio, RMarkdown"
-author: "ENVH 556 Instructors"
-date: "Created for Winter 2021; updated `r format(Sys.time(), '%d %B, %Y')`"
+title: "Week 1 Lab:  Becoming familiar with R, RStudio, RMarkdown"
+author: "ENVH 556 Autumn 2024 Instructors"
 output: 
     html_document:
         toc: true
         toc_depth: 3
         number_sections: true
 ---
+
+This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
 ------------------------------------------------------------------------
 
@@ -315,9 +316,9 @@ To produce summary statistics by facility: Here are two ideas. Which do you pref
 #-----simple.table using tapply and cbind ----------
 
 #This uses facilityno, a factor variable
-xbar<- tapply(DEMS$ecdata, DEMS$facilityno, mean, na.rm=TRUE)
+xbar <- tapply(DEMS$ecdata, DEMS$facilityno, mean, na.rm=TRUE)
 sd  <- tapply(DEMS$ecdata, DEMS$facilityno, sd, na.rm=TRUE)
-n   <- tapply(DEMS$ecdata[!is.na(DEMS$ecdata)], 
+n <- tapply(DEMS$ecdata[!is.na(DEMS$ecdata)], 
              DEMS$facilityno[!is.na(DEMS$ecdata)], length)
 cbind(mean=xbar, SD=sd, N=n)
 
@@ -584,55 +585,7 @@ kable(round(cbind(AM=xbar, SD=sd, GM=gm, GSD=gsd, N=n), 2))
 
 ------------------------------------------------------------------------
 
-# Appendix 1: Base R commands for reference {.unnumbered}
-
-While new packages may come and go, Base R will never go out of style. Here are some Base R options for tasks we've covered in this Lab.
-
-### A1.1 Histogram of ecdata with a density curve added to the histogram {.unnumbered}
-
-To get a basic histogram, use `hist`. For a density plot, use `plot()` with `density()`. (You need to explicitly remove the missing values to use the density function.)
-
-```{r hist.in.baseR, echo=TRUE}
-#-----hist in baseR-----------------
-
-# plot 1: basic histogram
-# can plot without explicitly excluding the missing data
-hist(DEMS$ecdata) 
-
-# plot 2: same plot, now explicitly removing missing data
-hist(DEMS$ecdata[!is.na(DEMS$ecdata)]) 
-
-# plot 3:  density plot:  need to explicitly remove missing data
-plot(density(DEMS$ecdata[!is.na(DEMS$ecdata)])) 
-
-```
-
-### A1.2 Logarithmic transformations: {.unnumbered}
-
-(a) `DEMS$ln_ecdata <- log(DEMS$ecdata)` creates the natural log-transformed variable in the DEMS data frame.
-
-(b) `DEMS$log10_ecdata <- log10(DEMS$ecdata)` creates the base 10 log-transformed variable in the DEMS data frame.
-
-### A1.3 Basic scatterplot and overlaid regression line {.unnumbered}
-
-```{r scatterplot.in.baseR}
-#-----scatterplot in baseR-------
-
-# Plot 1 with best fit regression line
-
-# Create a basic scatterplot
-plot(DEMS$ecdata, DEMS$nodata)  
-
-# Add a best fit regression line
-abline(lm(DEMS$nodata ~ DEMS$ecdata))
-
-# Plot 2 with scatterplot smoother
-# Repeat the plot, this time with a loess smooth curve with default span
-scatter.smooth(DEMS$ecdata, DEMS$nodata) 
-
-```
-
-# Appendix 2: Session Information, Code, and Functions {.unnumbered}
+# Appendix: Session Information, Code, and Functions {.unnumbered}
 
 The next three chunks should be included in the appendix of every R Markdown so that you document your session information, code, and functions defined in the document. This supports the reproducibility of your work.
 

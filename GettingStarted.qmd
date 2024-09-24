@@ -1,6 +1,6 @@
 ---
 title: "Getting Started with R, RStudio, & Quarto Markdown Files"
-subtitle: "ENVH 556"
+author: "ENVH 556 Autumn 2024"
 format:
   html:
     toc: true
