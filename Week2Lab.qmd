@@ -1,11 +1,14 @@
 ---
 title: "Week 2 Lab:  Compliance -- Descriptive Statistics and exceedance Probabilities"
 author: "Lianne Sheppard for ENVH 556 Autumn 2024"
-output: 
-    html_document:
-        toc: true
-        toc_depth: 3
-        number_sections: true
+format:
+  html:
+    df_print: "paged"
+    fig_caption: yes
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    self-contained: true #save images etc. in this file 
 execute:
   echo: true
   cache: false

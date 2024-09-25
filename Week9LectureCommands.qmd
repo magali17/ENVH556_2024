@@ -1,12 +1,14 @@
 ---
 title: "Week 9 Lecture Commands"
 author: "Lianne Sheppard for ENVH 556 Winter 2024"
-output: 
-    html_document:
-        fig_caption: yes
-        toc: true
-        toc_depth: 3
-        number_sections: true
+format:
+  html:
+    df_print: "paged"
+    fig_caption: yes
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    self-contained: true #save images etc. in this file 
 editor_options: 
   chunk_output_type: console
 ---

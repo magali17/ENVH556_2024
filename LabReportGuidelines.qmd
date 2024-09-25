@@ -1,12 +1,14 @@
 ---
 title: "Lab Report Guidelines & Template"
 author: "ENVH 556 Winter 2024 Instructors"
-format: 
+format:
   html:
-    fig-caption: true
+    df_print: "paged"
+    fig_caption: yes
     toc: true
-    toc-depth: 3
-    number-sections: true
+    toc_depth: 3
+    number_sections: true
+    self-contained: true #save images etc. in this file (vs folders)
 execute:
   echo: true
   warning: false

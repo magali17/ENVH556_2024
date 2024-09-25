@@ -3,11 +3,12 @@ title: "Getting Started with R, RStudio, & Quarto Markdown Files"
 author: "ENVH 556 Autumn 2024"
 format:
   html:
+    df_print: "paged"
+    fig_caption: yes
     toc: true
-    toc-depth: 3
-    number-sections: true
-    df-print: paged
-urlcolor: blue
+    toc_depth: 3
+    number_sections: true
+    self-contained: true #save images etc. in this file (vs folders)
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.

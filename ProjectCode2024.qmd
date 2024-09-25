@@ -1,14 +1,14 @@
 ---
 title: "Term Project Example Code and Workflow"
 author: "ENVH 556 Autumn 2024 Instructors"
-format: 
-    html:
-        df_print: "paged"
-        fig_caption: yes
-        toc: true
-        toc_depth: 3
-        number_sections: true
-        self-contained: true #save images etc. in this file (vs folders)
+format:
+  html:
+    df_print: "paged"
+    fig_caption: yes
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    self-contained: true #save images etc. in this file (vs folders)
 execute:
   echo: true
   warning: false

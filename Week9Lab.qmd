@@ -1,13 +1,15 @@
 ---
 title: "Week 9 Lab:  Time Series Data and Analysis Strategies"
 author: "Chris Zuidema and Elena Austin for ENVH 556 Autumn 2024"
-output: 
-    html_document:
-        df_print: "paged"
-        fig_caption: yes
-        toc: true
-        toc_depth: 3
-        number_sections: true
+format:
+  html:
+    df_print: "paged"
+    fig_caption: yes
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    self-contained: true #save images etc. in this file 
+
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.

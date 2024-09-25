@@ -1,12 +1,14 @@
 ---
 title: 'Week 4 Lecture:  Regression for Prediction'
 author: "Lianne Sheppard for ENVH 556 Autumn 2024"
-output: 
-    html_document:
-        fig_caption: yes
-        toc: true
-        toc_depth: 3
-        number_sections: true
+format:
+  html:
+    df_print: "paged"
+    fig_caption: yes
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    self-contained: true #save images etc. in this file (vs folders)
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
