@@ -15,6 +15,8 @@ This repository contains the code scripts for the ENVH 556 Quantitative Exposure
 
 ### 3.1. Download the Code Scripts
 
+We will be using the [School of Public Health Server](https://rstudio.sph.washington.edu) for this course. Please verify that you can log in, and create a course directory here. For example: Documents/Courses/2024/ENVH556.
+
 #### 3.1.1. Option 1: Clone the Repository
 
 1.  Open your terminal or command prompt.
