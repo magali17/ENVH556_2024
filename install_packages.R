@@ -52,7 +52,13 @@ if (!(exists("pdflatex_ver") & length(pdflatex_ver) > 0)) {
 
 # Install other packages
 ## if you receive errors for 'sf', you may need to remove and reinstall sf: remove.packages("sf")
-pkg_install(c("plyr", "reshape2", "tictoc", "stars", "sp", "sf", "hms"))
+pkg_install(c("plyr", "reshape2", "tictoc", "stars", "sp", 
+              #"sf", 
+              "hms"))
+
+# insall the prior sf package version; the current one has bugs/installation issues on SPH and/or Plasmid servers
+pkg_install("url::https://cran.r-project.org/src/contrib/Archive/sf/sf_1.0-16.tar.gz")
+
 pkg_install(c("feasts", "tidyverse", "lubridate", "broom"))
 pkg_install(c("downloader", "knitr", "formatR", "ggrepel", "Hmisc", "EnvStats"))
 pkg_install(c("codetools", "egg", "multcomp", "modelr", "car", "lme4", "VCA"))
