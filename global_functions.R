@@ -1,7 +1,7 @@
 
 ####################################################################################################################
+# download & read in csv or rda file from the internet
 ####################################################################################################################
-# function to download & read in csv or rda file from the internet
 download_and_read_file <- function(data_url, output_file_path) {
   
   # Check if the file already exists in the specified path
@@ -30,4 +30,18 @@ download_and_read_file <- function(data_url, output_file_path) {
 }
 
 ####################################################################################################################
+# MSE-based R2
 ####################################################################################################################
+
+calculate_mse_r2 <- function(observed, predicted) {
+  # Calculate MSE
+  mse <- mean((observed - predicted)^2)
+  
+  # Calculate the variance of the observed values
+  variance <- var(observed)
+  
+  # Calculate MSE-based R²
+  mse_r2 <- 1 - (mse / variance)
+  
+  return(mse_r2)
+}

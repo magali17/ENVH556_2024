@@ -46,9 +46,9 @@ pacman::p_load(knitr, readr, dplyr, ggplot2)
 
 # Introduction
 
-## Why R Markdown and reproducible reports?
+## Why Markdown and reproducible reports?
 
-All good data analysis should be reproducible. Markdown is a popular variant of the syntax often used in Wikis, such as Wikipedia. R Markdown is an extension of Markdown to support the execution and rendering of R code within the document. It integrates easily with R to allow you to produce reproducible reports. We will use these tools and reproducible research practices to support your development in this course.
+All good data analysis should be reproducible. Markdown is a popular variant of the syntax often used in Wikis, such as Wikipedia. Markdown is an extension of Markdown to support the execution and rendering of R code within the document. It integrates easily with R to allow you to produce reproducible reports. We will use these tools and reproducible research practices to support your development in this course.
 
 ## What is Markdown, and why bother?
 
@@ -488,11 +488,11 @@ getwd()
 
 Using working directories would be especially helpful if you needed to load lots of different data files and you didn't want to type out all the file paths. If you always put your `.qmd` and data files in the same location, you should be able to use the default working directory without typing file paths.
 
-One mild word of warning: there are some issues with working directories in R Markdown. If you are having trouble, you may want to make sure that `setwd()` is in the same chunk as your `readRDS()` command. There is also a more [elegant solution](http://pbahr.github.io/tips/2016/04/16/fix_rmarkdown_working_directory_issue) to this.
+One mild word of warning: there are some issues with working directories in Markdown. If you are having trouble, you may want to make sure that `setwd()` is in the same chunk as your `readRDS()` command. There is also a more [elegant solution](http://pbahr.github.io/tips/2016/04/16/fix_rmarkdown_working_directory_issue) to this.
 
 ## Automate preparation of the working environment
 
-When you write code in R Markdown it needs to be completely self-contained - that is, it can't rely on anything you loaded, imported, or run outside of the R Markdown document, e.g., in your RStudio session. An excellent principle is to automate the preparation of the working environment in your R Markdown document. This includes setting options and installing software packages.
+When you write code in Markdown it needs to be completely self-contained - that is, it can't rely on anything you loaded, imported, or run outside of the Markdown document, e.g., in your RStudio session. An excellent principle is to automate the preparation of the working environment in your Markdown document. This includes setting options and installing software packages.
 
 ### Install and load packages
 
@@ -537,15 +537,15 @@ At a minimum, your `.qmd` should record version numbers of R and your packages w
 sessionInfo()
 ```
 
-### Code embedded in the R Markdown file
+### Code embedded in the Markdown file
 
-For ENVH 556, we also want to see all of your code consolidated at the end of your R Markdown output. The following code for a chunk header will compile all your code into an appendix code listing. (This next version is for display in the rendered document and not for execution. A working version that is included in the appendix of this document. Note that the chunk header containing these options should be a single line of code with no line-wrap.)
+For ENVH 556, we also want to see all of your code consolidated at the end of your Markdown output. The following code for a chunk header will compile all your code into an appendix code listing. (This next version is for display in the rendered document and not for execution. A working version that is included in the appendix of this document. Note that the chunk header containing these options should be a single line of code with no line-wrap.)
 
 ```         
 ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE, include=TRUE
 ```
 
-### Functions defined in the R Markdown file
+### Functions defined in the Markdown file
 
 You should also include a list of functions you created for your analysis (i.e. functions used in your analysis that were not part of loaded packages).
 
@@ -594,7 +594,7 @@ Choose a code style and be consistent within your `.qmd`. Following established 
 
 # Tips on rendering to a PDF
 
-While Markdown files most easily render to`.html`, You may want to knit your R Markdown directly to a `.pdf`. This is very easy; although sometimes you may need to install an extra package. To check whether your computer is already set up to knit to `.pdf`, try selecting the drop-down from the 'Knit' button and choosing 'Knit to PDF' (or change your header, as described below). If that doesn't work, you'll have to install the `tinytex` package. You can do this within R if you use the [tinytex](https://yihui.name/tinytex/) package, which is a minimal TeX package for R users.
+While Markdown files most easily render to`.html`, You may want to knit your Markdown directly to a `.pdf`. This is very easy; although sometimes you may need to install an extra package. To check whether your computer is already set up to knit to `.pdf`, try selecting the drop-down from the 'Knit' button and choosing 'Knit to PDF' (or change your header, as described below). If that doesn't work, you'll have to install the `tinytex` package. You can do this within R if you use the [tinytex](https://yihui.name/tinytex/) package, which is a minimal TeX package for R users.
 
 ```         
 install.packages('tinytex', repos = 'http://cran.r-project.org')

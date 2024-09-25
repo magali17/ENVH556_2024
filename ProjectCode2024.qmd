@@ -1,23 +1,38 @@
 ---
-title: "Term Project Code"
+title: "Term Project Example Code and Workflow"
 author: "ENVH 556 Autumn 2024 Instructors"
-output: 
-    html_document:
+format: 
+    html:
         df_print: "paged"
         fig_caption: yes
         toc: true
         toc_depth: 3
         number_sections: true
+execute:
+  echo: true
+  warning: false
+  cache: false
+  message: false
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
 
+# Objectives
+
+The objective of this script is to provide you with an example workflow and code to complete the term project.
+
+
+# Example Research Questions
+
+What are the nitrogen dioxide (NO2, ppm) levels in the greater Seattle area? How do these vary based on highway proximity (A1 roads)?
+
+
+
+# Setup and Data Upload 
+
 ```{r setup, include=FALSE, echo=FALSE}
 #-----setup-----
-
-# set knitr options
-knitr::opts_chunk$set(echo = FALSE)
 
 # clear work space of all objects and unload all extra (non-base) packages
 rm(list = ls(all = TRUE))
@@ -33,8 +48,11 @@ my_repo <- 'http://cran.r-project.org'
 if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
 
 # Load the other packages, installing as needed.
-pacman::p_load(knitr, dplyr, tidyr, forcats, stringr, purrr, ggplot2, Hmisc)
-
+pacman::p_load(knitr, tidyr, dplyr, forcats, stringr, purrr, ggplot2, Hmisc, 
+               kableExtra, # table formatting
+               sf, #spatial analyses
+               leaflet #optional: make a map
+               )
 
 # load functions we'll use throughout the course
 source("global_functions.R")
@@ -53,53 +71,40 @@ if(!dir.exists(data_path)){dir.create(data_path, showWarnings=FALSE, recursive =
 # read in files
 ## annual average air pollution concentrations from mobile monitoring
 annual <- download_and_read_file(data_url = "https://zenodo.org/record/13761282/files/annual_data_and_predictions.csv?download=1", 
-                                 output_file_path = file.path(data_path, "annual_data_and_predictions.csv"))
+                                 output_file_path = file.path(data_path, "annual_data_and_predictions.csv")) 
+
+# we'll only look at NO2 in this example
+no2 <- annual %>%
+  filter(variable=="no2") %>%
+  # only keep the variables we'll use
+  select(location, longitude, latitude, variable, value)
 
 mm_covariates <- download_and_read_file(data_url = "https://zenodo.org/records/13761282/files/dr0311_mobile_covariates.csv?download=1", 
-                                 output_file_path = file.path(data_path, "dr0311_mobile_covariates.csv"))
+                                 output_file_path = file.path(data_path, "dr0311_mobile_covariates.csv")) %>%
+  # rename this to match 'annual'
+  rename(location = native_id) 
 
 
-
-# --> START UPDATING HERE 
-# covarites for prediction locations of interest
-grid_covariates <- read.csv(file.path(data_path, "covariates", "dr0311_grid_covars.csv"))
-block_covariates <- read.csv(file.path(data_path, "covariates", "block10_intpts_wa.csv"))
-
-```
-
-
-```{r}
-# TEST
-
-# --> fix format issues
-monitoring_area <- download_and_read_file(data_url = "https://zenodo.org/records/13761282/files/monitoring_area.rda?download=1", 
-                                 output_file_path = file.path(data_path, "monitoring_area.rda"))
-
-# monitoring_area[1]
-
+# covariates for a grid of locations (for prediction)
+grid_covariates <- download_and_read_file(data_url = "https://zenodo.org/records/13761282/files/dr0311_grid_covariates.csv?download=1", 
+                                 output_file_path = file.path(data_path, "dr0311_grid_covariates.csv"))
 
 ```
 
-
-
-
-# Objectives
-
-The objective of this script is to provide you with an example workflow and code to completet the term project.
-
-# Identify a Research Questions
-
-Example question: What is the distribution of nitrogen dioxide (NO2) levels in the greater Seattle area?
-
-# Draft an Analysis
 
 # Describe the Data
 
+## Numbers and Tables 
+
 Let's start by describing the data. What pollutants are included? How many observations are there?
 
--   pollutants \_\_\_\_
-
 ```{r}
+
+# total rows and columns
+dim(no2)
+
+# number of readings for each variable
+table(no2$variable)
 
 
 ```
@@ -109,144 +114,457 @@ here's an example
 
 ```{r}
 
+no2 %>%
+  #here, we are only looking at NO2. In many other analyses, you may want to look and group by multiple variables
+  group_by(variable) %>%
+  dplyr::summarize(
+    N = n(),
+    Min = min(value),
+    Q25 = quantile(value, 0.25),
+    Median = median(value),
+    Q75 = quantile(value, 0.75),
+    Max = max(value),
+    
+    Mean = mean(value),
+    SD = sd(value)
+    ) %>%
+  kable(caption = "Distribution of annual average pollutant concentrations",
+        digits = 1, 
+        # add a comma as the thousands separator 
+        format.args = list(big.mark=",")) %>%
+  kable_styling()
+
 ```
 
-summarize these the distribution of pollutant concentrations, for example using scatterplots, histograms, boxpots
+## Visualizations 
 
-here's a density plot looking at the distribution of the measurements
+Summarize the distribution of pollutant concentrations. Here's a density plot. How are these measurements distributed? 
 
 ```{r}
+no2 %>%
+  ggplot(aes(x=value)) + 
+  geom_density() + 
+  labs(x= "NO2 (ppb)")
 
+# same as above but with log(NO2)
+no2 %>%
+  ggplot(aes(x=log(value))) + 
+  geom_density() + 
+  labs(x= "Log NO2 (ppb)")
 
 ```
 
-Let's make a map! Visualizing environmental data can help us detect spatial patterns that may otherwise be missed. **what else**
+Let's make a map! Visualizing environmental data can help us detect spatial patterns that may otherwise be missed.  
 
 What do you see? Where are the highest and lowest concentrations? Are they what you expected to see?
 
 ```{r}
 
+ggplot(data = no2, aes(x = longitude, y = latitude)) +
+  geom_point(aes(color = value), alpha = 0.7) + 
+  scale_color_viridis_c(option = "C", name = "NO2 (µg/m³)") +   
+  labs(title = "NO2 Pollution Concentrations",
+       x = "Longitude",
+       y = "Latitude") +
+  theme_minimal() +
+  theme(legend.position = "right")  # Position the legend on the right
 
+
+# optional - add a basemap and make the plot interactive
+leaflet(data = no2) %>%
+  addTiles() %>%  # Add default OpenStreetMap tiles
+  addCircleMarkers(
+    lng = ~longitude, 
+    lat = ~latitude,
+    # Adjust radius size based on value (use sqrt for better scaling)
+    radius=3,
+    color = ~colorNumeric("viridis", domain = no2$value, reverse = T)(value),  
+    fillOpacity = 0.7,
+    # Add a popup with details
+    popup = ~paste("Location:", location, 
+                   "<br>", # Line break
+                   "NO2 (ppb):", round(value, 1))
+  ) %>%
+  addLegend(
+    pal = colorNumeric("viridis", domain = no2$value,  reverse = T), 
+    values = ~value, 
+    title = "NO2 (ppb)", 
+    opacity = 0.7,
+    position = "bottomright"
+  )
 
 ```
 
-\_\_compare levels near and away major AP source locations\_\_\_
+
+## Check the linearity assumption 
+
+Compare NO2 levels to land use variables (covariates) that might be important predictors. Here, we'll only look one predictor (m_to_a1 - highways) as an example. Your project should consider other variables and expand on this. 
+
+How should the data be modeled based on these relationships? On the native scale? Log scale? Something else? 
 
 ```{r}
+# combine NO2 concentrations with geocovariates at those locations
+no2_covariates <- left_join(no2, mm_covariates, by = join_by(location, longitude, latitude))
+
+no2_covariates %>%
+  ggplot(aes(x=m_to_a1, y=value)) + 
+  geom_point() + 
+  geom_smooth(method="loess") + 
+  theme_minimal() + 
+  labs(x = "Meters to A1 Road",
+       y = "NO2 Conc (ppb)",
+       title = "Annual average NO2 site concentrations versus distance to A1 roads"
+       ) 
+  
+# same as above using log m_to_a1 - looks more linear!
+# try other transformations (see examples below)
+left_join(no2, mm_covariates, by = "location") %>%
+  ggplot(aes(#x=m_to_a1,
+             x=log(m_to_a1), 
+             #y=log(value),
+             y=value
+             )) + 
+  geom_point() + 
+  # smooth line to characterize the data
+  geom_smooth(method="loess") + 
+  # check that loess is more/less linear (do these largely overlap?)
+  geom_smooth(method = "lm", col="purple") + 
+  theme_minimal() + 
+  labs(x = "Log Meters to A1 Road",
+       y = "NO2 Conc (ppb)",
+       title = "Annual average NO2 site concentrations versus distance to A1 roads"
+       ) 
 
 
 ```
 
 # Fit a simple prediction model
 
-plot predictors against your pollutant of interest
+We'll look at m_to_a1 again as a simple example. 
 
 ```{r}
 
-```
+lm1 <- lm(value ~ log(m_to_a1), data=no2_covariates)
 
-we'll develop a simple linear regression model
-
-```{r}
-
+summary(lm1)
 
 ```
+
 
 ## Evaluate the out-of-sample model predictions
-
---\> explain why important
 
 Let's calculate the $R^2_{CV}$ to evaluate how well the model predicts
 
 ```{r}
+# function to conduct cross-validation
+cv_lm <- function(data, 
+                  f = 10, # ten folds default 
+                  model_formula = "value ~ log(m_to_a1)" # input your lm() here
+                  ) {
+   
+  # Convert the input model formula from string to formula 
+  model_formula <- as.formula(model_formula)
+  
+  # Randomly assign each row to a fold
+  set.seed(123)  # Set seed for reproducibility
+  data <- data %>% 
+    mutate(fold = sample(1:f, size = nrow(data), replace = TRUE))
+  
+  # Initialize an empty data frame to store predictions
+  predictions <- data.frame()
+  
+  # Perform f-fold cross-validation
+  for (i in 1:f) {
+    # Split into training and test sets
+    train_data <- data %>% filter(fold != i)
+    test_data <- data %>% filter(fold == i)
+    
+    # Fit the model to the training data using the input model formula
+    lm1 <- lm(model_formula, data = train_data)
+    
+    # Make predictions on the test data
+    test_data$predicted_value <- predict(lm1, newdata = test_data)
+    
+    # Store the predictions
+    predictions <- rbind(predictions, test_data)
+  }
+  
+  return(predictions)
+}
 
 ```
 
-The $RMSE$ will tell us the average error in the predictions.
+```{r}
+no2_covariates <- cv_lm(data = no2_covariates,
+                        f = 10, # ten folds default
+                        model_formula = "value ~ log(m_to_a1)")
 
-How does it look?
+```
+
+Calculate CV MSE-based R2
+
+```{r}
+calculate_mse_r2 <- function(observed, predicted) {
+  # Calculate MSE
+  mse <- mean((observed - predicted)^2)
+  
+  # Calculate the variance of the observed values
+  ## NOTE: var() calculates the sample variance, which divides by n-1. 
+  ## An alternative is to, use: mean((observation - mean(observation))^2), which estimates a population-level variance that may be biased
+  variance <- var(observed)
+  
+  # Calculate MSE-based R²
+  mse_r2 <- 1 - (mse / variance)
+  
+  return(mse_r2)
+}
+
+```
+
+```{r}
+calculate_mse_r2(observed = no2_covariates$value, 
+                 predicted = no2_covariates$predicted_value)
+
+```
+
+
+Calculate regression-based R2.
+
+How does this differ from MSE-based R2? Which will you report? Why?
+
+```{r}
+calculate_regression_r2 <- function(observed, predicted) {
+  # Fit a linear model of predicted values on observed values
+  reg_model <- lm(predicted ~ observed)
+  
+  # Extract the R² value
+  regression_r2 <- summary(reg_model)$r.squared
+  
+  return(regression_r2)
+}
+
+```
+
+```{r}
+calculate_regression_r2(observed = no2_covariates$value, 
+                 predicted = no2_covariates$predicted_value)
+
+```
+
+Calculate RMSE.
+
+What different informaiton does this provide than CV R2? 
+
+```{r}
+calculate_rmse <- function(observed, predicted) {
+  # Calculate RMSE
+  rmse <- sqrt(mean((observed - predicted)^2))
+  
+  return(rmse)
+}
+
+```
+
+```{r}
+calculate_rmse(observed = no2_covariates$value, 
+                 predicted = no2_covariates$predicted_value)
+
+```
+
+
+## Calcualte the Model Residuals
+
+```{r}
+no2_covariates <- no2_covariates %>%
+  mutate(prediction_residual = predicted_value - value)
+
+
+```
+
+What is the distribution of the modeling errors? Is this meaningful compared to the observed concentrations?
+
+```{r}
+summary(no2_covariates$prediction_residual)
+
+```
+
+
+Plot predicted values against the residuals (prediction errors). Is there any pattern? 
 
 ```{r}
 
+ggplot(no2_covariates, aes(x = predicted_value, y = prediction_residual)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method="loess") + 
+  labs(title = "Residuals vs. Fitted NO2 (ppb) Values",
+       x = "Predicted Values",
+       y = "Residuals") +
+  theme_minimal()
+
+
 ```
 
-Let's visualize and map the residuals ( **briefly define** ) to evaluate whether there locations where predictions are more accurate. What do you think?
+```{r}
+# # QQ plot
+# ggplot(no2_covariates, aes(sample = prediction_residual)) +
+#   stat_qq() +
+#   stat_qq_line() +
+#   labs(title = "Normal Q-Q Plot of Residuals",
+#        x = "Theoretical Quantiles",
+#        y = "Sample Quantiles") +
+#   theme_minimal()
+
+
+```
+
+Here's a historgram of the residuals. The histogram should resemble a bell-shaped curve if the residuals are approximately normally distributed.
+
+```{r}
+ggplot(no2_covariates, aes(x = prediction_residual)) +
+  geom_histogram(binwidth = 0.5, alpha = 0.7) +
+  geom_vline(xintercept = 0, linetype="dashed") +
+  labs(title = "Histogram of Residuals",
+       x = "Residuals",
+       y = "Frequency") +
+  theme_minimal()
+
+```
+
+
+```{r}
+# # Checks the homoscedasticity (constant variance) assumption. You plot the square root of the absolute residuals against the fitted values.
+# 
+# 
+# ggplot(no2_covariates, aes(x = predicted_value, y = sqrt(abs(prediction_residual)))) +
+#   geom_point(alpha = 0.6) +
+#   geom_smooth(method = "loess") +
+#   labs(title = "Scale-Location Plot",
+#        x = "Predicted Values",
+#        y = "√|Residuals|") +
+#   theme_minimal()
+
+```
+
+
+```{r}
+# #Residuals vs. Each Covariate: You can create scatter plots of residuals against each covariate in your model to check for any patterns that might suggest non-linearity or missing predictors.
+# 
+# ggplot(no2_covariates, aes(x = log(m_to_a1), y = prediction_residual)) +
+#   geom_point(alpha = 0.6) +
+#   geom_hline(yintercept = 0, linetype = "dashed") +
+#   labs(title = "Residuals vs. log(m_to_a1)",
+#        x = "log(m_to_a1)",
+#        y = "Residuals") +
+#   theme_minimal()
+
+```
+
+```{r}
+# If data are spatially structured, a plot of residuals against a spatial index can help identify this. For example, you might plot residuals by latitude or longitude:
+  
+ggplot(no2_covariates, aes(x = longitude, y = prediction_residual)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Residuals vs. Longitude",
+       #x = "Longitude",
+       y = "Residuals") +
+  theme_minimal()
+
+
+```
+
+Map the residuals - where are prediction errors the largest? Smallest? 
 
 ```{r}
 
+leaflet(data = no2_covariates) %>%
+  addTiles() %>%  # Add default OpenStreetMap tiles
+  addCircleMarkers(
+    lng = ~longitude, 
+    lat = ~latitude,
+    radius=3,
+    color = ~colorNumeric("viridis", domain = no2_covariates$prediction_residual, reverse = T)(prediction_residual),  
+    fillOpacity = 0.7,
+    popup = ~paste("Location:", location, 
+                   "<br>", # Line break
+                   "NO2 (ppb) Residual:", round(prediction_residual, 1))
+  ) %>%
+  addLegend(
+    pal = colorNumeric("viridis", domain = no2_covariates$prediction_residual,  reverse = T), 
+    values = ~prediction_residual, 
+    title = "NO2 (ppb)\nResidual", 
+    opacity = 0.7,
+    position = "bottomright"
+  )
+
 
 
 ```
-
-Overall, how well does this model predict? What are the potential limitations of using a simplified model in exposure assessment? How might you improve it?
-
-## Improve the model fit
-
-Your turn! Based on the prior observations, refit the model to improve the predictions. You might consider adding other covariates, interaction terms, non-linear relationships.
-
-```{r}
-
-
-
-```
-
-what was your rational for selecting the covariates you selected? Which were identified by the model as being most important?
-
-Calculate new model performance statistics, as before. What do these tell you? How are these different from our base model?
 
 # Predict at new locations
 
-You have several options to choose from:
+In this example, we'll predict at grid locations in the region.
 
--   Census blocks/**tracts**
-    -   \--\> clean up MM area only
--   predefined grid points ( **??500 m resolution** )
+Check the distribution of your modeling covariate. Is it within the range of your modeling data? 
 
 ```{r}
-
-
+summary(grid_covariates$m_to_a1) 
 
 ```
 
-## Let's map these
+If you have transformed any of your modeling variables, verify that the new dataset has the same transformations, as needed. Here, we'll make sure any 0 values are converted to a small constant so that we can log-transform them without error.
 
-visualizing exposure predictions and their errors (residuals) can help us identify spatial patterns or discrepancies in model performances
+```{r}
 
-what do we learn from these maps that we did not before?
+grid_covariates <- grid_covariates %>%
+  mutate(
+    # if a location is on an a1 (m_to_a1 is 0), make this a small constant (you cannot take the log of 0)
+    m_to_a1 = ifelse(m_to_a1==0, 0.1, m_to_a1),
+    predicted_value = predict(lm1, newdata = .)) %>%
+  
+  # --> TEMP: why is there an Inf? m_to_a1 very small?
+  filter(is.finite(predicted_value))
+
+
+# summarize the predictions distribution
+summary(grid_covariates$predicted_value)
+
+```
+
+## Map these predictions
 
 Where are the highest and lowest predicted areas of air pollution? Is this what you expected
 
-How do these predictions compare to the earlier base model?
+What do we learn from these maps that we did not before?
 
 ```{r}
 
+leaflet(data = grid_covariates) %>%
+  addTiles() %>% 
+  addCircleMarkers(
+    lng = ~longitude, 
+    lat = ~latitude,
+    radius=3,
+    color = ~colorNumeric("viridis", domain = grid_covariates$predicted_value, reverse = T)(predicted_value),  
+    fillOpacity = 0.7,
+    popup = ~paste("location_id:", location_id, 
+                   "<br>", # Line break
+                   "NO2 (ppb) Prediction:", round(predicted_value, 1))
+  ) %>%
+  addLegend(
+    pal = colorNumeric("viridis", domain = grid_covariates$predicted_value,  reverse = T), 
+    values = ~predicted_value, 
+    title = "NO2 (ppb) Prediction", 
+    opacity = 0.7,
+    position = "bottomright"
+  )
 
 
 
 ```
 
-# Discussion
-
-Summarize what you did and your findings
-
-# Optional Advanced Topics
-
-## --\> add basic ML? kriging, random forest, Lasso
-
-```{r}
-
-
-```
-
-## optional: make a smooth map
-
-To do this, we'll take predictions from a grid and smooth these out
-
-```{r}
-
-
-
-```
+ 
 
 # Appendix
 
