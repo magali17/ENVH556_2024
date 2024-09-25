@@ -148,6 +148,17 @@ annual <- download_and_read_file(data_url = "https://zenodo.org/record/13761282/
                                  # where new file will be saved if it does not already exist or read in from if it does
                                  output_file_path = file.path(data_path, "annual_data_and_predictions.csv"))
 
+# add some example geographic covariates
+mm_covariates <- download_and_read_file(data_url = "https://zenodo.org/records/13761282/files/dr0311_mobile_covariates.csv?download=1", 
+                                 output_file_path = file.path(data_path, "dr0311_mobile_covariates.csv")) %>%
+  # rename this to match 'annual'
+  select(location = native_id, m_to_a1) 
+
+# combine files
+annual <- left_join(annual, mm_covariates, by="location") %>%
+  # select a subset of relevant columns
+  select(location, variable, value, m_to_a1) 
+
 ```
 
 ## Check your data first!
@@ -202,9 +213,6 @@ sapply(annual, class)
 #assignment.)
 (annual <- as_tibble(annual)) 
 
-# select a subset of relevant columns
-annual <- annual %>%
-  select(location, variable, value) 
 
 ```
 
@@ -238,9 +246,6 @@ xtabs( ~ variable, data = annual)
 ```
 
 ### Verify your data correspond to what you expect
-
-
-# --> UPDATE 
 
 The specifics of what you evaluate depend upon the context of the problem. In our case we have published papers we can rely upon to determine whether our data are what we expect. Here are some possible questions:
 
@@ -301,6 +306,7 @@ annual_summary
 kable(annual_summary, 
       # only show 2 digits
       digits = 2)
+
 ```
 
 Note: Consider estimating these values in multiple ways is to help you make sure you are reporting the correct values and that you completely understand your output. When multiple approaches to the same summary give the same answer, you can be more confident that your answer is correct.
@@ -336,7 +342,14 @@ p <- annual %>%
 
 p
 
+```
 
+
+We can add what a normal distribution with the observed mean and SD of the data might look like. The NO2 data (purple) looks slightly skewed, but not too far off from a 'normal' distribution (red). The mean is the vertical dashed line.
+
+With other variables, this contrast may be more stark
+
+```{r hist.in.tidyverse, warning=FALSE, message=FALSE}
 # Calculate the mean and standard deviation of the 'value' column
 mean_value <- mean(annual$value[annual$variable == "no2"], na.rm = TRUE)
 sd_value <- sd(annual$value[annual$variable == "no2"], na.rm = TRUE)
@@ -345,24 +358,43 @@ sd_value <- sd(annual$value[annual$variable == "no2"], na.rm = TRUE)
 # The purple line is a kernel density estimate representing the true shape of your data, while the red dashed line assumes a perfect normal distribution with the same mean and standard deviation.
 p <- annual %>%
   filter(variable == "no2") %>%
-  ggplot(aes(x = value, na.rm = TRUE)) +
+  ggplot(aes(x = value)) +
   # Add the density curve with some transparency
   geom_density(alpha = 0.5, color = "purple") +
   # Add the normal distribution curve using stat_function
-  stat_function(fun = dnorm, args = list(mean = mean_value, sd = sd_value), 
+  stat_function(fun = dnorm, args = list(mean = mean_value, sd = sd_value),
                 color = "red", size = 1, linetype = "dashed") +
   geom_vline(xintercept = mean_value, linetype = "dotted") +
-  theme_classic()
+  theme_classic() + 
+  #  a few style options, such as axis expansion so the bars aren't "floating" and an overall theme.
+  scale_y_continuous(expand = expand_scale(mult = c(0, .1))) 
 
 # Display the plot
 p  
 
- 
+```
 
-#  a few style options, such as axis expansion so the bars aren't "floating" and an overall theme.
-p +
+Let's look at distance to A1 (highway) roads.
+
+This also does not look too skewed, although the shapes are different. The data (purple) might be bi- or tri-modal, with the first and last peak occurring before and after the mean. The peak of the normal distribution (red) is at the mean.
+
+```{r}
+# Calculate the mean and standard deviation of the 'value' column
+mean_value <- mean(annual$m_to_a1[annual$variable == "no2"], na.rm = TRUE)
+sd_value <- sd(annual$m_to_a1[annual$variable == "no2"], na.rm = TRUE)
+
+annual %>%
+  filter(variable == "no2") %>%
+  ggplot(aes(x = m_to_a1)) +
+  # Add the density curve with some transparency
+  geom_density(alpha = 0.5, color = "purple") +
+  # Add the normal distribution curve using stat_function
+  stat_function(fun = dnorm, args = list(mean = mean_value, sd = sd_value),
+                color = "red", size = 1, linetype = "dashed") +
+  geom_vline(xintercept = mean_value, linetype = "dotted") +
+  theme_classic() + 
+  #  a few style options, such as axis expansion so the bars aren't "floating" and an overall theme.
   scale_y_continuous(expand = expand_scale(mult = c(0, .1))) 
-
 
 ```
 

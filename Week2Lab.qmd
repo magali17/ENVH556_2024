@@ -92,6 +92,60 @@ DEMS <- download_and_read_file(data_url = "https://faculty.washington.edu/sheppa
 
 The purpose of this lab is to work with descriptive statistics and compliance tests while also getting further practice with R, RStudio, and Markdown.  We will use the DEMS REC data, describing the distributions, exceedance probabilities, confidence intervals, and test compliance.
 
+# The DEMS Data       
+The underlying data to be used in the lab is from the DEMS study and is described in [Coble et al 2010](https://academic.oup.com/annweh/article/54/7/747/202635).  We are focusing on the personal data collected by NIOSH between 1998 and 2001.  In this lab we will mostly use the `ecdata` variable which is a measurement of exposure to respirable elemental carbon, also called REC.  The data were collected from workers from a cross-section of jobs at the seven mines open during the data collection.  For further information on this dataset, see the document: *DEMS Personal Data overview* available on the class Canvas site.
+
+Let's briefly review the data: 
+
+```{r data.description.1}
+#-----data description 1---------- 
+class(DEMS) 
+
+# We expect this to have 1275 rows and 17 columns
+dim(DEMS) 
+
+# This list should correspond to the list in the data summary document:
+names(DEMS) 
+
+# This gives us details on the type of each variable in the dataset
+sapply(DEMS, class) 
+
+# # first 6 rows and ALL variables (columns):
+head(DEMS) 
+
+# a basic summary of each variable
+summary(DEMS) 
+
+# a different basic summary of each variable from `Hmisc`
+describe(DEMS) 
+
+# Our application of select zooms in to focus on the key exposure data
+select(DEMS, facilityno, u_s, ecdata, nodata, no2data) 
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Getting Started  
 This section gives formulas and some basic R commands for descriptive statistics and exceedance probabilities.  It also provides reminders of formulas from lecture you will use in lab.
 
