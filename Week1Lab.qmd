@@ -99,7 +99,7 @@ source("global_functions.R")
 
 The goal of this lab is to help everyone become familiar with R, R Studio, and Markdown through the context of the course content. This is also your first opportunity to develop a lab write-up for ENVH 556 using Markdown.
 
-Note: It is in your best interest to learn modern R tools, such as those included in the [`tidyverse`](https://www.tidyverse.org). In this class we tend to prioritize `tidyvrese` approaches, but recognize there are often many packages and options to accomplish the same task. We want to deliver course materials without getting too bogged down in the debate about the "best" or "highest performing" packages.
+Note: It is in your best interest to learn modern R tools, such as those included in the [`tidyverse`](https://www.tidyverse.org). In this class we tend to prioritize `tidyverse` approaches, but recognize there are often many packages and options to accomplish the same task. We want to deliver course materials without getting too bogged down in the debate about the "best" or "highest performing" packages.
 
 ------------------------------------------------------------------------
 
@@ -137,21 +137,7 @@ if(!dir.exists(data_path)){dir.create(data_path, showWarnings=FALSE, recursive =
 
 -   Read in the data
 
-```{r read.data, eval=FALSE, error=TRUE}
-#-----read data--------
-
-# Note 1:  for simplicity of typing in this lab we're calling the dataset DEMS,
-# even though it is only one of several DEMS datasets we will use in this
-# course. 
-# Note 2: In this chunk heading eval = FALSE so that if it is run, we don't get an 
-# error if the file is not present in the "Datasets" folder. This would work if 
-# the `.rds` file were already downloaded and is a bit simpler compared to the 
-# more robust but more complicated code below.  
-DEMS <- readRDS(file.path(data_path, "DEMSCombinedPersonal.rds"))
-
-```
-
-As an alternative, the following code checks to see if the file is already present, and if not, downloads the data from a web site before reading it in:
+The following code checks to see if the file is already present, and if not, downloads the data from a web site before reading it in:
 
 ```{r read.data.from.a.website}
 #-----read data from a website--------
@@ -253,9 +239,12 @@ xtabs( ~ variable, data = annual)
 
 ### Verify your data correspond to what you expect
 
-The specifics of what you evaluate depend upon the context of the problem. In our case we have published papers we can rely upon to determine whether our data are what we expect. Here are some questions for the DEMS personal data:
 
--   How many observations are in your dataset overall and by facility? Do these numbers correspond to the originating datasets? (You can check against the papers.)
+# --> UPDATE 
+
+The specifics of what you evaluate depend upon the context of the problem. In our case we have published papers we can rely upon to determine whether our data are what we expect. Here are some possible questions:
+
+-   How many observations are in your dataset overall and for specific variables? Do these numbers correspond to the originating datasets? (You can check against the papers.)
 -   Note that there are missing data in this dataset. As you proceed, you will want to verify whether they are consistent with your expectations. Presence of missing data requires additional attention to how you will handle these values in R.
     -   Which variables have missing values?
     -   Which variable(s) have the most missing data?
@@ -273,12 +262,12 @@ The specifics of what you evaluate depend upon the context of the problem. In ou
 
 ## Basic data description
 
-Once you have a basic understanding of your data and believe they were read in correctly, you can focus on quantities of interest. We will focus on creating a few basic summaries of `ecdata` in this lab. Next week you will get more experience with other tools such as transformations and checking the distirbution of variables.
+Once you have a basic understanding of your data and believe they were read in correctly, you can focus on quantities of interest. We will focus on creating a few basic summaries this lab. Next week you will get more experience with other tools such as transformations and checking the distribution of variables.
 
 ### Tables and computing descriptive statistics
 
 -   What do you observe about the distribution?
--   Do the descriptive statistics vary by facility?
+-   How do the descriptive statistics vary for different variables (e.g., by pollutant)?
 
 Here are some commands:
 
@@ -387,8 +376,8 @@ Typically exposure data appear to be log-normally distributed. In this section w
 
 ### Logarithmic transformations using `dplyr`:
 
--   `mutate(my_dataset, ln_variable = log(variable) )` creates the natural log-transformed variable in the DEMS data frame.
--   `mutate(my_dataset, log10_variable = log10(variable) )` creates the base 10 log-transformed variable in the DEMS data frame.
+-   `mutate(my_dataset, ln_variable = log(variable) )` creates the natural log-transformed variable in the data frame.
+-   `mutate(my_dataset, log10_variable = log10(variable) )` creates the base 10 log-transformed variable in the data frame.
 
 Note that `mutate` adds the new variables to the end of the dataset. For more functions you can use with `mutate` to create new variables, see R4DS pp. 56-58.
 
@@ -500,7 +489,7 @@ Note: Refer to the lab write-up guidelines *LabReportGuidelines.html* posted on 
 
     (a) Note: This is not a concern in this dataset, but 0 values are common in many environmental datasets. You can't take the log of 0 so you would need to decide how to handle the 0's. Summary statistics from the reduced dataset, i.e. a dataset created by omitting the 0's, will be misleading. A simple alternative is to create a new variable that adds a constant to every observation and use this variable when taking logs. However, the purpose of your analysis matters since adding a constant is not always the appropriate way to handle this challenge. If you do add a constant, choose the constant to add thoughtfully. How big should it be? Should it be the same for all pollutants? Make sure to document any changes to the variables in your lab write-up.
 
-    (b) Getting GM and/or GSD in a table in R: This lab doesn't show how to get the GM and GSD using `tidyverse`; for example using `dplyr` `group_by()` and `mutate()` functions though you could (and may wish to). Instead, for demonstration, we show how to use the `EnvStats` package with `tapply` and `cbind`. To get the AM, ASD, GM, GSD, N in order:
+    (b) Getting GM and/or GSD in a table in R: This lab doesn't show how to get the GM and GSD using `tidyverse`; for example using `dplyr` `group_by()` and `mutate()` functions though you could (and may wish to). Instead, for demonstration, we show how to use the `EnvStats` package with `tapply` and `cbind`. 
 
 Repeat this exercise for normal stop versus collocation sites (see example code above for creating this variable).  
 
