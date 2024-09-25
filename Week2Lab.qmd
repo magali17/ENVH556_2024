@@ -6,22 +6,16 @@ output:
         toc: true
         toc_depth: 3
         number_sections: true
+execute:
+  echo: true
+  cache: false
+  echo.comments: false
+  message: false
+  warning: false
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
-```{r knitr.setup, include=FALSE, echo=FALSE}
-#----knitr.setup-------------
-
-knitr::opts_chunk$set(
-    echo = TRUE,
-    cache = FALSE,
-    cache.comments = FALSE,
-    message = FALSE,
-    warning = FALSE
-)
-
-```
 
 ```{r clear.workspace, eval=FALSE, echo=FALSE}
 #-----clear workspace----
@@ -69,38 +63,34 @@ if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
 # MKmisc:  quantileCI
 pacman::p_load(dplyr, tidyr, knitr, purrr, ggplot2, Hmisc, EnvStats, MKmisc)
 
+# download_and_read_file() function etc.
+source("global_functions.R")
+
 ```
 
 ```{r read.data, echo=FALSE}
 #-----read data----
 
-# assign project path variable
-project_path <- getwd()
-
 # create data directory if it does not exist
-dir.create(file.path(project_path, "Datasets"),
+dir.create(file.path("Datasets"),
            showWarnings = FALSE,
            recursive = TRUE)
 
 # assign data_path variable
-data_path <- file.path(project_path, "Datasets")
+data_path <- file.path("Datasets")
            
-# read data (this assumes you already have the data copied into your data directory)
-DEMS <- readRDS(file.path(data_path, "DEMSCombinedPersonal.rds"))
+# read data; download if necessary
+DEMS <- download_and_read_file(data_url = "https://faculty.washington.edu/sheppard/envh556/Datasets/DEMSCombinedPersonal.rds", 
+                                 output_file_path = file.path(data_path, "DEMSCombinedPersonal.rds"))
            
 ```
 
 # Purpose  
 
-The purpose of this lab is to work with descriptive statistics and compliance
-tests while also getting further practice with R, RStudio, and R Markdown.  We
-will use the DEMS REC data, describing the distributions, exceedance
-probabilities, confidence intervals, and test compliance.
+The purpose of this lab is to work with descriptive statistics and compliance tests while also getting further practice with R, RStudio, and Markdown.  We will use the DEMS REC data, describing the distributions, exceedance probabilities, confidence intervals, and test compliance.
 
 # Getting Started  
-This section gives formulas and some basic R commands for descriptive statistics
-and exceedance probabilities.  It also provides reminders of formulas from
-lecture you will use in lab.
+This section gives formulas and some basic R commands for descriptive statistics and exceedance probabilities.  It also provides reminders of formulas from lecture you will use in lab.
 
 ## Definitions
 
@@ -145,9 +135,7 @@ DEMS <- as_tibble(DEMS)
 
 ```
 
-(@) **Keep a subset of observations:**  Keep only a subset of the data based on
-selected jobs (240,110,410,600), underground only ("u"), and `ecdata` being
-non-missing:
+(@) **Keep a subset of observations:**  Keep only a subset of the data based on selected jobs (240,110,410,600), underground only ("u"), and `ecdata` being non-missing:
 
 ```{r filter.data}
 #-----filter data----
@@ -160,8 +148,7 @@ DEMSu <- filter(DEMS,
                 !is.na(ecdata) )
 ```
 
-(@) **Create new variables** using the log transformation.  Typically exposure
-data appear to be log-normally distributed.
+(@) **Create new variables** using the log transformation.  Typically exposure data appear to be log-normally distributed.
 
 ```{r transform.vars}
 #-----transform vars----
@@ -203,8 +190,7 @@ kable(DEMSsummary)
 
 ## Visualize the data and understand its distribution graphically
 
-Here are some sample graphical commands: (Plots in this section are not run;
-histogram code is modified from Week 1 lab, though now with new data and better labeling.)
+Here are some sample graphical commands: (Plots in this section are not run; histogram code is modified from Week 1 lab, though now with new data and better labeling.)
 
 ### Histograms
 
@@ -291,9 +277,7 @@ half <- sample(DEMSu$lnrec,
 
 ## Calculate the exceedance fraction and related statistics
 
-Here we get the empiric exceedance fraction, the parametric exceedance
-probability and show the tools for estimating various confidence limits for
-percentiles. For these calculations, we'll assume an OEL for REC equal to 200 $\mu g/m^3$.
+Here we get the empiric exceedance fraction, the parametric exceedance probability and show the tools for estimating various confidence limits for percentiles. For these calculations, we'll assume an OEL for REC equal to 200 $\mu g/m^3$.
 
 * **Empiric exceedance fraction**: 
 ```{r emp.exc.frac}
@@ -449,21 +433,13 @@ p
 
 # Practice Session  
 
-1) Plan to use an R project for this lab and make sure it is set up.  You
-probably will want to use one project for the entire ENVH556 course.
-2) Read in the ‘DEMSCombinedPersonal’ R dataset and keep only measurements from
-jobs 110, 240, 410 and 600 among underground workers.  (We have selected these
-particular jobs for simplicity, but feel free to explore additional jobs or
-other categories of the data if you want to.)  In order to avoid potential
-confusion later, for this practice session we suggest you also drop any observations that are missing `ecdata`.
+1) Plan to use an R project for this lab and make sure it is set up.  You probably will want to use one project for the entire ENVH556 course.
+2) Read in the ‘DEMSCombinedPersonal’ R dataset and keep only measurements from jobs 110, 240, 410 and 600 among underground workers.  (We have selected these particular jobs for simplicity, but feel free to explore additional jobs or other categories of the data if you want to.)  In order to avoid potential confusion later, for this practice session we suggest you also drop any observations that are missing `ecdata`.
 3) Describe REC (varname: `ecdata`)
-4) Determine whether REC in this subset is lognormally distributed.  Explore
-using histograms, qqplots,  and statistical tests.
+4) Determine whether REC in this subset is lognormally distributed.  Explore using histograms, qqplots,  and statistical tests.
 5) Calculate the GM, GSD, and AM (using both method of moments and maximum
 likelihood estimates for the AM) for each group.
-6) For a selected group (i.e. a single job, or for all four if you want):
-Assume data are lognormal (LN) and an OEL of 200 $\mu g/m^3$ has been determined
-for REC.
+6) For a selected group (i.e. a single job, or for all four if you want): Assume data are lognormal (LN) and an OEL of 200 $\mu g/m^3$ has been determined for REC.
     a) Calculate the empiric and parametric exceedance probabilities along with
     the 95^th^ percentile and 70% confidence limits.
     

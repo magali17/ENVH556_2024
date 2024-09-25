@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Chris Zuidema for ENVH 556 Autumn 2024">
+
+<title>Week 2 Lecture Code</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Week2Lecture_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Week2Lecture_files/libs/quarto-html/quarto.js"></script>
+<script src="Week2Lecture_files/libs/quarto-html/popper.min.js"></script>
+<script src="Week2Lecture_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Week2Lecture_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Week2Lecture_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Week2Lecture_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Week2Lecture_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Week2Lecture_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Week2Lecture_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Week 2 Lecture Code</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Chris Zuidema for ENVH 556 Autumn 2024 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>This document was rendered on September 25, 2024.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----read DEMS-----</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># assign data_path variable</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"Datasets"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>           </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># read data; download if necessary</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>DEMS <span class="ot">&lt;-</span> <span class="fu">download_and_read_file</span>(<span class="at">data_url =</span> <span class="st">"https://faculty.washington.edu/sheppard/envh556/Datasets/DEMSCombinedPersonal.rds"</span>, </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">output_file_path =</span> <span class="fu">file.path</span>(data_path, <span class="st">"DEMSCombinedPersonal.rds"</span>))  <span class="sc">%&gt;%</span> </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">constant =</span> <span class="st">" "</span>, </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">ln_nodata =</span> <span class="fu">log</span>(nodata))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----NO histogram-----</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"no_hist"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(DEMS, <span class="fu">aes</span>(<span class="at">x =</span> nodata)) <span class="sc">+</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span>..density..), <span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">1</span>))) <span class="sc">+</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"NO (ppm)"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----boxplot-----</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"no_box"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(DEMS, <span class="fu">aes</span>(<span class="at">x =</span> constant, <span class="at">y =</span> nodata)) <span class="sc">+</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.shape =</span> <span class="st">"o"</span>, <span class="at">outlier.alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">" "</span>, <span class="at">y =</span> <span class="st">"NO (ppm)"</span>) <span class="sc">+</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----ln(no) histogram-----</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create dataframe for normal density plot</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>df_norm <span class="ot">&lt;-</span> <span class="fu">with</span>(DEMS <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">is.finite</span>(ln_nodata)), </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                <span class="fu">tibble</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="fu">min</span>(ln_nodata), <span class="fu">max</span>(ln_nodata), </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                               <span class="at">length.out =</span> <span class="fu">length</span>(ln_nodata) ), </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> <span class="fu">dnorm</span>(x, <span class="fu">mean</span>(ln_nodata), <span class="fu">sd</span>(ln_nodata)) ) </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># create plot</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"ln_no_hist"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(DEMS, <span class="fu">aes</span>(<span class="at">x =</span> ln_nodata)) <span class="sc">+</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span>..density..), <span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span> </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#geom_density() +</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> df_norm, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">1</span>))) <span class="sc">+</span> </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"ln(NO) ln(ppm)"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="slide-5" class="level2">
+<h2 class="anchored" data-anchor-id="slide-5">Slide 5</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----combine histos-----</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"no_histos"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggarrange</span>(figs[[<span class="st">"no_hist"</span>]], figs[[<span class="st">"ln_no_hist"</span>]], <span class="at">ncol =</span> <span class="dv">2</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week2Lecture_files/figure-html/combine.histos-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="slide-11" class="level2">
+<h2 class="anchored" data-anchor-id="slide-11">Slide 11</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----lognormal histogram</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create data</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">802</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>df_lognormal <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">value =</span> <span class="fu">rlnorm</span>(<span class="dv">1000</span>, <span class="at">meanlog =</span> <span class="dv">6</span>, <span class="at">sdlog =</span> <span class="fl">0.5</span>))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"example_lognorm"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_lognormal, <span class="fu">aes</span>(<span class="at">x =</span> value)) <span class="sc">+</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">1</span>))) <span class="sc">+</span> </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Value"</span>, <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"example_lognorm"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week2Lecture_files/figure-html/lognormal.histogram-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="slide-12" class="level2">
+<h2 class="anchored" data-anchor-id="slide-12">Slide 12</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----lognormal stats-----</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate stats</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>EnvStats<span class="sc">::</span><span class="fu">elnormAlt</span>(df_lognormal<span class="sc">$</span>value, <span class="at">method =</span> <span class="st">"mvue"</span>, <span class="at">ci =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ci.type =</span> <span class="st">"two-sided"</span>, <span class="at">ci.method =</span> <span class="st">"cox"</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Results of Distribution Parameter Estimation
+--------------------------------------------
+
+Assumed Distribution:            Lognormal
+
+Estimated Parameter(s):          mean = 449.1583476
+                                 cv   =   0.5293236
+
+Estimation Method:               mvue
+
+Data:                            df_lognormal$value
+
+Sample Size:                     1000
+
+Confidence Interval for:         mean
+
+Confidence Interval Method:      Cox
+
+Confidence Interval Type:        two-sided
+
+Confidence Level:                95%
+
+Confidence Interval:             LCL = 434.7662
+                                 UCL = 464.1558</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----q-q plot no-----</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"no_qq"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(DEMS, <span class="fu">aes</span>(<span class="at">sample =</span> nodata)) <span class="sc">+</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">shape =</span> <span class="st">"o"</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>() <span class="sc">+</span> </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"NO (ppm)"</span>) <span class="sc">+</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----q-q plot ln(no)-----</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"ln_no_qq"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(DEMS, <span class="fu">aes</span>(<span class="at">sample =</span> ln_nodata)) <span class="sc">+</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">shape =</span> <span class="st">"o"</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>() <span class="sc">+</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ln(NO) ln(ppm)"</span>) <span class="sc">+</span> </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="slide-15" class="level2">
+<h2 class="anchored" data-anchor-id="slide-15">Slide 15</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----combine qq plots-----</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"no_qqs"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggarrange</span>(figs[[<span class="st">"no_qq"</span>]], figs[[<span class="st">"ln_no_qq"</span>]], <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week2Lecture_files/figure-html/combine.qq.plots-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="slide-18" class="level2">
+<h2 class="anchored" data-anchor-id="slide-18">Slide 18</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----q-q plot with substituted data-----</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create normal distribution</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">802</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">normal =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="dv">5</span>) ) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">substituted =</span> <span class="fu">if_else</span>(normal <span class="sc">&lt;</span> <span class="dv">2</span>, <span class="dv">2</span>, normal)) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">factor</span>(name, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"normal"</span>, <span class="st">"substituted"</span>)))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># make plot</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"qq_substituted"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(temp, <span class="fu">aes</span>(<span class="at">sample =</span> value)) <span class="sc">+</span> </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>name) <span class="sc">+</span> </span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">shape =</span> <span class="st">"o"</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> </span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>() <span class="sc">+</span> </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Random Normal Data (N = 100, mean = 10, sd = 5)</span><span class="sc">\n</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="st">       substituted: values &lt; 2 set equal to 2"</span>) <span class="sc">+</span> </span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"qq_substituted"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week2Lecture_files/figure-html/q.q.plot.with.substituted.data-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="slide-20" class="level2">
+<h2 class="anchored" data-anchor-id="slide-20">Slide 20</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----show qq ln no-----</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"ln_no_qq"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week2Lecture_files/figure-html/show%20qq.ln.no-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="slide-22" class="level2">
+<h2 class="anchored" data-anchor-id="slide-22">Slide 22</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----distribution with &lt; LOD missingness-----</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># specify LOD</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>lod <span class="ot">&lt;-</span> <span class="dv">400</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># create dataframe</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">802</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>df_lod <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">full =</span> <span class="fu">rlnorm</span>(<span class="dv">1000</span>, <span class="at">meanlog =</span> <span class="dv">6</span>, <span class="at">sdlog =</span> <span class="fl">0.5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">censored =</span> <span class="fu">ifelse</span>(full <span class="sc">&lt;</span> lod, <span class="cn">NA</span>, full), </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">censor_flag =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(censored), <span class="cn">TRUE</span>, <span class="cn">FALSE</span>))</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate distribution parameters with `NADA` package</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(df_lod, NADA<span class="sc">::</span><span class="fu">cenmle</span>(full, censor_flag))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        n     n.cen    median      mean        sd 
+1000.0000  492.0000  287.4104  410.2360  417.8239 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate distribution parameters with `EnvStats` package</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(df_lod, EnvStats<span class="sc">::</span><span class="fu">elnormCensored</span>(full, censor_flag))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Results of Distribution Parameter Estimation
+Based on Type I Censored Data
+--------------------------------------------
+
+Assumed Distribution:            Lognormal
+
+Censoring Side:                  left
+
+Censoring Level(s):               80.91065  90.05631  96.33052  97.15858 100.42880 100.86977 108.73637 113.19178 113.75308 117.85601 118.13382 120.56318 123.19337 123.36654 131.61559 131.94215 132.37006 133.96596 134.65758 134.84794 136.50403 137.44176 139.51948 141.67317 142.19666 143.23055 144.40805 147.04149 148.03519 150.25649 151.04791 151.90463 153.20706 153.83701 155.40876 156.62186 158.25025 158.47265 159.05841 159.75046 159.88496 159.91267 160.40471 161.28363 161.97562 162.14874 162.51157 163.69183 163.87634 164.15150 167.76526 168.41390 168.73574 170.59036 170.60784 173.23281 175.66637 176.21687 176.26932 176.27015 176.61263 179.97800 180.35294 181.17943 181.55190 181.70422 182.27788 183.16411 183.36313 183.67764 184.30522 186.75758 187.19219 187.86504 187.95431 189.69759 190.94180 191.16018 191.39486 192.34829 192.47089 193.52183 194.20589 194.63566 196.09940 196.15307 197.16663 197.57329 197.72684 198.87197 199.11400 200.51129 200.64286 200.91139 201.12344 201.16232 201.32694 202.41396 202.88895 203.47068 204.58063 206.23779 208.38551 209.32364 209.66882 210.10016 210.46205 210.53599 210.69243 211.49233 211.73078 211.96267 213.02003 213.25758 213.35275 214.20240 214.36138 214.41615 214.76440 215.05886 215.67566 216.37009 216.66554 216.95080 217.32031 217.52331 217.59577 218.24987 220.68231 222.33910 222.54855 224.36618 224.41532 224.49800 225.62834 225.78616 226.33787 227.21299 229.57860 230.12446 231.32317 232.39370 232.56727 233.26741 233.27123 233.65110 234.61428 234.65310 234.80758 236.05621 236.39412 237.40264 237.65293 238.10385 239.09343 239.76260 240.22784 240.30473 242.45211 243.23780 243.25082 244.06279 244.44530 244.47227 245.68373 247.31603 248.36207 248.46872 248.78186 248.90796 248.97540 249.26615 249.43365 250.13878 250.58314 250.91931 251.12415 251.51225 252.19813 252.36612 252.44459 252.86685 253.46933 253.67664 253.76667 254.19304 254.54537 256.10238 256.87467 257.42056 257.47624 258.19113 258.78535 258.99125 259.85443 260.59940 261.15654 261.19139 261.91946 261.98584 262.19798 262.52365 262.84020 263.75868 264.23329 265.21114 265.54238 266.30821 266.98785 267.34012 267.58217 267.65393 268.31026 268.50886 269.43845 270.14734 270.36438 271.31326 271.46943 271.72349 272.14425 273.57266 273.58375 274.05581 276.26410 276.27233 276.37922 276.55856 276.59504 277.55726 277.76183 278.30559 280.87259 281.00845 282.09347 282.83163 283.22516 283.73168 284.07005 284.90791 285.08392 285.11673 285.31126 285.36921 285.43528 286.23883 287.88261 288.49548 288.49626 289.14794 289.23510 289.28164 289.30627 289.36504 289.39783 289.57005 290.40654 291.01669 291.60104 291.61067 291.79094 291.83566 291.86483 292.70336 293.27367 293.49367 295.25683 295.95241 296.12931 296.90631 297.53227 297.81338 297.98118 298.38945 298.48326 298.49426 298.59675 298.61993 299.73236 301.65762 301.77488 301.89597 302.05740 302.71882 302.81555 303.01943 303.38595 303.65974 304.27872 304.33153 304.64160 304.71217 305.28691 305.56061 305.88880 305.91866 306.24733 307.75334 308.06255 308.36316 309.31133 310.18401 311.20319 311.67736 312.91242 313.14005 313.66631 313.72082 314.39376 314.65016 314.99318 315.71096 317.20528 317.83570 318.22872 319.18377 319.21221 319.41212 319.80456 319.86867 320.78352 320.94811 320.96874 321.84044 322.08256 323.29313 323.41676 324.12278 324.57975 325.86471 326.13079 326.47106 327.03075 327.43498 327.84143 328.69904 328.78618 329.22130 330.48779 330.58129 330.64205 331.03064 331.04866 331.06611 331.35124 331.66267 332.05289 332.30939 332.46621 332.55102 332.71911 333.08390 333.37502 333.66564 333.72131 333.80953 334.52716 334.96712 335.20388 335.86354 336.61675 337.17896 337.26277 337.68292 340.39373 340.66807 340.67663 340.83985 341.89424 342.04030 342.49720 342.53716 342.63953 343.54269 344.24273 344.26247 344.32288 344.34411 344.61717 344.87294 345.27622 345.45148 346.06110 346.77864 347.19346 347.38342 347.45083 347.49394 348.11263 348.51107 348.74709 349.27970 349.59165 349.78144 350.46644 350.79055 351.90257 353.35319 354.07577 354.20729 354.69158 354.78607 356.06016 356.67071 357.08956 358.09317 358.77688 358.97922 359.36201 359.40012 359.48093 360.08227 360.52707 360.53442 361.53306 363.43965 363.87289 363.92716 364.86525 365.87930 366.34380 366.40127 367.52669 368.37198 368.57974 368.70565 369.70600 370.30653 370.88663 371.17183 371.37449 372.42275 372.97552 373.32105 374.19077 374.25918 374.28741 374.57756 374.81906 376.18645 376.31311 376.37100 376.69792 377.06687 377.45717 378.29886 378.92211 379.38304 380.53080 380.83367 381.37391 382.57055 382.64245 383.08647 383.21555 383.32567 383.42550 383.96997 384.55559 384.77664 384.89644 385.60588 386.58589 386.99675 387.18885 389.35620 389.92300 390.35574 390.43447 390.54769 391.42411 391.46224 392.18712 392.26674 392.44186 392.65408 393.11458 393.16060 393.74446 394.02252 394.04281 394.12071 395.98147 396.16863 396.87599 396.94609 397.01546 397.88512 397.89076 397.99210 398.10409 399.62893 
+
+Estimated Parameter(s):          meanlog = 5.6609113
+                                 sdlog   = 0.8435891
+
+Estimation Method:               MLE
+
+Data:                            full
+
+Censoring Variable:              censor_flag
+
+Sample Size:                     1000
+
+Percent Censored:                49.2%</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----plot LOD distribution</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># plot lod data</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> df_lod <span class="sc">%&gt;%</span> </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"full"</span>, <span class="st">"censored"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">factor</span>(name, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"full"</span>, <span class="st">"censored"</span>) ))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># make plot</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"example_LOD"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(temp, <span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">fill =</span> name)) <span class="sc">+</span> </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">boundary =</span> lod, <span class="at">bins =</span> <span class="dv">50</span>, <span class="at">position=</span><span class="st">"identity"</span>) <span class="sc">+</span> </span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">#geom_density() + </span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">1</span>))) <span class="sc">+</span> </span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#labs(x = "Value") +</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"example_LOD"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week2Lecture_files/figure-html/plot.LOD.distribution-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="slide-25" class="level2">
+<h2 class="anchored" data-anchor-id="slide-25">Slide 25</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----no boxplot by facility-----</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"no_box_facility"</span>]] <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(DEMS, <span class="fu">aes</span>(<span class="at">x =</span> facilityid, <span class="at">y =</span> nodata)) <span class="sc">+</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.shape =</span> <span class="st">"o"</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Facility"</span>, <span class="at">y =</span> <span class="st">"NO (ppm)"</span>) <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>figs[[<span class="st">"no_box_facility"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Week2Lecture_files/figure-html/no.boxplot.by.facility-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -8,6 +8,7 @@ format:
         toc: true
         toc_depth: 3
         number_sections: true
+        self-contained: true #save images etc. in this file (vs folders)
 execute:
   echo: true
   warning: false
@@ -533,8 +534,6 @@ head(sort(grid_covariates$m_to_a1))
 If you have transformed any of your modeling variables, verify that the new dataset has the same transformations. Here, we'll make sure any 0 values are converted to a small constant so that we can log-transform them without error.
 
 ```{r}
-grid_covariates <- download_and_read_file(data_url = "https://zenodo.org/records/13761282/files/dr0311_grid_covariates.csv?download=1", 
-                                 output_file_path = file.path(data_path, "dr0311_grid_covariates.csv"))
 
 grid_covariates <- grid_covariates %>%
   # if a location is on an a1 (m_to_a1 is 0), make this a small constant (you cannot take the log of 0)

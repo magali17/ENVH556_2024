@@ -20,8 +20,8 @@ if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
 # Load the other packages, installing as needed.  Some reasons for packages:
 pacman::p_load(dplyr, tidyr, ggplot2, egg, EnvStats, NADA)  
 
-# set working directory
-work_dir <- getwd()
+# download_and_read_file() function etc.
+source("global_functions.R")
 
 # make a figure list
 figs <- list()
@@ -30,8 +30,12 @@ figs <- list()
 
 ```{r read.DEMS}
 #-----read DEMS-----
-
-DEMS <- readRDS(file.path(work_dir, "Datasets", "DEMSCombinedPersonal.rds")) %>% 
+# assign data_path variable
+data_path <- file.path("Datasets")
+           
+# read data; download if necessary
+DEMS <- download_and_read_file(data_url = "https://faculty.washington.edu/sheppard/envh556/Datasets/DEMSCombinedPersonal.rds", 
+                                 output_file_path = file.path(data_path, "DEMSCombinedPersonal.rds"))  %>% 
   as_tibble() %>% 
   mutate(constant = " ", 
          ln_nodata = log(nodata))

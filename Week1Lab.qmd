@@ -1,11 +1,14 @@
 ---
 title: "Week 1 Lab:  Becoming familiar with R, RStudio, RMarkdown"
 author: "ENVH 556 Autumn 2024 Instructors"
-output: 
-    html_document:
+format: 
+    html:
+        df_print: "paged"
+        fig_caption: yes
         toc: true
         toc_depth: 3
         number_sections: true
+        #self-contained: true #save images etc. in this file (vs folders)
 execute:
   echo: true
   cache: false
