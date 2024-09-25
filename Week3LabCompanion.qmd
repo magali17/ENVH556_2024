@@ -10,6 +10,8 @@ format:
     toc_depth: 3
     number_sections: true
     self-contained: true #save images etc. in this file (vs folders)
+execute:
+  echo: true
 
 ---
 
@@ -17,10 +19,6 @@ This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
 ```{r setup, include=FALSE}
 #-----setup-----
-
-# set knitr options
-knitr::opts_chunk$set(echo = TRUE)
-
 # clear work space of all objects and unload all extra (non-base) packages
 rm(list = ls(all = TRUE))
 if (!is.null(sessionInfo()$otherPkgs)) {

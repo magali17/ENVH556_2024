@@ -8,7 +8,7 @@ format:
     toc: true
     toc_depth: 3
     number_sections: true
-    self-contained: true #save images etc. in this file (vs folders)
+    self-contained: true #save images etc. in this file 
 execute:
   echo: true
   cache: false

@@ -14,6 +14,8 @@ format:
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
+# --> NOTE: HAS RENDERING ISSUE
+
 
 ```{r setup, include=FALSE}
 #-----setup-----

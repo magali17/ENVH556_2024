@@ -13,6 +13,7 @@ format:
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
+# --> NOTE: HAS RENDERING ISSUE
 
 ```{r setup, include=FALSE}
 #-----setup-----
@@ -129,29 +130,18 @@ rm(url, file_name, file_path, data_path)
 
 # Introduction, Purpose, and Credit
 
-The purpose of this lab is to learn about geostatistical models and further
-solidify your understanding of regression for prediction.  We will use the same
-MESA Air snapshot data described in [Mercer et al
-2011](https://doi.org/10.1016/j.atmosenv.2011.05.043) that we used earlier in
-the quarter.  As a side benefit you will also get exposure to the most modern
-tools for handling spatial data in R and learn how to create maps and add your
-data to them.  The secondary intent of this lab is to help you learn to use
-geographic data in R as productively as possible while recognizing there is much
+The purpose of this lab is to learn about geostatistical models and further solidify your understanding of regression for prediction.  We will use the same
+MESA Air snapshot data described in [Mercer et al 2011](https://doi.org/10.1016/j.atmosenv.2011.05.043) that we used earlier in
+the quarter.  As a side benefit you will also get exposure to the most modern tools for handling spatial data in R and learn how to create maps and add your data to them.  The secondary intent of this lab is to help you learn to use geographic data in R as productively as possible while recognizing there is much
 more to learn and develop.
 
-**Credit**:  Brian High, Chris Zuidema, and Dave Slager have provided an
-enormous amount of support in developing this lab.
+**Credit**:  Brian High, Chris Zuidema, and Dave Slager have provided an enormous amount of support in developing this lab.
 
-**A brief history of the evolution of this lab**:  Originally developed in 2019,
-this lab and its geostatistical examples were based on `geoR`.  The `geoR`
-coordinate system is outdated, so in 2021 we switched the geostatistics package
-to `gstat`.  This also meant adopting the `sp` system for spatial data.
-However, the `sf` package is a better way to handle spatial data, so thanks to
-support from Dave Slager, this lab now uses `sf` instead of `sp`.  See the
-resources section below for links to information about `sf` vs. `sp`.
+**A brief history of the evolution of this lab**:  Originally developed in 2019, this lab and its geostatistical examples were based on `geoR`.  The `geoR`
+coordinate system is outdated, so in 2021 we switched the geostatistics package to `gstat`.  This also meant adopting the `sp` system for spatial data.
+However, the `sf` package is a better way to handle spatial data, so thanks to support from Dave Slager, this lab now uses `sf` instead of `sp`.  See the resources section below for links to information about `sf` vs. `sp`.
 
-Also, this lab represents work in progress.  While it has undergone extensive
-testing, it is possible some errors remain.  In addition, there are some ideas
+Also, this lab represents work in progress.  While it has undergone extensive testing, it is possible some errors remain.  In addition, there are some ideas
 that would benefit from further development.
 
 # Getting Started
@@ -160,34 +150,18 @@ that would benefit from further development.
 
 ### Resources for Spatial data in R
 
-The use of spatial data in R is rapidly evolving.  Here are several useful
-overview resources:
+The use of spatial data in R is rapidly evolving.  Here are several useful overview resources:
 
-* A good and recently updated book is  [Geocomputation in
-R](https://geocompr.robinlovelace.net/index.html) by Robin Lovelace.  Its
-[introductory chapter](https://geocompr.robinlovelace.net/intro.html) gives a
-great overview of the "what" and "why" of geocomputation.  It also has a good
-overview of [R's spatial
-ecosystem](https://geocompr.robinlovelace.net/intro.html#rs-spatial-ecosystem),
-and a very nice overview of the history of spatial data in R, which Lovelace
-calls [The history of
-R-spatial](https://geocompr.robinlovelace.net/intro.html#the-history-of-r-spatial).
-In particular, it puts into historical context the tools we are using in this
-lab with the current state of the art.
+* A good and recently updated book is  [Geocomputation in R](https://geocompr.robinlovelace.net/index.html) by Robin Lovelace.  Its
+[introductory chapter](https://geocompr.robinlovelace.net/intro.html) gives a great overview of the "what" and "why" of geocomputation.  It also has a good
+overview of [R's spatial ecosystem](https://geocompr.robinlovelace.net/intro.html#rs-spatial-ecosystem), and a very nice overview of the history of spatial data in R, which Lovelace calls [The history of R-spatial](https://geocompr.robinlovelace.net/intro.html#the-history-of-r-spatial). In particular, it puts into historical context the tools we are using in this lab with the current state of the art.
 
-* Roger Bivand was an early leader in developing tools to work with spatial data
-in R. His book, [Spatial Data Analysis in R](https://asdar-book.org/) was
-published in 2013.  (The link is actually to the scripts and datasets to
-reproduce the examples in his book.)  The book is available for download from
-the UW library and there is a copy on the course website. In particular, I
-recommend Chapter 1 for an overview of ideas, Chapter 4 for the quickest start
-to using spatial data (though the rest of Part I will also be helpful), and
-Chapter 8 for methods for kriging.
+* Roger Bivand was an early leader in developing tools to work with spatial data in R. His book, [Spatial Data Analysis in R](https://asdar-book.org/) was
+published in 2013.  (The link is actually to the scripts and datasets to reproduce the examples in his book.)  The book is available for download from
+the UW library and there is a copy on the course website. In particular, I recommend Chapter 1 for an overview of ideas, Chapter 4 for the quickest start
+to using spatial data (though the rest of Part I will also be helpful), and Chapter 8 for methods for kriging.
 
-* Pebesma & Bivand have a new book [Spatial Data
-Science](https://keen-swartz-3146c4.netlify.app/) that explains the concepts
-underlying spatial data, links it to many modern packages of theirs (e.g.
-`sf`, `lwgeom`, and `stars`), and accompanies this with `tidyverse`.
+* Pebesma & Bivand have a new book [Spatial Data Science](https://keen-swartz-3146c4.netlify.app/) that explains the concepts underlying spatial data, links it to many modern packages of theirs (e.g. `sf`, `lwgeom`, and `stars`), and accompanies this with `tidyverse`.
 
 * **Coordinate Reference Systems and Projections**:  These can be confusing to the uninitiated.  Here are a few resources:
     - [A brief and compact overview of coordinate reference
@@ -198,121 +172,50 @@ systems](https://www.nceas.ucsb.edu/sites/default/files/2020-04/OverviewCoordina
 
 ### Spatial data in R:  `sf` and `sp`
 
-The `sf` or "simple features" package is the more modern way to reference
-spatial data in R.  We use `sf` in this lab.  The alternative is `sp` and we
-include a few references to it for completeness.  See also the introduction to
-the snapshot data section below for a discussion on distance calculations.
+The `sf` or "simple features" package is the more modern way to reference spatial data in R.  We use `sf` in this lab.  The alternative is `sp` and we include a few references to it for completeness.  See also the introduction to the snapshot data section below for a discussion on distance calculations.
 
-* Jesse Sadler gives a good overview in his [Introduction to GIS with R:
-Spatial data with the sp and sf
+* Jesse Sadler gives a good overview in his [Introduction to GIS with R: Spatial data with the sp and sf
 packages](https://www.jessesadler.com/post/gis-with-r-intro/)
 
-* R-bloggers post: [Should I learn sf or sp for spatial R
-programming?](https://www.r-bloggers.com/2018/03/should-i-learn-sf-or-sp-for-spatial-r-programming/)
+* R-bloggers post: [Should I learn sf or sp for spatial R programming?](https://www.r-bloggers.com/2018/03/should-i-learn-sf-or-sp-for-spatial-r-programming/)
 
-* Moving from `sp` to `sf`: See this [Nick Bearman
-blog](https://www.nickbearman.me.uk/2019/04/spatial-r-moving-from-sp-to-sf/) for
+* Moving from `sp` to `sf`: See this [Nick Bearman blog](https://www.nickbearman.me.uk/2019/04/spatial-r-moving-from-sp-to-sf/) for
 some good perspective.
 
-* `sp`: This RPub describes [Spatial Data
-Objects](https://rpubs.com/NateByers/spatialobjects) including `Spatial`,
+* `sp`: This RPub describes [Spatial Data Objects](https://rpubs.com/NateByers/spatialobjects) including `Spatial`,
 `SpatialPoints`, and `SpatialPointsDataFrame`.
 
-* `sf`: See the very accessible Ed Pebesma overview of [Simple Features for
-R](https://r-spatial.github.io/sf/articles/sf1.html#what-is-a-feature-) and to
-dig further, [here](https://r-spatial.github.io/sf/articles/) is the index to
-all his `sf` vignettes.
+* `sf`: See the very accessible Ed Pebesma overview of [Simple Features for R](https://r-spatial.github.io/sf/articles/sf1.html#what-is-a-feature-) and to dig further, [here](https://r-spatial.github.io/sf/articles/) is the index to all his `sf` vignettes.
+
 
 ### R packages for geostatistics and spatial data
 
-Packages for kriging include `geoR`, `automap`, and `gstat`.  The package `geoR`
-has been around for some time and the original 2019 version of this lab used
-this package.  The package `gstat` is newer and uses either the `sp` or `sf`
-class.  `automap` calls `gstat`.  `geoR` and `gstat` have been documented to
-give identical results, at least for a simple dataset example.  To verify this,
-type `demo(gstat::comp_geoR)` in the console after loading both `gstat` and
-`geoR`.  Because of its more modern implementation with `sf` and `sp`, we
-discuss `gstat` in this lab. There are good examples online and in books (e.g.,
-Bivand's) that show how to do kriging with `gstat`.
+Packages for kriging include `geoR`, `automap`, and `gstat`. The package `geoR` has been around for some time, and the original 2019 version of this lab used this package. The package `gstat` is newer and uses either the `sp` or `sf` class. `automap` calls `gstat`. `geoR` and `gstat` have been documented to give identical results, at least for a simple dataset example. To verify this, type `demo(gstat::comp_geoR)` in the console after loading both `gstat` and `geoR`. Because of its more modern implementation with `sf` and `sp`, we discuss `gstat` in this lab. There are good examples online and in books (e.g., Bivand's) that show how to do kriging with `gstat`.
 
-(Aside:  There is an interesting [stackoverflow
-discussion](https://stackoverflow.com/questions/21970992/compare-variogram-and-variog-function)
-of comparing empirical variograms in `geoR` vs. `sp` and `gstat` that addresses
-coordinate transformations and binning.  It is worth a look if you want to
-understand the details better.)
+(Aside: There is an interesting [stackoverflow discussion](https://stackoverflow.com/questions/21970992/compare-variogram-and-variog-function) of comparing empirical variograms in `geoR` vs. `sp` and `gstat` that addresses coordinate transformations and binning. It is worth a look if you want to understand the details better.)
 
-**Note on `rgdal`**:  If you are running your lab locally on a Mac, the `rgdal`
-package doesn't load properly on newer Macs running Catalina.  You need to
-install GDAL from the terminal.  See this
-[link](https://medium.com/@egiron/how-to-install-gdal-and-qgis-on-macos-catalina-ca690dca4f91)
-for how to do this.
+**Note on `rgdal`**: If you are running your lab locally on a Mac, the `rgdal` package doesn't load properly on newer Macs running Catalina. You need to install GDAL from the terminal. See this [link](https://medium.com/@egiron/how-to-install-gdal-and-qgis-on-macos-catalina-ca690dca4f91) for how to do this.
 
-### Some comments on universal kriging and prediction  
+### Some comments on universal kriging and prediction
 
-In kriging, you can't predict on the same locations that you used to estimate
-the parameters.  As discussed on
-[stackoverflow](https://stackoverflow.com/questions/45768516/why-does-the-kriging-give-the-same-values-as-the-observed),
-"this is a well-known property of kriging; it comes from the fact that the model
-underlying kriging assumes that a value is perfectly correlated with itself."
-Thus predicting a known value always returns that value, with zero prediction
-error.  This is also the cause of errors with duplicate observations at the same
-location. Think of this property of kriging as an enforced need to do
-cross-validation to evaluate your predictions.  Apparently with the `gstat`
-package you can do smoothing instead of kriging by specifying an "Err" variogram
-instead of a "Nug" nugget effect.
+In kriging, you can't predict at the same locations that you used to estimate the parameters. As discussed on [stackoverflow](https://stackoverflow.com/questions/45768516/why-does-the-kriging-give-the-same-values-as-the-observed), "this is a well-known property of kriging; it comes from the fact that the model underlying kriging assumes that a value is perfectly correlated with itself." Thus predicting a known value always returns that value, with zero prediction error. This is also the cause of errors with duplicate observations at the same location. Think of this property of kriging as an enforced need to do cross-validation to evaluate your predictions. Apparently, with the `gstat` package, you can do smoothing instead of kriging by specifying an "Err" variogram instead of a "Nug" nugget effect.
 
 ### Brief discussion of variograms
 
-A semivariance is defined as one half of the average of all the squared
-differences of all points that are a certain distance $h$ apart.  A variogram is
-a plot of these squared differences as a function of distance, presented as
-either all the points (a "cloud"), or as an average (typically called "binned").
-Empirical variograms are useful for helping a data analyst see the spatial
-structure in the data.  In many situations with spatial structure, the average
-semivariance increases as distance increases until it eventually levels off.  In
-geostatistics we use a model to approximate the structure we see in an empirical
-variogram.  There are different variogram models depending upon the assumed
-covariance model.  Examples of common assumed models are exponential, spherical,
-Gaussian, and Matern.  This [link](http://www.kgs.ku.edu/Tis/surf3/s3krig2.html)
-gives a brief summary of semivariance and variograms (which it calls
-semivariograms; see the following link for discussion of terminology and the
-confusing overlapping terms in the literature).
+A semivariance is defined as one-half of the average of all the squared differences of all points that are a certain distance $h$ apart. A variogram is a plot of these squared differences as a function of distance, presented as either all the points (a "cloud") or as an average (typically called "binned"). Empirical variograms are useful for helping a data analyst see the spatial structure in the data. In many situations with spatial structure, the average semivariance increases as distance increases until it eventually levels off. In geostatistics, we use a model to approximate the structure we see in an empirical variogram. There are different variogram models depending upon the assumed covariance model. Examples of common assumed models are exponential, spherical, Gaussian, and Matern. This [link](http://www.kgs.ku.edu/Tis/surf3/s3krig2.html) gives a brief summary of semivariance and variograms (which it calls semivariograms; see the following link for discussion of terminology and the confusing overlapping terms in the literature).
 
-There is confusion about terminology and often variogram and semivariogram are
-used interchangeably.  This paper, [Variogram or semivariogram? Understanding
-the variances in a
-variogram](https://link.springer.com/article/10.1007%2Fs11119-008-9056-2), gives
-a nice overview of the terminology and notation.  It also links well-understood
-estimates of variance with semivariance estimates, making the point that a
-variance can be expressed either in the traditional way as the squared deviation
-from the mean, or as 1/2 the average of squared differences between points,
-averaged over all possible pairs of points.  This helps you see that the formula
-for a variogram is a re-expression of a standard variance formula, though now
-looking at each term that goes into the sum as a function of distance.
-
+There is confusion about terminology, and often variogram and semivariogram are used interchangeably. This paper, [Variogram or semivariogram? Understanding the variances in a variogram](https://link.springer.com/article/10.1007%2Fs11119-008-9056-2), gives a nice overview of the terminology and notation. It also links well-understood estimates of variance with semivariance estimates, making the point that a variance can be expressed either in the traditional way as the squared deviation from the mean or as 1/2 the average of squared differences between points, averaged over all possible pairs of points. This helps you see that the formula for a variogram is a re-expression of a standard variance formula, though now looking at each term that goes into the sum as a function of distance.
 
 ## Applications using `gstat`: Practice with the built-in `meuse` dataset
 
-The purpose of this section is to show some `gstat` tools using the built-in
-`meuse` dataset.  The dataset is part of the package `sp` and documentation of
-this dataset can be found
-[here](http://www.dpi.inpe.br/gilberto/tutorials/software/R-contrib/sp/html/meuse.html).
+The purpose of this section is to show some `gstat` tools using the built-in `meuse` dataset. The dataset is part of the package `sp`, and documentation of this dataset can be found [here](http://www.dpi.inpe.br/gilberto/tutorials/software/R-contrib/sp/html/meuse.html).
 
-First we will go through the `meuse` dataset, a dataset of soil contamination
-from The Netherlands.  Its location coordinates are `x` and `y`, and its
-exposure measurements are concentrations of various metals in topsoil.  We will
-focus on `zinc` in this lab.  There are also some potential covariates we could
-consider in a universal kriging model such as elevation and distance from the
-Meuse river.
-
+First, we will go through the `meuse` dataset, a dataset of soil contamination from The Netherlands. Its location coordinates are `x` and `y`, and its exposure measurements are concentrations of various metals in topsoil. We will focus on `zinc` in this lab. There are also some potential covariates we could consider in a universal kriging model, such as elevation and distance from the Meuse river.
 
 ### Summary & learn about the data
 
-The following section was structured after the examples
-[here](https://rpubs.com/liem/63374) as well as a more updated version that uses
-`tidyverse` and `ggplot` commands called [Meuse
-Tutorial](https://rstudio-pubs-static.s3.amazonaws.com/134781_28af3676f8b943749ebfa536b3897cac.html).
-However, this implementation uses `sf`.
+The following section was structured after the examples [here](https://rpubs.com/liem/63374) as well as a more updated version that uses `tidyverse` and `ggplot` commands called [Meuse Tutorial](https://rstudio-pubs-static.s3.amazonaws.com/134781_28af3676f8b943749ebfa536b3897cac.html). However, this implementation uses `sf`.
+
 
 ```{r basics with meuse dataset - summary + EDA}
 #-----basics with meuse dataset - summary + EDA-----
@@ -336,29 +239,13 @@ summary(meuse)
 
 #### Comments about Simple Features
 
-As summarized in this
-[vignette](https://r-spatial.github.io/sf/articles/sf1.html), simple features is
-formal standard used for geographic data and geographic information systems
-(GIS) that has both geographic and non-geographic attributes.  It has a common
-architecture and a geometry to indicate its location on Earth.  In R the package
-`sf` represents simple features objects.  All operations from this package are
-preceded by `st_` to refer to *spatial data type*.  There are 3 classes used to
-represent simple features.  We will focus on the `sf` class which is a table or
-`data.frame`.  It contains `sfc`, with the geometries for each record, which is
-in turn made up of `sfg`, the geometry for a single feature such as a point or
-polygon.
+As summarized in this [vignette](https://r-spatial.github.io/sf/articles/sf1.html), simple features is a formal standard used for geographic data and geographic information systems (GIS) that has both geographic and non-geographic attributes. It has a common architecture and a geometry to indicate its location on Earth. In R, the package `sf` represents simple features objects. All operations from this package are preceded by `st_` to refer to *spatial data type*. There are three classes used to represent simple features. We will focus on the `sf` class, which is a table or `data.frame`. It contains `sfc`, with the geometries for each record, which is in turn made up of `sfg`, the geometry for a single feature such as a point or polygon.
 
-The next chunk turns `meuse` into an `sf` object.  Of note, there needs to be a
-projection for the coordinates.  Projections are essential to know in order to
-place maps in space correctly. Here are the links we will need to handle the
-projection:
+The next chunk turns `meuse` into an `sf` object. Of note, there needs to be a projection for the coordinates. Projections are essential to know in order to place maps in space correctly. Here are the links we will need to handle the projection:
 
-* Look up the projection of the `meuse` coordinates [here:
-https://rdrr.io/cran/sp/man/meuse.html](https://rdrr.io/cran/sp/man/meuse.html).
-Note this is dataset-specific.
+* Look up the projection of the `meuse` coordinates [here](https://rdrr.io/cran/sp/man/meuse.html). Note this is dataset-specific.
 
-* The proj4 string is a standardized way to describe a projection.  Get the
-proj4string [here: https://epsg.io/28992](https://epsg.io/28992).
+* The proj4 string is a standardized way to describe a projection. Get the proj4string [here](https://epsg.io/28992).
 
 
 ```{r meuse as an sf object}
@@ -415,12 +302,9 @@ st_coordinates(meuse) %>% head()
 
 ### Some meuse plots
 
-Note that `geom_sf` plots in lat-long units by default, even though our data is
-stored in a different projection. (As we will see later, it is trivial to
-convert our points to a different projection once our points have a specific
-projection in `sf`). We can check that map projections are working properly and
-explore the study area on [Google
-Maps](https://www.google.com/maps?q=50.97,5.74)
+Note that `geom_sf` plots in lat-long units by default, even though our data is stored in a different projection. (As we will see later, it is trivial to
+convert our points to a different projection once our points have a specific projection in `sf`). We can check that map projections are working properly and
+explore the study area on [Google Maps](https://www.google.com/maps?q=50.97,5.74)
 
 ```{r meuse plots}
 # ---- meuse plots ----
@@ -503,28 +387,14 @@ ggplot(data=meuse) +
 
 #### Empirical variograms
 
-We use variograms to get an understanding on how our variable of interest varies
-over space.  One of the variables in the `meuse` dataset is the concentration of
-zinc.  We will focus on modeling the log-transformed value of zinc.
+We use variograms to get an understanding of how our variable of interest varies over space. One of the variables in the `meuse` dataset is the concentration of zinc. We will focus on modeling the log-transformed value of zinc.
 
-The following code gives empirical variograms plotted using two different
-options:  a *variogram cloud* with all squared distances (`cloud = TRUE`), and
-the default *binned variogram*.  The third plot is the binned variogram again;
-this one shows the number of points that make up each bin.  The fourth plot is the cloud variogram with a smoother overlaid, this time plot using `ggplot`.
+The following code gives empirical variograms plotted using two different options: a *variogram cloud* with all squared distances (`cloud = TRUE`), and the default *binned variogram*. The third plot is the binned variogram again; this one shows the number of points that make up each bin. The fourth plot is the cloud variogram with a smoother overlaid, this time plotted using `ggplot`.
 
-Note that while the `meuse` dataset has only 155 observations, in principle the
-variogram is binning over all possible point pairs: 155 * 154 / 2 = 11,935.
-However, only a subset of these pairs is used by `gstat`, according to the value
-in the `cutoff` variable.  The variogram cloud dataset only has 6,833 data
-points and in the binned variogram the sum of `np`, the number of points in each
-bin, is also 6,833.  This is because the default distance in `gstat` is 1/3 of
-the maximum distance.  We can change the default distance using the `cutoff =`
-option.  We change the cutoff in the snapshot data example below.
+Note that while the `meuse` dataset has only 155 observations, in principle, the variogram is binning over all possible point pairs: 155 * 154 / 2 = 11,935. However, only a subset of these pairs is used by `gstat`, according to the value in the `cutoff` variable. The variogram cloud dataset only has 6,833 data points, and in the binned variogram, the sum of `np`, the number of points in each bin, is also 6,833. This is because the default distance in `gstat` is 1/3 of the maximum distance. We can change the default distance using the `cutoff =` option. We change the cutoff in the snapshot data example below.
 
-The distance is Euclidean distance; gamma is the semi-variance estimate, as
-described in this helpful document: [An introduction to (geo)statistics with
-R](http://www.css.cornell.edu/faculty/dgr2/_static/files/R_PDF/gs_intro_20Mar2019.pdf),
-also uploaded to the course Canvas site.
+The distance is Euclidean distance; gamma is the semi-variance estimate, as described in this helpful document: [An introduction to (geo)statistics with R](http://www.css.cornell.edu/faculty/dgr2/_static/files/R_PDF/gs_intro_20Mar2019.pdf), also uploaded to the course Canvas site.
+
 
 ```{r meuse empirical variogram, warning=FALSE}
 # ---- meuse empirical variogram ----
@@ -563,13 +433,8 @@ ggplot(data=vgm.meuse, aes(x = dist, y = gamma)) +
 
 #### Modeled variogram
 
-One can superimpose various modeled variograms onto empirical variograms. We
-need a modeled variogram in order to parameterize the structured error in our
-kriging model.  This is important because we need to have some idea of
-appropriate variogram parameters because we need to supply the kriging
-estimation fuctions with initial values of these parameters, specifically the
-partial sill ($\sigma^2$) and range ($\phi$).  The following chunk offers 3
-possible variogram model options and the best-fitting one was selected.
+One can superimpose various modeled variograms onto empirical variograms. We need a modeled variogram in order to parameterize the structured error in our
+kriging model.  This is important because we need to have some idea of appropriate variogram parameters because we need to supply the kriging estimation fuctions with initial values of these parameters, specifically the partial sill ($\sigma^2$) and range ($\phi$).  The following chunk offers 3 possible variogram model options and the best-fitting one was selected.
 
 
 ```{r meuse modeled variogram, warning = FALSE}
@@ -594,17 +459,12 @@ plot(v, v.fit)
 
 ### Kriging
 
-Credit:  The following examples were modified to use the `sf` package and
-otherwise follows the code
-[here](https://github.com/r-spatial/gstat/blob/master/demo/krige.R).
+Credit:  The following examples were modified to use the `sf` package and otherwise follows the code [here](https://github.com/r-spatial/gstat/blob/master/demo/krige.R).
 
 #### Ordinary Kriging (OK)
 
-We use kriging to get predictions at *new* locations (not used in the model
-fitting).  Use the function `krige` to accomplish this.  Give it locations where
-it should predict in the `newdata = ` option.  You also need to pass it the
-results of a fitted variogram model in the `model = ` option.  Note that in this
-example we are estimating a common mean using ordinary kriging.
+We use kriging to get predictions at *new* locations (not used in the model fitting).  Use the function `krige` to accomplish this.  Give it locations where
+it should predict in the `newdata = ` option.  You also need to pass it the results of a fitted variogram model in the `model = ` option.  Note that in this example we are estimating a common mean using ordinary kriging.
 
 ```{r meuse ordinary kriging}
 # ---- meuse ordinary kriging ----
@@ -630,12 +490,8 @@ pl2 <- plot(lzn.kr["se"], main = "OK prediction error")
 
 #### Universal kriging (UK)
 
-To do universal kriging, we also need covariates for the fixed part of the
-model.  As discussed in Mercer et al, ArcGIS doesn't (or didn't at the time that
-paper was written) allow an arbitrary set of covariates to be included in UK.
-ArcGIS only allows (or allowed) the mean function to be a function of latitude
-and longitude, which is far too limiting in many applications.  The next chunk
-demonstrates universal kriging with the `meuse` data using the square root of
+To do universal kriging, we also need covariates for the fixed part of the model.  As discussed in Mercer et al, ArcGIS doesn't (or didn't at the time that
+paper was written) allow an arbitrary set of covariates to be included in UK. ArcGIS only allows (or allowed) the mean function to be a function of latitude and longitude, which is far too limiting in many applications.  The next chunk demonstrates universal kriging with the `meuse` data using the square root of
 the distance from the river as our covariate.   
 
 
@@ -665,20 +521,10 @@ pl4 <- plot(lzn.kr["se"], main = "UK prediction error")
 
 ### Cross-validating the kriging model using the built-in CV function `krige.cv`
 
-`gstat` uses the function `krige.cv` to do kriging with cross-validation. If you
-pass it the number of folds as a scalar and then it randomly divides the data
-into that number of folds.  The default is leave one out (LOO) which is a scalar
-of the length of the data.  One can also pass to `nfolds` a vector of the length
-the data with values to indicate the groups each observation belongs in (e.g.
-the cluster variable in the snapshot dataset).
+`gstat` uses the function `krige.cv` to do kriging with cross-validation. If you pass it the number of folds as a scalar and then it randomly divides the data
+into that number of folds.  The default is leave one out (LOO) which is a scalar of the length of the data.  One can also pass to `nfolds` a vector of the length the data with values to indicate the groups each observation belongs in (e.g. the cluster variable in the snapshot dataset).
 
-First we define two functions to use later:  `krige.cv.bubble` - a bubble plot
-for kriging residuals, and `krige.cv.stats` - a function to produce prediction model
-performance statistics.  Then we use ordinary kriging with cross-validation,
-followed by universal kriging with cross-validation.  We first conduct 5-fold
-cross-validation, followed by LOO.  We observe that for OK the LOO has better
-performance.  For UK, the performance doesn't meaningfully change with the CV
-approach.
+First we define two functions to use later:  `krige.cv.bubble` - a bubble plot for kriging residuals, and `krige.cv.stats` - a function to produce prediction model performance statistics.  Then we use ordinary kriging with cross-validation, followed by universal kriging with cross-validation.  We first conduct 5-fold cross-validation, followed by LOO.  We observe that for OK the LOO has better performance.  For UK, the performance doesn't meaningfully change with the CV approach. 
 
 
 ```{r define CV functions}
@@ -787,51 +633,26 @@ bind_rows(
 
 ### Comments about geographic coordinates and conversions
 
-It is important to know the projection used in order to correctly do distance
-calculations.  Using distance calculations based on the Pythagorean theorem
-won't give you correct distances on a sphere.  Thus we can't use latitude and
-longitude directly.  The Mercer dataset we are using for this lab has three
-location variables:
+It is important to know the projection used in order to correctly do distance calculations. Using distance calculations based on the Pythagorean theorem won't give you correct distances on a sphere. Thus, we can't use latitude and longitude directly. The Mercer dataset we are using for this lab has three location variables:
 
-* `latitude` and `longitude` which is in decimal degrees 
-* `lat_m` and `long_m`, which is not clearly documented and may be in UTM, and 
-* `lambert_x` and `lambert_y` which is a Lambert projection and is in
-meters. It is the USA_Continguous_Lambert_Conformal_Conic.
+* `latitude` and `longitude`, which are in decimal degrees 
+* `lat_m` and `long_m`, which is not clearly documented and may be in UTM
+* `lambert_x` and `lambert_y`, which is a Lambert projection and is in meters. It is the USA_Contiguous_Lambert_Conformal_Conic.
 
-The `sf` package makes properly estimating distances easy as long as we input
-the correct coordinate reference system into the object.  For distances,
-[Lambert
-coordinates](https://en.wikipedia.org/wiki/Lambert_conformal_conic_projection)
-are useful because they are in meters and projected for a flat surface so
-distance calculations can be done directly.  To see documentation of the Lambert
-projection formulas, see this [New Zealand government
-website](https://www.linz.govt.nz/data/geodetic-system/coordinate-conversion/projection-conversions/lambert-conformal-conic-geographic).  However, with the `sf` package, we can easily convert to Lambert coordinates within the package, as long as we get the initial projection correct.
+The `sf` package makes properly estimating distances easy as long as we input the correct coordinate reference system into the object. For distances, [Lambert coordinates](https://en.wikipedia.org/wiki/Lambert_conformal_conic_projection) are useful because they are in meters and projected for a flat surface, so distance calculations can be done directly. To see documentation of the Lambert projection formulas, see this [New Zealand government website](https://www.linz.govt.nz/data/geodetic-system/coordinate-conversion/projection-conversions/lambert-conformal-conic-geographic). However, with the `sf` package, we can easily convert to Lambert coordinates within the package, as long as we get the initial projection correct.
 
-Here are some examples of useful packages and functions for working with spatial data
-and to get distances.  
+Here are some examples of useful packages and functions for working with spatial data and getting distances:
 
-* The `sp::SpatialPoints` function can is used to create objects of the spatial
-points from lat/long data.
-
-* The `sf` package is the modern replacement for package `sp`.
-
-* The `rgeos::gWithinDistance` function is used to find if locations are the
-same, or within a specified distance.
-
-* The `rgeos::gDistance` function is used to find the Cartesian minimum distance
-between two locations. This function can be used to create a distance matrix.
-
-* The `geosphere` package has multiple distance formulas for two points with
-latitude and longitude coordinates.  See this [stackoverflow
-comment](https://stackoverflow.com/questions/31668163/geographic-geospatial-distance-between-2-lists-of-lat-lon-points-coordinates).
-
+* The `sp::SpatialPoints` function is used to create objects of the spatial points from lat/long data.
+* The `sf` package is the modern replacement for the `sp` package.
+* The `rgeos::gWithinDistance` function is used to find if locations are the same, or within a specified distance.
+* The `rgeos::gDistance` function is used to find the Cartesian minimum distance between two locations. This function can be used to create a distance matrix.
+* The `geosphere` package has multiple distance formulas for two points with latitude and longitude coordinates. See this [stackoverflow comment](https://stackoverflow.com/questions/31668163/geographic-geospatial-distance-between-2-lists-of-lat-lon-points-coordinates).
 
 ### Snapshot data set-up
 
-First read in the snapshot data as a `sf` object.  Note we initially save the coordinate systems as variables for easy use later.  We are only
-using the fall season for this example.  Summarize the data.  Take note of the
-range of the data coordinates and other dataset features
-(e.g. which covariates are included).
+First, read in the snapshot data as an `sf` object. Note that we initially save the coordinate systems as variables for easy use later. We are only using the fall season for this example. Summarize the data, and take note of the range of the data coordinates and other dataset features (e.g., which covariates are included).
+
 
 ```{r read fall snapshot as a sf}
 #---- read fall snapshot as a sf -----
@@ -862,9 +683,7 @@ st_coordinates(fall) %>% head(10)
 
 ```
 
-For later use, we need to convert the Los Angeles grid to `sf` points.  We also
-download a file to identify locations on land so that we can drop from the grid
-locations in the ocean.
+For later use, we need to convert the Los Angeles grid to `sf` points.  We also download a file to identify locations on land so that we can drop from the grid locations in the ocean.
 
 ```{r convert LA grid to sf}
 #-----convert LA grid to sf-----
@@ -920,8 +739,7 @@ la_grid <- la_grid[st_within(la_grid,land) %>% sapply(length) > 0,]
 
 ```
 
-Now plot the snapshot data using ggplot code similar to that applied
-to the `meuse` data.  This is without any map outline.
+Now plot the snapshot data using ggplot code similar to that applied to the `meuse` data.  This is without any map outline.
 
 
 ```{r plot fall snapshot}
@@ -947,23 +765,14 @@ ggplot(data=fall) +
 
 ### Mapping the data
 
-R has many map options available now.  This seems to be evolving rapidly and
-there appears to be a growing number of tools available.  Some maps require an
-API key which adds a layer of complexity we won't address in ENVH 556.  Stamen
-maps do not require API keys, at least not yet.
+R has many map options available now. This seems to be evolving rapidly, and there appears to be a growing number of tools available. Some maps require an API key, which adds a layer of complexity we won't address in ENVH 556. Stamen maps do not require API keys, at least not yet.
 
-Here is code to use `ggmap` with a Stamen map in the background.  The steps are
-to set the region for the map and then define the borders, call the Stamen map
-after choosing from a variety of options, and then overlay our data onto this.
-For some basic info on using these in R, see [Getting started with Stamen maps
-with ggmap](https://www.r-bloggers.com/getting-started-stamen-maps-with-ggmap/).
+Here is code to use `ggmap` with a Stamen map in the background. The steps are to set the region for the map and then define the borders, call the Stamen map after choosing from a variety of options, and then overlay our data onto this. For some basic info on using these in R, see [Getting started with Stamen maps with ggmap](https://www.r-bloggers.com/getting-started-stamen-maps-with-ggmap/).
 
-Note 1:  the zoom option specifies the scaling on the map.  In `ggmap` zoom can
-be an integer between 1 and 21.  The smallest zooms are global and
-continent-level scales, the middle ones (~10-12) are city scale, and 21 is at a
-building level.
+**Note 1**: The zoom option specifies the scaling on the map. In `ggmap`, zoom can be an integer between 1 and 21. The smallest zooms are global and continent-level scales, the middle ones (~10-12) are city scale, and 21 is at a building level.
 
-Note 2:  Maps require access to the internet to load. 
+**Note 2**: Maps require access to the internet to load.
+
 
 ```{r LA Stamen map}
 # ----LA Stamen map-----
@@ -1016,16 +825,12 @@ g + geom_point(data=fall,
 
 ```
 
-Note, in comparing the above map to the one displayed in Figure 2b of Mercer, a
-few observations are in order:
+Note, in comparing the above map to the one displayed in Figure 2b of Mercer, a few observations are in order:
 
-* The gradient points in Mercer are spread out much more than in our map.  This
-was done on purpose in the displays in Mercer et al to enable the viewer to see
-the gradient values.  Our data have not been transformed this way.  (It would be
-a good exercise to implement this...)
+* The gradient points in Mercer are spread out much more than in our map.  This was done on purpose in the displays in Mercer et al to enable the viewer to see
+the gradient values.  Our data have not been transformed this way.  (It would be a good exercise to implement this...)
 
-Now add the grid to the map.  This plot isn't particularly informative, other
-than showing us the grid locations and that we successfully removed grid
+Now add the grid to the map.  This plot isn't particularly informative, other than showing us the grid locations and that we successfully removed grid
 locations in the ocean.
 
 ```{r plot the grid on the map}
@@ -1044,16 +849,11 @@ g + geom_point(data=la_grid,aes(x = st_coordinates(la_grid)[,'X'],
 
 ### Estimation using the snapshot data: Kriging using the common model
 
-Here we fit both OK and UK models using the snapshot data, evaluate the
-prediction quality using cross-validation, and then produce predictions at the
+Here we fit both OK and UK models using the snapshot data, evaluate the prediction quality using cross-validation, and then produce predictions at the
 grid locations for later use.
 
-**Step 1**:  Estimate the variograms and geostatistical model parameters
-(partial sill, range, nugget).  In the following chunk we also include an OK model
-for didactic purposes only.  The models are an OK model with no trend (i.e. no covariates in a
-LUR), and a UK model with trend (i.e. the covariates in the common model).  We
-plot the variogram fits to both models for comparison.  (Note:  Scientifically we don't think an OK
-model of these data is a sensible choice.)
+**Step 1**:  Estimate the variograms and geostatistical model parameters (partial sill, range, nugget).  In the following chunk we also include an OK model
+for didactic purposes only.  The models are an OK model with no trend (i.e. no covariates in a LUR), and a UK model with trend (i.e. the covariates in the common model).  We plot the variogram fits to both models for comparison.  (Note:  Scientifically we don't think an OK model of these data is a sensible choice.)
 
 ```{r fall estimate variogram}
 #-----fall estimate variogram-----
@@ -1108,19 +908,14 @@ plot(vfc, vfc.fit)
 
 ```
 
-Observe the exponential and spherical fits are almost indistinguishable
-visually.  They are also different from the Mercer paper.  This may be due to
-the software or starting values of the estimation.  Another reason may be the
-approach to binning.  Mercer et al used bins that reflected the design of the
-snapshot campaign.  Given the gradient sampling, the binning was based on
-irregular distance groups with shorter spacing in the shortest distances.
-Ultimately the differences in the modeled variogram estimates don't impact the
-kriging predictions, as summarized by the cross-validation performance
+Observe the exponential and spherical fits are almost indistinguishable visually.  They are also different from the Mercer paper.  This may be due to
+the software or starting values of the estimation.  Another reason may be the approach to binning.  Mercer et al used bins that reflected the design of the
+snapshot campaign.  Given the gradient sampling, the binning was based on irregular distance groups with shorter spacing in the shortest distances.
+Ultimately the differences in the modeled variogram estimates don't impact the kriging predictions, as summarized by the cross-validation performance
 statistics shown in the next step.
 
 
-**Step 2**:  Cross-validate the UK models to evaluate the quality of the
-predictions.  
+**Step 2**:  Cross-validate the UK models to evaluate the quality of the predictions.  
 
 
 ```{r krige.cv in LA, warning=FALSE}
@@ -1174,11 +969,8 @@ kc_la
 
 ### Plotting the predictions
 
-Display the predictions on a map.  First we need to join the predictions with
-the original grid in order to get the longitude and latitude coordinates.  At
-the end of the chunk we add our predictions to a Stamen map.  These are
-restricted to the subset of the grid we created above.  The second plot shows
-interpolated predictions.
+Display the predictions on a map.  First we need to join the predictions with the original grid in order to get the longitude and latitude coordinates.  At
+the end of the chunk we add our predictions to a Stamen map.  These are restricted to the subset of the grid we created above.  The second plot shows interpolated predictions.
 
 
 ```{r plot the grid predictions on the map}
@@ -1251,19 +1043,13 @@ g + stat_contour(aes(x = x, y = y, z = z, fill = ..level..), alpha = 0.07,
 
 #### Ordinary kriging using the residuals from a LUR
 
-The idea is to use a traditional linear model to fit the common model, save the
-residuals from this model, and then import the residuals into `gstat` and fit an OK
-model.  This is a homework problem.
+The idea is to use a traditional linear model to fit the common model, save the residuals from this model, and then import the residuals into `gstat` and fit an OK model.  This is a homework problem.
 
 #### Variograms to compare with Mercer -- a future TODO
 
-The idea is to try to produce the variograms like Mercer.  To accomplish this we
-need to use variable breaks to allow for very fine scale short distances to
-capture the gradient structure.  `geoR` has the breaks option to allow for this.
-In `gstat` it appears that the only option is width which allows the user to
-change the width of the intervals for binning.  This option does not appear to
-take a vector, so it may not be possible to use `gstat` without modification to
-accomplish this goal.
+The idea is to try to produce the variograms like Mercer.  To accomplish this we need to use variable breaks to allow for very fine scale short distances to
+capture the gradient structure.  `geoR` has the breaks option to allow for this. In `gstat` it appears that the only option is width which allows the user to
+change the width of the intervals for binning.  This option does not appear to take a vector, so it may not be possible to use `gstat` without modification to accomplish this goal.
 
 # Practice Session
 
@@ -1273,8 +1059,7 @@ During class we will review the output above.  Please come prepared to ask quest
 
 Use the snapshot data and focus on the winter season.
 
-1.  Repeat the universal kriging model approach shown above, this time using the
-winter season.  Also repeat the cross-validation.  Check whether your
+1.  Repeat the universal kriging model approach shown above, this time using the winter season.  Also repeat the cross-validation.  Check whether your
 performance statistics agree with those reported by Mercer et al.  Discuss.
 
 2.  Fit a LUR model (using the common model covariates) to the winter season
@@ -1287,19 +1072,12 @@ snapshot data. Take the residuals from this model and evaluate them:
     evidence of spatial structure in the data?  Do you get different insights
     from each variogram?
     
-3.  **Optional extra credit**:  Using 10-fold cross-validation with the cluster
-variable to define the CV groups, estimate predictions from a 2-step model using
-the common model covariates.  For this model you need to separately create
-cross-validated predictions from the LUR model and from the OK model of the LUR
-residuals (of the winter season dataset), and sum these to compare with
-the observed ln_nox data.
+3.  **Optional extra credit**:  Using 10-fold cross-validation with the cluster variable to define the CV groups, estimate predictions from a 2-step model using the common model covariates.  For this model you need to separately create cross-validated predictions from the LUR model and from the OK model of the LUR residuals (of the winter season dataset), and sum these to compare with the observed ln_nox data.
 
-4.	Write a basic summary of your understanding of how universal kriging differs
-from land use regression.  What additional insights do you get from the Mercer
+4.	Write a basic summary of your understanding of how universal kriging differs from land use regression.  What additional insights do you get from the Mercer
 et al paper now that you have done some kriging analyses using the snapshot data?
 
-5.	Discuss your thoughts on the most useful summaries to show from an exposure
-prediction analysis.
+5.	Discuss your thoughts on the most useful summaries to show from an exposure prediction analysis.
 
 
 # Appendix

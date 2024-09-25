@@ -9,6 +9,8 @@ format:
     toc_depth: 3
     number_sections: true
     self-contained: true #save images etc. in this file (vs folders)
+execute:
+  echo: true
 
 ---
 
@@ -16,9 +18,6 @@ This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
 ```{r setup, include=FALSE}
 #-----setup-----
-
-# set knitr options
-knitr::opts_chunk$set(echo = TRUE)
 
 # clear work space of all objects and unload all extra (non-base) packages
 rm(list = ls(all = TRUE))
@@ -80,17 +79,12 @@ rm(url, file_name, file_path, data_path)
 
 # Purpose
 
-The purpose of this lab is to use principles of “out-of-sample” assessment to
-validate regression models.   We will use the snapshot data for model
-validation, run a cross-validation, and write a program to more easily repeat
-cross-validation procedures. You will use these tools to try to understand the
-bias-variance trade-off in these data.
+The purpose of this lab is to use principles of “out-of-sample” assessment to validate regression models.   We will use the snapshot data for model validation, run a cross-validation, and write a program to more easily repeat cross-validation procedures. You will use these tools to try to understand the bias-variance trade-off in these data.
 
 
 # Getting Started
 
-This section gives some basic R commands for regression, prediction, and model
-validation.  We will also learn how to write loops and programs.
+This section gives some basic R commands for regression, prediction, and model validation.  We will also learn how to write loops and programs.
 
 ## Set-up
 
@@ -135,11 +129,7 @@ summary(lm_fall <- lm(frml, data = fall))
 
 * AIC and BIC:  
 
-Note, you can provide these functions multiple model objects to facilitate
-comparisons of AIC or BIC across models fit on the same data.  I only show one
-model object here.  This has limited utility since there isn't inherent meaning
-in the AIC or BIC estimates.  Their value is in their comparison across fitted
-models.
+Note, you can provide these functions multiple model objects to facilitate comparisons of AIC or BIC across models fit on the same data.  I only show one model object here.  This has limited utility since there isn't inherent meaning in the AIC or BIC estimates.  Their value is in their comparison across fitted models.
 
 ```{r AIC.and.BIC}
 #-----AIC and BIC-----
@@ -155,8 +145,7 @@ BIC(lm_fall)
 
 * Extract predictions, and plot them:  
 
-(Note: the `fig.width` and `fig.height`
-options to a chunk give local definitions for the figure height and width.)
+(Note: the `fig.width` and `fig.height` options to a chunk give local definitions for the figure height and width.)
 
 ```{r predictions.with.modelr, warning=FALSE, message=FALSE}
 #-----predictions with modelr-----
@@ -202,27 +191,13 @@ pred_summary
 
 ## Commands for stepwise regression (forward selection)
 
-The R function `step()` allows stepwise regression.  It has forward, backward,
-or stepwise regression search algorithms. Forward selection is a useful tool for
-ordering a sequence of models based on increasing complexity.
+The R function `step()` allows stepwise regression.  It has forward, backward, or stepwise regression search algorithms. Forward selection is a useful tool for ordering a sequence of models based on increasing complexity.
 
-Note:  The `step` function is available in both base R and in the `MASS`
-package.  While we won't use it in this lab, the function `addterm()` from the
-`MASS` package allows the addition of the next best term to a model.  This
-allows use of the F-test or a Chi-square test as alternatives to AIC which is
-implemented below.
+Note:  The `step` function is available in both base R and in the `MASS` package.  While we won't use it in this lab, the function `addterm()` from the `MASS` package allows the addition of the next best term to a model.  This allows use of the F-test or a Chi-square test as alternatives to AIC which is implemented below.
 
 * **Model Set-up**
-First define the smallest starting model (the *null* model) and the largest
-possible model we will consider (the *full* model). These define the scope.  The
-function `step()` has options to specify the direction of the model selection
-(we will only use forward selection or `direction = "forward"`), the amount of
-output (we'll use `trace = 0` to omit printing any output) and the number of
-models fit (the default number of models fit, or `steps`, is 1000).  `step()`
-minimizes the AIC and the option `k` controls the degree of penalty.  Since for
-our purposes here we don't want to stop early, we use `k = 0` which seems to not
-impose a stopping criterion in our dataset.  More investigation is needed to
-understand exactly how the `k` option operates w.r.t. stopping the algorithm.
+First define the smallest starting model (the *null* model) and the largest possible model we will consider (the *full* model). These define the scope.  The
+function `step()` has options to specify the direction of the model selection (we will only use forward selection or `direction = "forward"`), the amount of output (we'll use `trace = 0` to omit printing any output) and the number of models fit (the default number of models fit, or `steps`, is 1000).  `step()` minimizes the AIC and the option `k` controls the degree of penalty.  Since for our purposes here we don't want to stop early, we use `k = 0` which seems to not impose a stopping criterion in our dataset.  More investigation is needed to understand exactly how the `k` option operates w.r.t. stopping the algorithm.
 
 
 ```{r forward.selection.set.up.for.fall.snapshot}
@@ -260,10 +235,8 @@ full <- as.formula(paste("ln_nox ~ ", paste(covars_all, collapse= "+")))
 
 * **Forward Selection**
 
-The first model listed in the command (the "object"), is the initial model used
-to start the search.  In forward regression we want to start with the smallest
-model of interest to us, here the intercept only model.  The scope gives the
-entire range of models by also incorporating the largest possible model.
+The first model listed in the command (the "object"), is the initial model used to start the search.  In forward regression we want to start with the smallest
+model of interest to us, here the intercept only model.  The scope gives the entire range of models by also incorporating the largest possible model.
 
 ```{r fitting.forward.selection}
 #-----fitting forward selection model-----
@@ -313,11 +286,7 @@ forwardreg_fall$anova$Deviance
 
 ## Manual cross-validation and summarization
 
-Note:  We are summarizing the cross-validation results overall.  This overall
-summary is one valid way to do the summary.  Other approaches summarize the
-results in each cluster (or cross-validation group) separately and average
-these.  (See e.g. the *Introduction to Statistical Learning* textbook:
-[ISL](http://www-bcf.usc.edu/~gareth/ISL/) for guidance using this approach.)
+Note:  We are summarizing the cross-validation results overall.  This overall summary is one valid way to do the summary.  Other approaches summarize the results in each cluster (or cross-validation group) separately and average these.  (See e.g. the *Introduction to Statistical Learning* textbook: [ISL](http://www-bcf.usc.edu/~gareth/ISL/) for guidance using this approach.)
 
 
 ```{r manual.CV}
@@ -411,13 +380,7 @@ paste("MSE-based R2:  ", max(1 - MSE_pred/MSE_obs, 0))
 
 ### Tips on writing functions
 
-From the *R for Data Science* [R4DS](https://r4ds.had.co.nz/index.html) chapter
-on functions, [Chapter 19](https://r4ds.had.co.nz/functions.html), the reason to
-write functions is to automate repetitive tasks and avoid copying and pasting.
-This eliminates the need to update the code in multiple places when you make a
-change and reduces your chances of making mistakes.  A simple rule of thumb is
-to write a function whenever you have or will need at least three copies of a
-block of code.
+From the *R for Data Science* [R4DS](https://r4ds.had.co.nz/index.html) chapter on functions, [Chapter 19](https://r4ds.had.co.nz/functions.html), the reason to write functions is to automate repetitive tasks and avoid copying and pasting. This eliminates the need to update the code in multiple places when you make a change and reduces your chances of making mistakes. A simple rule of thumb is to write a function whenever you have or will need at least three copies of a block of code.
 
 Here are the 3 basic steps to writing a function as described in *R4DS*:
 
@@ -425,50 +388,25 @@ Here are the 3 basic steps to writing a function as described in *R4DS*:
 2. List the inputs or *arguments* to the function inside the function call.
 3. Put code to accomplish what you want in the body of the function.
 
-Here is a list of twelve best practices for writing functions graciously
-provided by Brian High:
+Here is a list of twelve best practices for writing functions graciously provided by Brian High:
 
-1. Use a function when you need to repeat a block of code, instead of simply 
-   copying and pasting the same block of code. I.e. "do not repeat yourself".
-2. If the code would need to be slightly different with each execution, 
-   allow for those differences in the function's argument (parameter) list.
-3. All inputs needed for the function should be in the argument list. Do not
-   refer to variables within the function which are defined outside of it, but
-   were not included in the parameter list. I.e., "make no assumptions".
-4. Define default values in the argument list if it makes sense to do so. 
-5. The order of arguments should be from most to least essential. If the
-   function operates on a data frame, for example, it should be the first 
-   argument (this also allows you to use your new function with the pipe 
-   operator, `%>%`). Put arguments with defined defaults at the end, so the 
-   function user can safely omit providing values for those arguments if they 
-   prefer to use the defaults you have defined for them. 
-6. Use argument names as consistently as possible. Refer to functions you
-   commonly use for examples of consistently named arguments.
-7. The function should return a single value or object (e.g., a vector, 
-   dataframe, list, etc.).
-8. Use the return() function at the end of your function to return this object 
-   explicitly. Otherwise, the value of the last expression of the function will 
-   be returned implicitly. You will see both methods in practice, and the use 
-   of return() varies somewhat by style.
-9. Comment your function to make it clear what it expects for input and what
-   it returns as output.
-10. Write the function to be as resuable (i.e., flexible, generic) as practical.
-11. When practical, validate the inputs (argument list) for expected data type 
-    and appropriate range if values to avoid strange results if the function is 
-    misused.
-12. Avoid huge monolithic functions that perform all sorts of tasks. Separate 
-    steps into separate functions when it makes sense to do so. This will make 
-    your code more reusable, flexible, easier to understand, and therefore 
-    easier to debug.
+1. Use a function when you need to repeat a block of code, instead of simply copying and pasting the same block of code. I.e., "do not repeat yourself."
+2. If the code would need to be slightly different with each execution, allow for those differences in the function's argument (parameter) list.
+3. All inputs needed for the function should be in the argument list. Do not refer to variables within the function that are defined outside of it but were not included in the parameter list. I.e., "make no assumptions."
+4. Define default values in the argument list if it makes sense to do so.
+5. The order of arguments should be from most to least essential. If the function operates on a data frame, for example, it should be the first argument (this also allows you to use your new function with the pipe operator, `%>%`). Put arguments with defined defaults at the end so the function user can safely omit providing values for those arguments if they prefer to use the defaults you have defined for them.
+6. Use argument names as consistently as possible. Refer to functions you commonly use for examples of consistently named arguments.
+7. The function should return a single value or object (e.g., a vector, dataframe, list, etc.).
+8. Use the `return()` function at the end of your function to return this object explicitly. Otherwise, the value of the last expression of the function will be returned implicitly. You will see both methods in practice, and the use of `return()` varies somewhat by style.
+9. Comment your function to make it clear what it expects for input and what it returns as output.
+10. Write the function to be as reusable (i.e., flexible, generic) as practical.
+11. When practical, validate the inputs (argument list) for expected data type and appropriate range of values to avoid strange results if the function is misused.
+12. Avoid huge monolithic functions that perform all sorts of tasks. Separate steps into separate functions when it makes sense to do so. This will make your code more reusable, flexible, easier to understand, and therefore easier to debug.
 
 
 ### Our first function:  `get_MSE()`
 
-To start our learning process, first we write a function to estimate the MSE and
-MSE-based R^2^.  We call it `get_MSE()`.  Note that in addition to its name and
-arguments, there are key formatting details that are required in defining
-functions in R.  In particular, pay attention to the arguments inside the
-parentheses in the function command, and the use of curly brackets.
+To start our learning process, first, we write a function to estimate the MSE and MSE-based R^2^. We call it `get_MSE()`. Note that in addition to its name and arguments, there are key formatting details that are required in defining functions in R. In particular, pay attention to the arguments inside the parentheses in the function command and the use of curly brackets.
 
 ```{r define get_MSE}
 #-----define get_MSE function-----
@@ -611,8 +549,7 @@ fall <- mutate(fall, CV_grp = CV_grp)
 
 ```
 
-Now test the CV on random groups.  Note that these out-of-sample results should
-look better.  Why is that the case? (This is a homework challenge question.)
+Now test the CV on random groups.  Note that these out-of-sample results should look better.  Why is that the case? (This is a homework challenge question.)
 
 ```{r CV.results.on.random.groups}
 #-----CV results on random groups-----
@@ -641,8 +578,7 @@ ggplot(data = temp2, aes(ln_nox, cvpreds)) +
 
 ## Bias-variance trade-off analysis 
 
-Assignment Request:	Use the order of entry into the stepwise to sequentially
-complete the following computations.  For models with one up to the maximum
+Assignment Request:	Use the order of entry into the stepwise to sequentially complete the following computations.  For models with one up to the maximum
 number of selected variables:  
 
 1. Use the full dataset to obtain in-sample estimates of the RMSE and R2.  
@@ -652,12 +588,10 @@ number of selected variables:
 Steps to coding this:  
 * compute/retrieve the vector of names output from the forward selection model  
 * loop over the maximum number of covariates from forward selection  
-* create a formula that is the linear combination of the first `i` terms of the
-forward selection model   
+* create a formula that is the linear combination of the first `i` terms of the forward selection model   
 * summarize the in-sample prediction MSE and R2   
 * cross-validate this and summarize the out-of-sample MSE and R2   
-* store the key set of results, plus the number of covariates in the model and
-possibly the variable added to use in plotting   
+* store the key set of results, plus the number of covariates in the model and possibly the variable added to use in plotting   
 * use ggplot to make the bias-variance trade-off plot  
 
 
@@ -701,8 +635,7 @@ res <- lapply(seq_along(covars_forward), function(i){
 
 ### Now plot the bias-variance trade-off
 
-Note: the precipitous drop in R2 in the out of sample assessment is best
-explained by major overfitting of this model after ~ 30 covariates.
+Note: the precipitous drop in R2 in the out of sample assessment is best explained by major overfitting of this model after ~ 30 covariates.
 
 ```{r bias-var separate plots}
 #-----bias-var separate plots-----
@@ -804,52 +737,26 @@ combined_plot
 
 # Practice Session
 
-This section covers basic practice to be completed during the lab.   We are
-going to use the snapshot data described in [Mercer et al,
-2011](https://doi.org/10.1016/j.atmosenv.2011.05.043), discussed in class, and
-used last week.  It can also be found on the class website.  Note that in this
-lab we are treating the errors are independent and identically distributed even
-though this assumption is not correct in these data.  (This is the same
-assumption typically made in LUR modeling.)
+# Practice Session
+
+This section covers basic practice to be completed during the lab. We are going to use the snapshot data described in [Mercer et al, 2011](https://doi.org/10.1016/j.atmosenv.2011.05.043), discussed in class, and used last week. It can also be found on the class website. Note that in this lab we are treating the errors as independent and identically distributed even though this assumption is not correct in these data. (This is the same assumption typically made in LUR modeling.)
 
 Perform the following tasks:
 
 1. Determine the R project you will use.
-2. Explore the dataset a bit, focusing on one particular season.  Make sure you
-have some basic understanding of the outcome variable (*ln_nox*), the CV
-grouping variable (*cluster*), and the large number of covariates you can use in
-your prediction modeling.   In this lab you should restrict your analysis to one
-season (e.g. fall for the practice session; winter for homework).
-3. Fit the model for one of the seasons given in Table 4 of Mercer et al. Make
-note of these in-sample estimates of R^2^ and RMSE.
-4. Try to manually cross-validate this model using the code given above.
-Compare the CV R^2^ and RMSE to your in-sample estimates.  (Note:  Use the cluster
-variable in the dataset to define your CV groups.)
-5. Use the cross-validation function and repeat your cross-validation analysis.
-(If you use the same groups, you should get the same results as in the previous
-step.)
-6. Make a scatterplot comparing *ln_nox* (the observed dependent variable) on the
-x-axis with the cross-validated predictions on the y-axis.  Add the 1:1 line to
-your plot. (If you also want to show the best-fit line, you’ll need to put the
-predictions on the x-axis rather than the y-axis.)
-7. Create your own version of the bias-variance trade-off plot shown in class
-using the following steps:
-    a. Do a forward stepwise regression of *ln_nox* on a set of plausible variables
-with a lax entry criterion (`k=0`) in the `step()` function.  (You may restrict
-your attention to the list in the forward selection model example given above.)
-See the code to learn how to keep track of the order the variables were added.
-    b. Use the order of entry into the stepwise to sequentially complete the
-following computations.  For models with one up to the maximum number of
-selected variables:
+2. Explore the dataset a bit, focusing on one particular season. Make sure you have some basic understanding of the outcome variable (*ln_nox*), the CV grouping variable (*cluster*), and the large number of covariates you can use in your prediction modeling. In this lab you should restrict your analysis to one season (e.g., fall for the practice session; winter for homework).
+3. Fit the model for one of the seasons given in Table 4 of Mercer et al. Make note of these in-sample estimates of R^2^ and RMSE.
+4. Try to manually cross-validate this model using the code given above. Compare the CV R^2^ and RMSE to your in-sample estimates. (Note: Use the cluster variable in the dataset to define your CV groups.)
+5. Use the cross-validation function and repeat your cross-validation analysis. (If you use the same groups, you should get the same results as in the previous step.)
+6. Make a scatterplot comparing *ln_nox* (the observed dependent variable) on the x-axis with the cross-validated predictions on the y-axis. Add the 1:1 line to your plot. (If you also want to show the best-fit line, you’ll need to put the predictions on the x-axis rather than the y-axis.)
+7. Create your own version of the bias-variance trade-off plot shown in class using the following steps:
+    a. Do a forward stepwise regression of *ln_nox* on a set of plausible variables with a lax entry criterion (`k=0`) in the `step()` function. (You may restrict your attention to the list in the forward selection model example given above.) See the code to learn how to keep track of the order the variables were added.
+    b. Use the order of entry into the stepwise to sequentially complete the following computations. For models with one up to the maximum number of selected variables:
         i. Use the full dataset to obtain in-sample estimates of the RMSE and R^2^.
         ii. Estimate predicted values using cross-validation.
         iii. Compute out-of-sample RMSE and MSE-based R^2^ estimates.
-    c. In a table or figure(s), summarize the number of variables in each model
-along with the R^2^ and/or RMSE estimates from CV and the training data.  If you
-choose to show your results in a plot, put the number of variables in the model
-on the x-axis vs. the R^2^ or RMSE estimates on the y-axis.  Distinguish the two
-kinds of estimates on your plot.  If you choose to show your results in a table,
-also include a column for the variable name of the variable added.
+    c. In a table or figure(s), summarize the number of variables in each model along with the R^2^ and/or RMSE estimates from CV and the training data. If you choose to show your results in a plot, put the number of variables in the model on the x-axis vs. the R^2^ or RMSE estimates on the y-axis. Distinguish the two kinds of estimates on your plot. If you choose to show your results in a table, also include a column for the variable name of the variable added.
+
 
 # Homework Exercises
 
@@ -857,7 +764,7 @@ also include a column for the variable name of the variable added.
 present your results:
 
     a.  Describe the results (with appropriate displays in table(s) and/or
-    figures(s)), and
+     figures(s)), and
     
     b.  Discuss the insights you have obtained from your analyses, both of the
     training data alone and after cross-validation. In your discussion, comment

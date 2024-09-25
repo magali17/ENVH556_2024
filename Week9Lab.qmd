@@ -14,6 +14,9 @@ format:
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
+# --> NOTE: HAS RENDERING ISSUE     
+# --> NOTE: FORMAT FROM .RMD FILE DOES NOT WRAP TEXT HERE; UPDATE     
+
 ```{r setup, include=FALSE}
 #-----setup-----
 
@@ -83,17 +86,9 @@ if (!dir.exists(data_dir)) {
 
 # Introduction and Purpose
 
-The purpose of this lab is to practice working with time series data, develop
-facility in importing and merging data of varying time scales, smoothing
-approaches, and some analysis tools to reduce the complexity of these data. In
-addition, as with all the labs in this course, you should focus on writing up a
-coherent lab report that addresses the scientific context and scientific
-questions.
+The purpose of this lab is to practice working with time series data, develop facility in importing and merging data of varying time scales, smoothing approaches, and some analysis tools to reduce the complexity of these data. In addition, as with all the labs in this course, you should focus on writing up a coherent lab report that addresses the scientific context and scientific questions.
 
-In this lab exercise we will use data collected as part of the MOV-UP mobile
-monitoring campaign. This data was collected on 1-second and 10-second time
-scales. The lab will walk you through the steps of importing the raw instrument
-data. The MOV-UP study has collected data from the following instruments: 
+In this lab exercise, we will use data collected as part of the MOV-UP mobile monitoring campaign. This data was collected on 1-second and 10-second time scales. The lab will walk you through the steps of importing the raw instrument data. The MOV-UP study has collected data from the following instruments:  
 
   * GPS tracker
   * particle counter (P-Trak, model 8525, TSI Inc., MN)
@@ -102,33 +97,20 @@ data. The MOV-UP study has collected data from the following instruments:
   * particle sizing spectrometer (NanoScan)
   * carbon dioxide (CO<sub>2</sub>) (SenseAir K-30-FS)
 
-The full suite of instruments and their characteristics of the platform used in
-this study can be found in [Riley et al.,
-2014](https://doi.org/10.1016/j.atmosenv.2014.09.018), [Larson et al.,
-2017](https://doi.org/10.1016/j.atmosenv.2016.12.037), and [Xiang et
-al.,2020](https://doi.org/10.1021/acs.est.0c00612). The remainder of the code in
-this week's lab uses the GPS, P-Trak, and CO<sub>2</sub> measurements.
-
+The full suite of instruments and their characteristics of the platform used in this study can be found in [Riley et al., 2014](https://doi.org/10.1016/j.atmosenv.2014.09.018), [Larson et al., 2017](https://doi.org/10.1016/j.atmosenv.2016.12.037), and [Xiang et al., 2020](https://doi.org/10.1021/acs.est.0c00612). The remainder of the code in this week's lab uses the GPS, P-Trak, and CO<sub>2</sub> measurements.
 
 # Dates and Times
 
-Managing dates and times in exposure assessment is a common challenge because
-there are a variety of common date and time formats used to log instrument data.
-You've no doubt encountered the following representations of dates:
+Managing dates and times in exposure assessment is a common challenge because there are a variety of common date and time formats used to log instrument data. You've no doubt encountered the following representations of dates:
 
    * `r format(Sys.time(), '%d %b, %Y')`
    * `r format(Sys.time(), '%m/%d/%Y')`
    * `r format(Sys.time(), '%Y-%m-%d')`
 
-With direct-reading instruments made all over the world, you'll have the
-potential to encounter many devices that use different date and time formats.
-You'll find it advantageous to convert everything to a standardized format,
-including the time zone. Consistently using a standardized date and time format
-will make it less likely that you'll interpret a date and time incorrectly.
+With direct-reading instruments made all over the world, you'll have the potential to encounter many devices that use different date and time formats. You'll find it advantageous to convert everything to a standardized format, including the time zone. Consistently using a standardized date and time format will make it less likely that you'll interpret a date and time incorrectly.
 
-Date objects in `R` are of class `Date`, and compound date and time ("datetime")
-objects, are of class `POSIXct` (shown as `dttm` when a tibble is printed to the
-console). Let's take a look at  these object types and show their classes: 
+Date objects in `R` are of class `Date`, and compound date and time ("datetime") objects are of class `POSIXct` (shown as `dttm` when a tibble is printed to the console). Let's take a look at these object types and show their classes:
+
 
 ```{r datetime.and.date.objects}
 #-----datetime.and.date objects-----
@@ -151,41 +133,22 @@ class(Sys.Date())
 
 ```
 
-Internally, date and datetime objects store the number of seconds (for
-`POSIXct`) or days (for `Date`) since January 1st 1970 at midnight. So for the
-current time and date these values are `r as.numeric(Sys.time())` seconds and 
-`r as.numeric(Sys.Date())` days. When printed to the console, they are displayed
-in a human-readable format along the the International Organization for
-Standardization (ISO) 8601 date and time standard. ISO 8601 provides an
-unambiguous, well-known, and well-defined method of representing dates and
-times.
+Internally, date and datetime objects store the number of seconds (for `POSIXct`) or days (for `Date`) since January 1st, 1970, at midnight. So for the current time and date, these values are `r as.numeric(Sys.time())` seconds and `r as.numeric(Sys.Date())` days. When printed to the console, they are displayed in a human-readable format along with the International Organization for Standardization (ISO) 8601 date and time standard. ISO 8601 provides an unambiguous, well-known, and well-defined method of representing dates and times.
 
-It is often necessary to define date/time components or the format of a datetime
-object specifically for each instrument. There are several reasons in practice
-why we need to pay careful attention to this:  
+It is often necessary to define date/time components or the format of a datetime object specifically for each instrument. There are several reasons in practice why we need to pay careful attention to this:  
 
-  * the time scale of each instrument can be different, 
-  * the internal instrument clocks can be different from each other and/or the
-    current time, or
-  * the instruments may be using different time zones, daylight savings time
-    conventions, or there may be issues with simultaneous measurements on either
-    side of the international date line.
+  * The time scale of each instrument can be different. 
+  * The internal instrument clocks can be different from each other and/or the current time.
+  * The instruments may be using different time zones, daylight savings time conventions, or there may be issues with simultaneous measurements on either side of the international date line.
 
-Regardless, it is necessary to ensure a common schedule prior to merging the
-data. Accounting for these issues during the initial data wrangling will make it
-easier to handle date and datetime variables throughout your analysis process.
-
+Regardless, it is necessary to ensure a common schedule prior to merging the data. Accounting for these issues during the initial data wrangling will make it easier to handle date and datetime variables throughout your analysis process.
 
 # Identify Files of Interest, Read Files & Wrangle
 
-Here, we'll focus on CO<sub>2</sub> data from Car 1 (there were 2 cars), for your
-assignment we ask you to analyze data from P-Traks, either using the same car or
-the other car.
+Here, we'll focus on CO<sub>2</sub> data from Car 1 (there were 2 cars); for your assignment, we ask you to analyze data from P-Traks, either using the same car or the other car.
 
-In each of the following chunks we show the tibble. In the `.html` file you can
-scroll through the first 10,000 rows.  However, don't assume that 10,000 is the
-maximum number of observations in the dataset. To learn that use `glimpse` or
-`str`.
+In each of the following chunks, we show the tibble. In the `.html` file, you can scroll through the first 10,000 rows. However, don't assume that 10,000 is the maximum number of observations in the dataset. To learn that, use `glimpse` or `str`.
+
 
 ```{r gather.file.names.for.import}
 #-----gather file names for import-----
@@ -219,18 +182,12 @@ gps
 
 ## P-Trak
 
-These instruments collect ultrafine particles (UFPs) at 1-second time
-resolution. In order to capture the change in ultrafine particles, two ultrafine
-particle counters (P-Trak) instruments were used. One instrument was operated
-under standard conditions and reported the total particle number concentration
-(in units of particles/cm^3^, #/cm^3^, pt/cm^3^, or 1/cm^3^) for all particles
-with diameters between 20 nm - 1 um. The second P-Trak operated using a screened
-inlet. The mesh size used and the number of layers of mesh were selected to
-intercept the smallest particles as they entered the system and changed the
-lower particle size to 36 nm. The difference between the unscreened and screened
-P-Trak instruments provided an estimate the particle concentration of 20-36 nm
-particles. This was verified using a particle Scanning Mobility Particle Sizer
-Spectrometer.
+These instruments collect ultrafine particles (UFPs) at 1-second time resolution. In order to capture the change in ultrafine particles, two ultrafine
+particle counters (P-Trak) instruments were used. One instrument was operated under standard conditions and reported the total particle number concentration
+(in units of particles/cm^3^, #/cm^3^, pt/cm^3^, or 1/cm^3^) for all particles with diameters between 20 nm - 1 um. The second P-Trak operated using a screened
+inlet. The mesh size used and the number of layers of mesh were selected to intercept the smallest particles as they entered the system and changed the
+lower particle size to 36 nm. The difference between the unscreened and screened P-Trak instruments provided an estimate the particle concentration of 20-36 nm
+particles. This was verified using a particle Scanning Mobility Particle Sizer Spectrometer.
 
 ```{r p.trak, message=FALSE}
 #-----p-trak-----
@@ -305,20 +262,15 @@ co2
 
 # Merge & Inspect Instrument Data
 
-The `purrr` package from `tidyverse` is a functional programming tool that
-allows you to apply a function iteratively over a list.  We use that next to
-merge (or "join") the datasets.  Note that the `full_join` function searches for
-common column names and joins on these. Alternatively you can add this argument:
-`by = c("date", "time", "datetime")`.
+The `purrr` package from `tidyverse` is a functional programming tool that allows you to apply a function iteratively over a list.  We use that next to
+merge (or "join") the datasets.  Note that the `full_join` function searches for common column names and joins on these. Alternatively you can add this argument: `by = c("date", "time", "datetime")`.
 
-We print out the dataset to get a basic idea of whether the merge worked.  Ask
-yourself questions like the following:
+We print out the dataset to get a basic idea of whether the merge worked.  Ask yourself questions like the following:
 
   * Are there missing data and what is its pattern?
   * Do the variables (columns) in the final dataset make sense to you?  
 
-We observe that early rows of the dataset have missing GPS and CO<sub>2</sub>
-data, so we know this is something we need to investigate further.
+We observe that early rows of the dataset have missing GPS and CO<sub>2</sub> data, so we know this is something we need to investigate further.
 
 ```{r merge.datasets}
 #-----merge datasets-----
@@ -343,8 +295,7 @@ glimpse(all_data)
 
 ## Plot Data 
 
-Let's make a quick visualization of the concentration data to get an idea of the
-data we're working with.
+Let's make a quick visualization of the concentration data to get an idea of the data we're working with.
 
 What features do you see?
 
@@ -369,12 +320,8 @@ ggplot(aes(x = datetime, y = concentration)) +
 
 ```
 
-Data availability plots can be a useful initial check to visualize what data we
-have across instruments over time. We show one variable from each dataset. In
-this case the plot is not very informative because the data are fairly complete
-and the plot doesn't make it easy to see the limited amount of missing data that
-are present even though we already observed that there are missing data after
-merging.
+Data availability plots can be a useful initial check to visualize what data we have across instruments over time. We show one variable from each dataset. In
+this case the plot is not very informative because the data are fairly complete and the plot doesn't make it easy to see the limited amount of missing data that are present even though we already observed that there are missing data after merging.
 
 ```{r data.availability.plot}
 #-----data availability plot-----
@@ -396,10 +343,8 @@ ggplot(aes(x = datetime, y = measurement, color = factor(measurement)) ) +
 
 ## Missing Data
 
-Next we try to precisely determine how much missing data we have and what are
-the likely sources of missingness in our data. First we calculate the total and
-percent missing for every variable in the dataset. We observe that the presence
-of missing data depends upon the instrument.
+Next we try to precisely determine how much missing data we have and what are the likely sources of missingness in our data. First we calculate the total and
+percent missing for every variable in the dataset. We observe that the presence of missing data depends upon the instrument.
 
 ```{r missing}
 #-----missing-----
@@ -423,8 +368,7 @@ lapply(all_data, function(i){
 
 # Time Interval
 
-Our data appeared to be on a similar 1-second time interval. Let's confirm by
-calculating the difference in time between consecutive measurements in each of
+Our data appeared to be on a similar 1-second time interval. Let's confirm by calculating the difference in time between consecutive measurements in each of
 our datasets:
 
 ```{r time.stamps}
