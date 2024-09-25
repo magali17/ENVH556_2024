@@ -20,7 +20,9 @@ This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
 # Objectives
 
-The objective of this script is to provide you with an example workflow and code to complete the term project.
+The objective of this script is to provide you with an example workflow and code to complete the analytic section of the Term Project described in **Project Steps**.
+
+This document does not include all aspects required for the project (e.g., write up, group work). Please review that documentation. 
 
 
 # Example Research Questions
@@ -92,7 +94,7 @@ grid_covariates <- download_and_read_file(data_url = "https://zenodo.org/records
 ```
 
 
-# Describe the Data
+# Explore and Describe the Data
 
 ## Numbers and Tables 
 
@@ -109,8 +111,8 @@ table(no2$variable)
 
 ```
 
-generate a summary table describing the distribution of pollutant concentrations (Min, Q25, median, mean, Q75, Max)\
-here's an example
+Generate a summary table describing the distribution of pollutant concentrations (Min, Q25, median, mean, Q75, Max). Here's an example.
+
 
 ```{r}
 
@@ -124,7 +126,6 @@ no2 %>%
     Median = median(value),
     Q75 = quantile(value, 0.75),
     Max = max(value),
-    
     Mean = mean(value),
     SD = sd(value)
     ) %>%
@@ -138,7 +139,7 @@ no2 %>%
 
 ## Visualizations 
 
-Summarize the distribution of pollutant concentrations. Here's a density plot. How are these measurements distributed? 
+Visualize the distribution of pollutant concentrations. Below is a density plot that shows how these measurements are distributed.
 
 ```{r}
 no2 %>%
@@ -154,12 +155,13 @@ no2 %>%
 
 ```
 
-Let's make a map! Visualizing environmental data can help us detect spatial patterns that may otherwise be missed.  
+Mapping environmental data can help us detect spatial patterns that may otherwise be missed. 
 
-What do you see? Where are the highest and lowest concentrations? Are they what you expected to see?
+What do you see? Where are the highest and lowest concentrations? Is this what you expected to see?
 
 ```{r}
-
+# quick plot the data without a basemap.
+# note that the lat/long may be distorted here
 ggplot(data = no2, aes(x = longitude, y = latitude)) +
   geom_point(aes(color = value), alpha = 0.7) + 
   scale_color_viridis_c(option = "C", name = "NO2 (µg/m³)") +   
@@ -167,7 +169,7 @@ ggplot(data = no2, aes(x = longitude, y = latitude)) +
        x = "Longitude",
        y = "Latitude") +
   theme_minimal() +
-  theme(legend.position = "right")  # Position the legend on the right
+  theme(legend.position = "right") 
 
 
 # optional - add a basemap and make the plot interactive
@@ -238,7 +240,10 @@ left_join(no2, mm_covariates, by = "location") %>%
 
 ```
 
-# Fit a simple prediction model
+
+# Analyses to Support Your Research Question
+
+## Example of Exposure Prediction Model
 
 We'll look at m_to_a1 again as a simple example. 
 
@@ -251,9 +256,11 @@ summary(lm1)
 ```
 
 
-## Evaluate the out-of-sample model predictions
+## Example of Results Evaluation (Out-of-Sample Model Performance)
 
-Let's calculate the $R^2_{CV}$ to evaluate how well the model predicts
+Calculate the $R^2_{CV}$ to evaluate how well the model predicts.
+
+Note that here, we develop a model using a subset of the data, and predict at a *different* subset of the data the model has never seen to get a better idea of how well the model might perform out-of-sample. There are many ways to approach this. This is one common approach. 
 
 ```{r}
 # function to conduct cross-validation
@@ -301,7 +308,7 @@ no2_covariates <- cv_lm(data = no2_covariates,
 
 ```
 
-Calculate CV MSE-based R2
+Calculate CV MSE-based R2 ($R^2_{CV MSE}$).
 
 ```{r}
 calculate_mse_r2 <- function(observed, predicted) {
@@ -328,9 +335,9 @@ calculate_mse_r2(observed = no2_covariates$value,
 ```
 
 
-Calculate regression-based R2.
+Calculate regression-based R2 ($R^2_{CV Reg}$).
 
-How does this differ from MSE-based R2? Which will you report? Why?
+How does this differ from $R^2_{CV MSE}$? Which will you report? Why?
 
 ```{r}
 calculate_regression_r2 <- function(observed, predicted) {
@@ -351,9 +358,9 @@ calculate_regression_r2(observed = no2_covariates$value,
 
 ```
 
-Calculate RMSE.
+Calculate $RMSE$.
 
-What different informaiton does this provide than CV R2? 
+What different information does this provide when compared to $R^2_{CV}$?
 
 ```{r}
 calculate_rmse <- function(observed, predicted) {
@@ -372,7 +379,7 @@ calculate_rmse(observed = no2_covariates$value,
 ```
 
 
-## Calcualte the Model Residuals
+## Calcualte and Visualize the Residuals
 
 ```{r}
 no2_covariates <- no2_covariates %>%
@@ -502,37 +509,48 @@ leaflet(data = no2_covariates) %>%
 
 ```
 
-# Predict at new locations
+# Example of Application and Visualization of Findings (Predict Exposures at New Unmeasured Locations)
 
-In this example, we'll predict at grid locations in the region.
+In this example, we'll predict at grid locations in the Seattle area.
 
-Check the distribution of your modeling covariate. Is it within the range of your modeling data? 
+
+Remember, this assumes that our modeling data are representative of new prediction locations and the exposures of interest. How can you verify that? Here are some examples: 
+
+* Are these in the same area?  
+    * Yes - they are both in Seattle.   
+* Do the modeling covariates and new prediction location covarites overlap? You want to avoid clear covaraite extrapollation. 
+    * Let's check below.     
+
 
 ```{r}
+
 summary(grid_covariates$m_to_a1) 
+
+head(sort(grid_covariates$m_to_a1))
 
 ```
 
-If you have transformed any of your modeling variables, verify that the new dataset has the same transformations, as needed. Here, we'll make sure any 0 values are converted to a small constant so that we can log-transform them without error.
+If you have transformed any of your modeling variables, verify that the new dataset has the same transformations. Here, we'll make sure any 0 values are converted to a small constant so that we can log-transform them without error.
 
 ```{r}
+grid_covariates <- download_and_read_file(data_url = "https://zenodo.org/records/13761282/files/dr0311_grid_covariates.csv?download=1", 
+                                 output_file_path = file.path(data_path, "dr0311_grid_covariates.csv"))
 
 grid_covariates <- grid_covariates %>%
-  mutate(
-    # if a location is on an a1 (m_to_a1 is 0), make this a small constant (you cannot take the log of 0)
-    m_to_a1 = ifelse(m_to_a1==0, 0.1, m_to_a1),
-    predicted_value = predict(lm1, newdata = .)) %>%
-  
-  # --> TEMP: why is there an Inf? m_to_a1 very small?
-  filter(is.finite(predicted_value))
+  # if a location is on an a1 (m_to_a1 is 0), make this a small constant (you cannot take the log of 0)
+  mutate(m_to_a1 = ifelse(m_to_a1 ==0, 0.1, m_to_a1)) %>%
+  # works better when predict() is in a different mutate()
+  mutate(predicted_value = predict(lm1, newdata = .))  
 
+# # QC: check predictions
+# grid_covariates %>% select(location_id, m_to_a1, predicted_value) %>% arrange(predicted_value) %>% View()
 
 # summarize the predictions distribution
 summary(grid_covariates$predicted_value)
 
 ```
 
-## Map these predictions
+## Map These Predictions
 
 Where are the highest and lowest predicted areas of air pollution? Is this what you expected
 
