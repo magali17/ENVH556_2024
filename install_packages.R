@@ -1,12 +1,24 @@
 # Install all of the packages used in this repository (up to ~30 min run time)
+# Last Updated: 2024-09-25 by Brian High for Ubuntu 22.04.3 LTS (64-bit)
 
-# NOTE: Ubuntu (Linux) dependencies: libxml2, libpng, libfortran, libgdal, cmake
+# NOTE: Ubuntu (Linux) dependencies: libxml2, libpng-dev, libfortran, libgdal, 
+#.      cmake, libfontconfig1-dev, libharfbuzz-dev and libfribidi-dev
 #
 # - tidyverse and xml2 need libxml2
-# - Hmisc, ggmap, funModeling need libpng
+# - Hmisc, ggmap, funModeling need libpng-dev
 # - lme4, VCA, stars, sf need libgfortran
-# - rgdal needs libgdal
+# - rgdal needs libgdal                    # Note: rgdal was retired Oct. 2023
 # - nloptr (for lme4) needs cmake
+# - systemfonts needs libfontconfig1-dev 
+# - textshaping needs libharfbuzz-dev & libfribidi-dev
+#
+# On Ubuntu 22.04, these shell commands were used to install these dependencies:
+#
+# sudo apt update
+# sudo apt install r-base r-base-dev git
+# sudo apt install libxml2 libpng-dev cmake libfontconfig1-dev libharfbuzz-dev \
+#   libfribidi-dev libcurl4-openssl-dev libgdal-dev libgfortran5 libcairo2-dev \
+#   libudunits2-dev gdal-bin
 
 # Clear workspace of all objects and unload all extra (non-base) packages.
 rm(list = ls(all = TRUE))
@@ -35,55 +47,40 @@ pdflatex_ver <- try(system("pdflatex -v", intern = T, wait = T), silent = T)
 pdflatex_ver <- grep("^pdfTeX", pdflatex_ver, value = T)
 if (!(exists("pdflatex_ver") & length(pdflatex_ver) > 0)) {
   pkg_install("tinytex")
-if (!dir.exists(tinytex::tinytex_root(error = F))) tinytex::install_tinytex()
+  if (!dir.exists(tinytex::tinytex_root(error = F))) tinytex::install_tinytex()
 }
 
 # Install other packages
-## consider running this line by line if you have issues
-
-pkg_install(c("plyr", "reshape2", "tictoc", "stars", "sp", "hms"#, "sf"
-              ))
-
-# --> ERROR: SF may have issues on the SPH server. You may need to update the dependencies. GDAL, PROJ, GEOS? 
-pkg_install(c("sf"))
-
-# --> ERROR: has dependency conflicts & 'can't find gdal'
-pkg_install(c("feasts", "tidyverse", "lubridate", "broom", "rgdal", "foreign"))
-
+pkg_install(c("plyr", "reshape2", "tictoc", "stars", "sp", "sf", "hms"))
+pkg_install(c("feasts", "tidyverse", "lubridate", "broom"))
 pkg_install(c("downloader", "knitr", "formatR", "ggrepel", "Hmisc", "EnvStats"))
 pkg_install(c("codetools", "egg", "multcomp", "modelr", "car", "lme4", "VCA"))
 pkg_install(c("parallel", "NADA", "ggmap", "geoR", "maps", "limma"))
-pkg_install(c("slider", "scatterplot3d", "funModeling", "scales", "akima"))
+
+# pak::pkg_install() won't install foreign, slider and scales, so use base-r:
+if (!requireNamespace("foreign", quietly = TRUE)) install.packages("foreign")
+if (!requireNamespace("slider", quietly = TRUE)) install.packages("slider")
+if (!requireNamespace("scales", quietly = TRUE)) install.packages("scales")
+
+# For funModeling, install these dependencies first
+pkg_install(c("ROCR", "pander", "lazyeval", "moments", "entropy"))
+
+# Install rgdal from the archives because it was removed from CRAN
+# See: https://cran.r-project.org/web/packages/rgdal/index.html
+options("rgdal_show_exportToProj4_warnings" = "none")
+if (!requireNamespace("rgdal", quietly = TRUE)) install.packages(
+  'https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-7.tar.gz', 
+  repos = NULL)
+
+# Install funModeling from the archives because it was removed from CRAN
+# See: https://cran.r-project.org/web/packages/funModeling/index.html
+if (!requireNamespace("funModeling", quietly = TRUE)) install.packages(
+  "https://cran.r-project.org/src/contrib/Archive/funModeling/funModeling_1.9.4.tar.gz", 
+  repos = NULL)
+
+pkg_install(c("scatterplot3d", "akima"))
 pkg_install(c("MKmisc", "tseries", "xts", "lubridate", "tsibble", "pacman"))
 
 # Update tidyverse, if needed
-pkg_install(c("tidyverse"))
-#tidyverse::tidyverse_update()
-
-
-################################################################################
-################################################################################
-# # you may need to install some of these packages differently if you receive errors
-# install.packages("tidyverse")
-
-
-# having issues w/ 'sf'
-## 1. try again
-# install.packages("sf")
-
-## 2. sf may expect updated versions of these: GDAL, PROJ, GEOS? 
-## need to install dependencies in terminal (with permissions)? e.g.:
-## sudo apt update
-## sudo apt install libgdal-dev libgeos-dev
-
-#if (!requireNamespace("pacman", quietly = TRUE)){install.packages("pacman")}
- 
-
-# ## 3. try installing using a different approach
-# # Check if 'remotes' is installed, and install if it's not
-# if (!requireNamespace("remotes", quietly = TRUE)){install.packages("remotes")}
-# # Install 'sf' from GitHub using 'remotes'
-# remotes::install_github("r-spatial/sf")
-
-
+tidyverse::tidyverse_update()
 
