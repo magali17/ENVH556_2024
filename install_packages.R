@@ -51,6 +51,7 @@ if (!(exists("pdflatex_ver") & length(pdflatex_ver) > 0)) {
 }
 
 # Install other packages
+## if you receive errors for 'sf', you may need to remove and reinstall sf: remove.packages("sf")
 pkg_install(c("plyr", "reshape2", "tictoc", "stars", "sp", "sf", "hms"))
 pkg_install(c("feasts", "tidyverse", "lubridate", "broom"))
 pkg_install(c("downloader", "knitr", "formatR", "ggrepel", "Hmisc", "EnvStats"))
