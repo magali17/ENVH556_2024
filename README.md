@@ -6,7 +6,8 @@ This repository contains the code scripts for the ENVH 556 Quantitative Exposure
 
 ## 2. Repository Structure
 
--   **.qmd**: Files include individual lab and lecture scripts
+-   **.qmd**: Files include individual lab and lecture code scripts
+-   **.html**: Files include rendered scripts with include analytic output
 -   **/Datasets**: Where data files should be placed (not included in the repository)
 
 ## 3. Getting Started
