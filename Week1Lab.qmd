@@ -349,7 +349,7 @@ We can add what a normal distribution with the observed mean and SD of the data 
 
 With other variables, this contrast may be more stark
 
-```{r hist.in.tidyverse, warning=FALSE, message=FALSE}
+```{r hist.in.tidyverse.m_to_a1, warning=FALSE, message=FALSE}
 # Calculate the mean and standard deviation of the 'value' column
 mean_value <- mean(annual$value[annual$variable == "no2"], na.rm = TRUE)
 sd_value <- sd(annual$value[annual$variable == "no2"], na.rm = TRUE)
