@@ -1,5 +1,5 @@
 ---
-title: "Week 1 Lab:  Becoming familiar with R, RStudio, RMarkdown"
+title: "Week 1 Lab:  Becoming familiar with R, RStudio, Markdown"
 author: "ENVH 556 Autumn 2024 Instructors"
 format:
   html:
@@ -15,7 +15,6 @@ execute:
   echo.comments: false
   message: false
   warning: false
-  tidy: false
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
@@ -27,6 +26,8 @@ Note: The code in the following three chunks should typically appear at the begi
 ```{r setup, include=TRUE}
 # this "hash pipe" format also works with quatro
 #| include: true
+
+# When include = FALSE, the code and output is hidden from the final document, even if the code was executed
 
 #-----setup-------------
 
@@ -47,7 +48,10 @@ Note: The code in the following three chunks should typically appear at the begi
 
 ```
 
-```{r clear.workspace, eval=FALSE, echo=TRUE}
+```{r clear.workspace, eval=TRUE, echo=TRUE}
+# when eval=FALSE, code is not executed. E.g., for temporary code or troubleshooting
+
+
 #-----clear workspace------------
 
 # Clear the environment without clearing knitr
@@ -87,7 +91,9 @@ if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
 # dplyr:   Don't load:  part of tidyverse
 # Hmisc:  Miscellaneous functions helpful for data analysis
 # EnvStats: geoMean, geoSD, probability plotting functions
-pacman::p_load(tidyverse, knitr, Hmisc, EnvStats)
+pacman::p_load(tidyverse, knitr, Hmisc, EnvStats,
+               GGally # ggpairs()
+               )
 
 source("global_functions.R")
 
@@ -131,7 +137,6 @@ data_path <- c(file.path("Datasets", "mobile monitoring"))
 
 # create directories if they do not already exist    
 if(!dir.exists(data_path)){dir.create(data_path, showWarnings=FALSE, recursive = TRUE)}
-
 
 ```
 
@@ -213,7 +218,6 @@ sapply(annual, class)
 #assignment.)
 (annual <- as_tibble(annual)) 
 
-
 ```
 
 ### Get some basic understanding of the data
@@ -241,7 +245,10 @@ summary(annual)
 describe(annual) 
 
 # tallies of the number of observations for 'variable' (pollutant)
+# gives unique available values and their counts 
 xtabs( ~ variable, data = annual) 
+
+table(annual$variable)
 
 ```
 
@@ -421,6 +428,20 @@ annual %>%
   mutate(ln_value = log(value), 
          log10_value = log10(value) )
 
+
+# compare these log-transformations 
+annual %>%
+  mutate(ln_value = log(value), 
+         log10_value = log10(value)) %>%
+  filter(variable == "no2") %>%
+  
+  ggplot(data=.) +
+  #geom_density(aes(x=value)) + 
+  geom_density(aes(x=ln_value,  col="ln")) + 
+  geom_density(aes(x=log10_value, col="log10")) +
+  theme_classic() 
+
+
 ```
 
 ## More plots
@@ -452,18 +473,19 @@ where the added pieces are `<STAT>`: statistics to put on the plot, `<POSITION>`
 
 For more details on `ggplot` see R4DS, the [R for Data Science](https://r4ds.had.co.nz/data-visualisation.html) book by Hadley Wickham and Garrett Grolemund.
 
-### Scatterplots: Plot the relationship between NO2 and PM2.5
+### Scatterplots: Plot the relationship between pollutants
 
 `ggplot2` makes this easy:
+
+
+ Compare two pollutants: PM2.5 vs NO2
 
 ```{r scatterplot.in.tidyverse, echo=TRUE, warning=FALSE, message=FALSE}
 #-----scatterplot in tidyverse------------
 
 # make each pollutant of interest its own column, for easier plotting
 annual_wide <- annual %>%
-  filter(variable %in% c("no2", "pm2.5_ug_m3")) %>%
   pivot_wider(names_from = variable, values_from = value)
-
 
 # Plot 1: simple way to use ggplot to ask for a scatterplot
 qplot(no2, pm2.5_ug_m3, data=annual_wide) 
@@ -511,22 +533,62 @@ annual_wide %>%
     
 ```
 
+
+multi-variable comparison plots (using a 'wide' dataset and ggpairs())
+
+```{r}
+annual_wide %>%
+  # which columns should be compared?
+  select(m_to_a1, no2, pm2.5_ug_m3) %>%
+  ggpairs()  
+
+# add a smooth line
+## there are many more options to modify this
+annual_wide %>%
+  select(m_to_a1, no2, pm2.5_ug_m3) %>%
+  ggpairs(
+    lower = list(continuous = wrap("smooth", method = "loess", se = TRUE, color = "purple")),
+  )
+```
+
+
+multi-variable comparison plots (using a 'long' dataset and facet_wrap()).
+
+Note that ggplot does well with long datasets. 
+
+```{r}
+annual %>%
+  ggplot(aes(x=m_to_a1, y=value)) + 
+  # allow the y-axis to vary for each pollutant
+  facet_wrap(~variable, scales="free_y") + 
+  geom_point() + 
+  geom_smooth() + 
+  labs(y="Pollutant Conc")
+
+
+```
+
+
+
+
 ------------------------------------------------------------------------
 
 # Homework exercises
 
 Note: Refer to the lab write-up guidelines *LabReportGuidelines.html* posted on Canvas for the format and content of your lab report.
 
-(1) Make table(s) summarizing each pollutant ('variable') in this dataset. Include the arithmetic mean (AM), arithmetic standard deviation (ASD), geometric mean (GM), and geometric standard deviation (GSD) of each pollutant. Write a few sentences describing the results in the table. 
+(1) Make table(s) summarizing each pollutant ('variable') in this dataset. Include the sample size (N), number of missing observations (if any), arithmetic mean (AM), arithmetic standard deviation (ASD), geometric mean (GM), and geometric standard deviation (GSD) of each pollutant. Write a few sentences describing the results in the table. 
 
     (a) Note: This is not a concern in this dataset, but 0 values are common in many environmental datasets. You can't take the log of 0 so you would need to decide how to handle the 0's. Summary statistics from the reduced dataset, i.e. a dataset created by omitting the 0's, will be misleading. A simple alternative is to create a new variable that adds a constant to every observation and use this variable when taking logs. However, the purpose of your analysis matters since adding a constant is not always the appropriate way to handle this challenge. If you do add a constant, choose the constant to add thoughtfully. How big should it be? Should it be the same for all pollutants? Make sure to document any changes to the variables in your lab write-up.
 
-    (b) Getting GM and/or GSD in a table in R: This lab doesn't show how to get the GM and GSD using `tidyverse`; for example using `dplyr` `group_by()` and `mutate()` functions though you could (and may wish to). Instead, for demonstration, we show how to use the `EnvStats` package with `tapply` and `cbind`. 
 
-Repeat this exercise for normal stop versus collocation sites (see example code above for creating this variable).  
+(2) Repeat this exercise, stratified by normal stops versus collocation sites (see example code above for creating this variable). How do these distributiosn compare?   
 
 
-(2) Make some figures to show the distribution of the air pollution measurements ('value'). (Challenge version: Can you do this separately by site_type?) Write a few sentences describing what you see in the figures.
+(3) Make some figures to show the distribution of the air pollution measurements ('value'). (Challenge version: Can you do this separately by site_type?) Write a few sentences describing what you see in the figures.
+
+
+(4) Create some plots to compare the different pollutants (e.g., NO2 vs PM2.5). Are these highly correlated? 
 
 
 ------------------------------------------------------------------------
