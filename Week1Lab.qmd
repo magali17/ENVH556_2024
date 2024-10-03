@@ -10,7 +10,7 @@ format:
     number_sections: true
     self-contained: true #save images etc. in this file 
 execute:
-  echo: true
+  echo: true # set to 'false' when submitting labs to hide code
   cache: false
   echo.comments: false
   message: false
@@ -67,7 +67,6 @@ if (!is.null(sessionInfo()$otherPkgs)) {
     res <- suppressWarnings(
         lapply(paste('package:', names(sessionInfo()$otherPkgs), sep=""),
                detach, character.only=TRUE, unload=TRUE, force=TRUE))
-   
 }
 
 ```
