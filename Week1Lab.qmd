@@ -303,7 +303,7 @@ annual_summary <- annual %>%
             Min = min(value, na.rm = TRUE),
             Q25 = quantile(value, 0.25,na.rm = TRUE),
             Median = median(value, na.rm = TRUE),
-            Q75 = quantile(value, 0.25,na.rm = TRUE),
+            Q75 = quantile(value, 0.75,na.rm = TRUE),
             Max = max(value, na.rm = TRUE),
             Mean = mean(value, na.rm = TRUE),
             SD = sd(value, na.rm = TRUE),

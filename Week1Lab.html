@@ -3445,7 +3445,7 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">Min =</span> <span class="fu">min</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">Q25 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.25</span>,<span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">Median =</span> <span class="fu">median</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">Q75 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.25</span>,<span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">Q75 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.75</span>,<span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">Max =</span> <span class="fu">max</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">Mean =</span> <span class="fu">mean</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">SD =</span> <span class="fu">sd</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
@@ -3459,14 +3459,14 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <pre><code># A tibble: 8 × 12
   variable     N Nmiss    Min    Q25 Median    Q75    Max   Mean      SD      SE
   &lt;chr&gt;    &lt;int&gt; &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-1 co2_umo…   309     0 4.16e2 4.26e2 4.30e2 4.26e2 4.55e2 4.30e2 5.98e+0 3.40e-1
-2 ma200_i…   309     0 2.70e2 4.36e2 5.37e2 4.36e2 1.48e3 5.52e2 1.59e+2 9.06e+0
-3 no2        309     0 3.87e0 7.52e0 8.82e0 7.52e0 2.25e1 9.24e0 2.62e+0 1.49e-1
-4 ns_tota…   309     0 5.59e3 8.40e3 9.72e3 8.40e3 2.57e4 1.03e4 2.99e+3 1.70e+2
-5 pm2.5_u…   309     0 3.26e0 4.25e0 4.59e0 4.25e0 6.26e0 4.63e0 5.71e-1 3.25e-2
-6 pmdisc_…   309     0 4.83e3 7.03e3 8.36e3 7.03e3 3.49e4 9.32e3 4.09e+3 2.33e+2
-7 pnc_nos…   309     0 3.99e3 5.66e3 6.59e3 5.66e3 1.75e4 7.19e3 2.39e+3 1.36e+2
-8 pnc_scr…   309     0 1.80e3 2.55e3 3.04e3 2.55e3 7.31e3 3.15e3 8.79e+2 5.00e+1
+1 co2_umo…   309     0 4.16e2 4.26e2 4.30e2 4.34e2 4.55e2 4.30e2 5.98e+0 3.40e-1
+2 ma200_i…   309     0 2.70e2 4.36e2 5.37e2 6.33e2 1.48e3 5.52e2 1.59e+2 9.06e+0
+3 no2        309     0 3.87e0 7.52e0 8.82e0 1.04e1 2.25e1 9.24e0 2.62e+0 1.49e-1
+4 ns_tota…   309     0 5.59e3 8.40e3 9.72e3 1.12e4 2.57e4 1.03e4 2.99e+3 1.70e+2
+5 pm2.5_u…   309     0 3.26e0 4.25e0 4.59e0 5.00e0 6.26e0 4.63e0 5.71e-1 3.25e-2
+6 pmdisc_…   309     0 4.83e3 7.03e3 8.36e3 1.02e4 3.49e4 9.32e3 4.09e+3 2.33e+2
+7 pnc_nos…   309     0 3.99e3 5.66e3 6.59e3 8.02e3 1.75e4 7.19e3 2.39e+3 1.36e+2
+8 pnc_scr…   309     0 1.80e3 2.55e3 3.04e3 3.50e3 7.31e3 3.15e3 8.79e+2 5.00e+1
 # ℹ 1 more variable: IQR &lt;dbl&gt;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># And here is the same result printed using kable</span></span>
@@ -3482,7 +3482,7 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <col style="width: 8%">
 <col style="width: 8%">
 <col style="width: 8%">
-<col style="width: 8%">
+<col style="width: 9%">
 <col style="width: 9%">
 <col style="width: 9%">
 <col style="width: 8%">
@@ -3513,7 +3513,7 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <td style="text-align: right;">415.79</td>
 <td style="text-align: right;">426.27</td>
 <td style="text-align: right;">430.05</td>
-<td style="text-align: right;">426.27</td>
+<td style="text-align: right;">434.23</td>
 <td style="text-align: right;">454.97</td>
 <td style="text-align: right;">430.18</td>
 <td style="text-align: right;">5.98</td>
@@ -3527,7 +3527,7 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <td style="text-align: right;">270.23</td>
 <td style="text-align: right;">436.24</td>
 <td style="text-align: right;">537.04</td>
-<td style="text-align: right;">436.24</td>
+<td style="text-align: right;">633.25</td>
 <td style="text-align: right;">1482.36</td>
 <td style="text-align: right;">552.10</td>
 <td style="text-align: right;">159.22</td>
@@ -3541,7 +3541,7 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <td style="text-align: right;">3.87</td>
 <td style="text-align: right;">7.52</td>
 <td style="text-align: right;">8.82</td>
-<td style="text-align: right;">7.52</td>
+<td style="text-align: right;">10.39</td>
 <td style="text-align: right;">22.52</td>
 <td style="text-align: right;">9.24</td>
 <td style="text-align: right;">2.62</td>
@@ -3555,7 +3555,7 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <td style="text-align: right;">5594.76</td>
 <td style="text-align: right;">8403.63</td>
 <td style="text-align: right;">9718.73</td>
-<td style="text-align: right;">8403.63</td>
+<td style="text-align: right;">11157.87</td>
 <td style="text-align: right;">25696.31</td>
 <td style="text-align: right;">10277.60</td>
 <td style="text-align: right;">2988.00</td>
@@ -3569,7 +3569,7 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <td style="text-align: right;">3.26</td>
 <td style="text-align: right;">4.25</td>
 <td style="text-align: right;">4.59</td>
-<td style="text-align: right;">4.25</td>
+<td style="text-align: right;">5.00</td>
 <td style="text-align: right;">6.26</td>
 <td style="text-align: right;">4.63</td>
 <td style="text-align: right;">0.57</td>
@@ -3583,7 +3583,7 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <td style="text-align: right;">4828.34</td>
 <td style="text-align: right;">7033.71</td>
 <td style="text-align: right;">8355.35</td>
-<td style="text-align: right;">7033.71</td>
+<td style="text-align: right;">10182.88</td>
 <td style="text-align: right;">34944.94</td>
 <td style="text-align: right;">9321.85</td>
 <td style="text-align: right;">4088.94</td>
@@ -3597,7 +3597,7 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <td style="text-align: right;">3985.55</td>
 <td style="text-align: right;">5661.54</td>
 <td style="text-align: right;">6589.14</td>
-<td style="text-align: right;">5661.54</td>
+<td style="text-align: right;">8023.00</td>
 <td style="text-align: right;">17543.63</td>
 <td style="text-align: right;">7191.41</td>
 <td style="text-align: right;">2388.53</td>
@@ -3611,7 +3611,7 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <td style="text-align: right;">1803.60</td>
 <td style="text-align: right;">2549.62</td>
 <td style="text-align: right;">3040.90</td>
-<td style="text-align: right;">2549.62</td>
+<td style="text-align: right;">3500.22</td>
 <td style="text-align: right;">7308.24</td>
 <td style="text-align: right;">3147.83</td>
 <td style="text-align: right;">878.60</td>
@@ -4115,7 +4115,7 @@ loaded via a namespace (and not attached):
 <span id="cb49-155"><a href="#cb49-155" aria-hidden="true" tabindex="-1"></a>            <span class="at">Min =</span> <span class="fu">min</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb49-156"><a href="#cb49-156" aria-hidden="true" tabindex="-1"></a>            <span class="at">Q25 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.25</span>,<span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb49-157"><a href="#cb49-157" aria-hidden="true" tabindex="-1"></a>            <span class="at">Median =</span> <span class="fu">median</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb49-158"><a href="#cb49-158" aria-hidden="true" tabindex="-1"></a>            <span class="at">Q75 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.25</span>,<span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb49-158"><a href="#cb49-158" aria-hidden="true" tabindex="-1"></a>            <span class="at">Q75 =</span> <span class="fu">quantile</span>(value, <span class="fl">0.75</span>,<span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb49-159"><a href="#cb49-159" aria-hidden="true" tabindex="-1"></a>            <span class="at">Max =</span> <span class="fu">max</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb49-160"><a href="#cb49-160" aria-hidden="true" tabindex="-1"></a>            <span class="at">Mean =</span> <span class="fu">mean</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb49-161"><a href="#cb49-161" aria-hidden="true" tabindex="-1"></a>            <span class="at">SD =</span> <span class="fu">sd</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
@@ -4336,7 +4336,7 @@ function (data_url, output_file_path)
     }
     return(data)
 }
-&lt;bytecode: 0x1174c91f8&gt;</code></pre>
+&lt;bytecode: 0x10d199df8&gt;</code></pre>
 </div>
 </div>
 </section>
