@@ -416,7 +416,12 @@ Typically exposure data appear to be log-normally distributed. In this section w
 ### Logarithmic transformations using `dplyr`:
 
 -   `mutate(my_dataset, ln_variable = log(variable) )` creates the natural log-transformed variable in the data frame.
+  - frequently used in many fields, including environmental health
+  - can result in more "normal" looking distributions
+  - more challenging to intuitively translate back to native units (ln(100)=4.6)
+
 -   `mutate(my_dataset, log10_variable = log10(variable) )` creates the base 10 log-transformed variable in the data frame.
+  - can be more intuitive (get powers of ten - e.g., log10(100)=2)
 
 Note that `mutate` adds the new variables to the end of the dataset. For more functions you can use with `mutate` to create new variables, see R4DS pp. 56-58.
 
