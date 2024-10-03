@@ -3645,8 +3645,12 @@ pmdisc_number  pnc_noscreen    pnc_screen
 <section id="logarithmic-transformations-using-dplyr" class="level3">
 <h3 class="anchored" data-anchor-id="logarithmic-transformations-using-dplyr">Logarithmic transformations using <code>dplyr</code>:</h3>
 <ul>
-<li><code>mutate(my_dataset, ln_variable = log(variable) )</code> creates the natural log-transformed variable in the data frame.</li>
-<li><code>mutate(my_dataset, log10_variable = log10(variable) )</code> creates the base 10 log-transformed variable in the data frame.</li>
+<li><p><code>mutate(my_dataset, ln_variable = log(variable) )</code> creates the natural log-transformed variable in the data frame.</p></li>
+<li><p>frequently used in many fields, including environmental health</p></li>
+<li><p>can result in more “normal” looking distributions</p></li>
+<li><p>more challenging to intuitively translate back to native units (ln(100)=4.6)</p></li>
+<li><p><code>mutate(my_dataset, log10_variable = log10(variable) )</code> creates the base 10 log-transformed variable in the data frame.</p></li>
+<li><p>can be more intuitive (get powers of ten - e.g., log10(100)=2)</p></li>
 </ul>
 <p>Note that <code>mutate</code> adds the new variables to the end of the dataset. For more functions you can use with <code>mutate</code> to create new variables, see R4DS pp. 56-58.</p>
 <div class="cell">
@@ -4249,7 +4253,7 @@ function (data_url, output_file_path)
     }
     return(data)
 }
-&lt;bytecode: 0x10e1cf808&gt;</code></pre>
+&lt;bytecode: 0x110a37d68&gt;</code></pre>
 </div>
 </div>
 </section>
