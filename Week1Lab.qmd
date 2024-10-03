@@ -300,9 +300,15 @@ annual_summary <- annual %>%
   group_by(variable) %>% 
   summarise(N = sum(!is.na(value)),
             Nmiss = sum(is.na(value)),
-            mean = mean(value, na.rm = TRUE),
-            sd = sd(value, na.rm = TRUE),
-            se = sd/sqrt(N)
+            Min = min(value, na.rm = TRUE),
+            Q25 = quantile(value, 0.25,na.rm = TRUE),
+            Median = median(value, na.rm = TRUE),
+            Q75 = quantile(value, 0.25,na.rm = TRUE),
+            Max = max(value, na.rm = TRUE),
+            Mean = mean(value, na.rm = TRUE),
+            SD = sd(value, na.rm = TRUE),
+            SE = SD/sqrt(N),
+            IQR = IQR(value)
             )
 
 # show tibble
