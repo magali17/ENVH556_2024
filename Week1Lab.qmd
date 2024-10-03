@@ -449,7 +449,8 @@ annual %>%
   #geom_density(aes(x=value)) + 
   geom_density(aes(x=ln_value,  col="ln")) + 
   geom_density(aes(x=log10_value, col="log10")) +
-  theme_classic() 
+  theme_classic() + 
+  labs(x="value")
 
 
 ```
@@ -536,7 +537,8 @@ annual_wide %>%
   ggplot(data = ., aes(no2, pm2.5_ug_m3, col=site_type)) + 
   geom_point() + 
   facet_wrap(~site_type) +
-  stat_smooth(method = "loess", se = FALSE) +
+  stat_smooth(method = lm, se = FALSE) +
+  stat_smooth(method = "loess", col="green") +
     labs(title = "Scatterplot of the NO2 (ppb) vs. PM2.5 (ug/m3) data",  
          x = "NO (ppm)",
          y = "PM2.5 (ug/m3)")
@@ -571,7 +573,7 @@ annual %>%
   ggplot(aes(x=m_to_a1, y=value)) + 
   # allow the y-axis to vary for each pollutant
   facet_wrap(~variable, scales="free_y") + 
-  geom_point() + 
+  geom_point(alpha=0.3) + 
   geom_smooth() + 
   labs(y="Pollutant Conc")
 
