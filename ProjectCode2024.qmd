@@ -317,8 +317,8 @@ calculate_mse_r2 <- function(observed, predicted) {
   mse <- mean((observed - predicted)^2)
   
   # Calculate the variance of the observed values
-  ## NOTE: var() calculates the sample variance, which divides by n-1. 
-  ## An alternative is to, use: mean((observation - mean(observation))^2), which estimates a population-level variance that may be biased
+  ## NOTE: var() calculates the sample variance, which divides by n-1 (vs n). 
+  ## An alternative is to, use: mean((observed - mean(observed))^2), which estimates a population-level variance that may be biased
   variance <- var(observed)
   
   # Calculate MSE-based R²
