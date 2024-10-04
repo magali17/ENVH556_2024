@@ -15,6 +15,8 @@ execute:
   echo.comments: false
   message: false
   warning: false
+  output: console  # Show the output in the console instead of inline
+
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
@@ -22,11 +24,6 @@ This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
 ```{r clear.workspace, eval=FALSE, echo=FALSE}
 #-----clear workspace----
-
-# code to clear the environment without clearing knitr. Useful for code
-# development because it simulates the knitr environment Run as a code chunk
-# when testing.  When knitr is run, this is effectively run in the knitr
-# environment
 
 # Clear workspace of all objects and unload all extra (non-base) packages
 rm(list = ls(all = TRUE))
@@ -58,13 +55,14 @@ if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
 
 # Load the other packages, installing as needed.  Some reasons for packages:
 # knitr:  kable
+# kableExtra: kable_styling()
 # dplyr: data wrangling functions.
 # tidyr: drop_na
 # ggplot: visualizations
 # Hmisc:  describe
 # EnvStats: geoMean, geoSD, probability plotting functions
 # MKmisc:  quantileCI
-pacman::p_load(dplyr, tidyr, knitr, purrr, ggplot2, Hmisc, EnvStats, MKmisc)
+pacman::p_load(dplyr, tidyr, knitr, kableExtra, purrr, ggplot2, Hmisc, EnvStats, MKmisc)
 
 # download_and_read_file() function etc.
 source("global_functions.R")
@@ -78,13 +76,10 @@ source("global_functions.R")
 dir.create(file.path("Datasets"),
            showWarnings = FALSE,
            recursive = TRUE)
-
-# assign data_path variable
-data_path <- file.path("Datasets")
            
 # read data; download if necessary
 DEMS <- download_and_read_file(data_url = "https://faculty.washington.edu/sheppard/envh556/Datasets/DEMSCombinedPersonal.rds", 
-                                 output_file_path = file.path(data_path, "DEMSCombinedPersonal.rds"))
+                                 output_file_path = file.path("Datasets", "DEMSCombinedPersonal.rds"))
            
 ```
 
@@ -107,9 +102,6 @@ dim(DEMS)
 # This list should correspond to the list in the data summary document:
 names(DEMS) 
 
-# This gives us details on the type of each variable in the dataset
-sapply(DEMS, class) 
-
 # # first 6 rows and ALL variables (columns):
 head(DEMS) 
 
@@ -119,31 +111,7 @@ summary(DEMS)
 # a different basic summary of each variable from `Hmisc`
 describe(DEMS) 
 
-# Our application of select zooms in to focus on the key exposure data
-select(DEMS, facilityno, u_s, ecdata, nodata, no2data) 
-
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # Getting Started  
@@ -185,13 +153,6 @@ $$P\big(y>\ln(OEL)\big) =
 
 (@) **Make a tibble**:  First let's turn our DEMS dataset into a tibble. Tibbles are dataframes of the `tidyverse`, with some functional and aesthetic differences compared to regular data.frames. Tibbles will facilitate our use of `tidyverse` functions.  
 
-```{r create.tibble}
-#-----create tibble----
-
-DEMS <- as_tibble(DEMS)
-
-```
-
 (@) **Keep a subset of observations:**  Keep only a subset of the data based on selected jobs (240,110,410,600), underground only ("u"), and `ecdata` being non-missing:
 
 ```{r filter.data}
@@ -202,7 +163,8 @@ DEMS <- as_tibble(DEMS)
 DEMSu <- filter(DEMS, 
                 u_s == "u", 
                 job %in% c(240, 110, 410, 600), 
-                !is.na(ecdata) )
+                !is.na(ecdata))
+
 ```
 
 (@) **Create new variables** using the log transformation.  Typically exposure data appear to be log-normally distributed.
@@ -237,11 +199,12 @@ DEMSsummary <- DEMSu %>%
     mutate_if(is.double, round, digits = 2) %>% 
     arrange(job, facilityid, desc(AM))
 
-# show tibble
-DEMSsummary
-
 # print summary using kable
-kable(DEMSsummary)
+kable(DEMSsummary,
+      caption = "Distribution of EC by job and facility",
+      digits=1) %>%
+  kable_styling()
+   
 
 ```
 
@@ -261,23 +224,25 @@ p <- ggplot(data = DEMSu, aes(lnrec)) +
                    fill = "white", 
                    binwidth = 0.5 
                    )
+p
 
 # create dataframe to overlay a normal density curve:
 norm_df <- with(DEMSu %>% drop_na(lnrec), 
-           tibble(x = seq(min(lnrec), max(lnrec), length.out = length(lnrec) ), 
+           tibble(x = seq(min(lnrec), max(lnrec), length.out = length(lnrec)), 
                   y = dnorm(x, mean(lnrec), sd(lnrec)) ) 
            )
 
-# histogram + overlaid normal + density w/ transparency
+# histogram + density w/ transparency + overlaid normal 
 p +
-    geom_line(data = norm_df, aes(x = x, y = y), color = "red")  +
-    geom_density(alpha = .2, fill = "red") +
-    labs(title = paste("Density Plot of ln(REC)\n","In 4 Underground Jobs"), 
-         caption = paste("With overlaid normal distribution (red line) with the same mean and SD"), 
-         x = "ln(REC) (ln(ug/m^3)") + 
-    scale_y_continuous(expand = expansion(mult = c(0, .1))) +
-    theme_classic() +
-    theme(plot.caption = element_text(hjust = 0))
+  geom_density(alpha = .2, fill = "red") +
+  geom_line(data = norm_df, aes(x = x, y = y), color = "red")  +
+  labs(title = paste("Density Plot of ln(REC)\n","In 4 Underground Jobs"),
+       caption = paste("With overlaid normal distribution (red line) with the same mean and SD"),
+       x = "ln(REC) (ln(ug/m^3)") +
+  scale_y_continuous(expand = expansion(mult = c(0, .1))) +
+  theme_classic() +
+  # left justify the caption
+  theme(plot.caption = element_text(hjust = 0))
     
 ```
 
@@ -287,18 +252,20 @@ p +
 #-----qqplot in tidyverse----
 
 # create the base plot, overlay the points and line, and add title
-p <- ggplot(DEMSu, aes(sample = lnrec)) +
-    stat_qq() + stat_qq_line() +
-    labs(title = "Normal Q-Q Plot of ln(REC)\nIn 4 Underground Jobs")
+ggplot(DEMSu, aes(sample = lnrec)) +
+  stat_qq() + 
+  stat_qq_line() +
+  labs(title = "Normal Q-Q Plot of ln(REC)\nIn 4 Underground Jobs")
 
-# show plot
-p
 ```
 
 
 ##  Test the normality of a variable 
 
 The Shapiro-Wilk test evaluates the null hypothesis that the data are normally distributed against the alternative that they aren't.  Unfortunately, it is very easy to reject the null hypothesis using this test, particularly when the sample size is large.  See [this example using simulations](http://emilkirkegaard.dk/en/?p=4452) to get a feeling for the kinds of deviations from normality that give high and statistically significant Shapiro-Wilk tests.  The general advice in using this test is to not over-interpret it.  Look at the data visually and use your judgment about whether they are consistent with a normal distribution.  Ask yourself whether it is just a few values at the tails that deviate, or are there other more important concerns.
+
+
+**Interpretation**: If the p-value is less than or equal to the significance level (e.g., p < 0.05), you reject the null hypothesis, suggesting that the data significantly deviates from a normal distribution. This could indicate that the data is skewed, has heavy tails, or contains outliers. 
 
 ```{r Shapiro-Wilk test}
 #-----Shapiro-Wilk test----
@@ -339,26 +306,28 @@ Here we get the empiric exceedance fraction, the parametric exceedance probabili
 * **Empiric exceedance fraction**: 
 ```{r emp.exc.frac}
 #-----emp exc frac----
-
+# proportion of samples above a specific value
 sum(DEMSu$ecdata > 200) / length(DEMSu$ecdata)
 
 ```
 
 * **Parametric exceedance fraction**: 
 
+Calculate the proportion of the samples that are greater than a threshold of log(200).
+
+
 ```{r param.exc.frac}
 #-----param exc frac----
+
+#  1. Convert log(200) into a z-score, to indicate how many standard deviations away from the mean it is. Standardize by subtracting the mean of lnrec and then dividing by its standard deviation.
+# 2. pnorm() returns the probability that a normal random variable is less than or equal to the computed z-score
+# 3. 1-pnmorm() gives the probability that this is greater than a z-score.
 
 1 - pnorm((log(200) - mean(DEMSu$lnrec)) / sd(DEMSu$lnrec))
 
 ```
 
-* **Upper 5^th^ percentile of the distribution and its 70% CI**.  The following
-describes an approach estimated directly on the log-transformed data and
-exponentiates.  You can use the `quantileCI` command in the `MKmisc` package. (See
-https://rdrr.io.)  The `quantile` command in base R can be used to get the upper
-5th percentile (or 95th percentile), but there is no clear way to get its CI from
-the `quantile` command.
+* **Upper 5^th^ percentile of the distribution and its 70% CI**.  The following describes an approach estimated directly on the log-transformed data and exponentiates.  You can use the `quantileCI` command in the `MKmisc` package. (See https://rdrr.io.)  The `quantile` command in base R can be used to get the upper 5th percentile (or 95th percentile), but there is no clear way to get its CI from the `quantile` command.
 
 ```{r quantile.95+70th.CI}
 #-----quantile 95+70th CI----
@@ -371,6 +340,7 @@ quantile(DEMSu$lnrec, .95)
 exp(quantile(DEMSu$lnrec, .95))
 
 # now using quantileCI:
+## function uses bootstrap sampling (sampling with replacement) to calculate an interval. For each resampled dataset, the specified quantile is calculated.The resulting distribution of quantiles is used to determine the confidence interval. 
 quantileCI(DEMSu$lnrec, prob = 0.95, conf.level = 0.7)
 quantileCI(DEMSu$ecdata, prob = 0.95, conf.level = 0.7)
 
@@ -403,22 +373,33 @@ Notes on how to create this:
 set.seed(2001)
 
 # the measurement x ~LN(mu_y,sd_y) and y=log(x) ~N(mu_y,sd_y)
-# generate a random lognormal, with specified mean and sd as from lecture
-# eventually we can replace this example with measured data
-
 
 # x is the "measured" exposure data ~LN
+# generate random numbers from a log-normal distribution. 
 x <- rlnorm(n = 1000, meanlog = 1, sdlog = 0.92)
+
+############## side note ##############
+# note that the numbers generated are on the native (non-log scale). The mean is ~4, and max ~63
+summary(x)
+# the numbers produced are right skewed
+hist(x)
+# ...but normal on the log scale
+hist(log(x))
+######################################
 
 # variable y is normally distributed 
 # for exposure data this is ordinarily the log-transformed measurement
 y <- log(x)
 
 # Use rank to get the order statistics 
+# the smallest (min) number is 1, the largest (max) number is length(x)
 rx <- rank(x)
 
 # order statistics re-expressed as proportions
 p_i <- rx/(length(x)+1)
+# range: 0-0.99
+range(p_i)
+
 
 # corresponding normal quantiles for a distribution with realized mean and
 # variance of y.  Need to use these later for the y axis probabilities.
@@ -426,13 +407,13 @@ p_i <- rx/(length(x)+1)
 (y_bar <- mean(y))
 (sd_y <- sd(y))
 
-# theoretical quantiles of the normal distribution that corresponds to the data
-# on the log scale
+# theoretical quantiles of the normal distribution that corresponds to the data on the log scale
+# qnorm() returns z-scores (quantiles) for probabilities
 qy <-qnorm(p_i)*sd_y+y_bar
 
 #quantiles of the corresponding LN distribution
 qx <- exp(qy)
-
+ 
 # create a data frame for plotting
 pplot_data <- tibble(y, x, rx, p_i, qy, qx)
 
@@ -457,6 +438,18 @@ exp_quants <- exp(quants)
 # in the plots we will draw horizontal lines at exp_quants and label these lines with the probs
 
 ```
+
+This log probability plot assess whether the data follow a specific distribution, in this case, the log-normal distribution.
+
+**Consistent deviations in the tails can suggest that the distribution used (log-normal in this case) might not characterize the data best.** 
+
+The **black line** represents the theoretical cumulative distribution function (CDF) of a log-normal distribution fitted to the data. Ideally, if the data perfectly follow the log-normal distribution, the points should lie close to this line.
+
+**Outliers:** Any significant deviations from the line, especially towards the upper end of the plot, may indicate the presence of outliers or that the data has a heavy tail.
+
+If the points in the lower tail (left side of the plot) lie *above* the reference line, it suggests that the actual data has more values that are smaller than expected under the log-normal distribution.
+
+If the points in the upper tail (right side of the plot) lie *below* the reference line, it suggests that there are fewer extreme values in the dataset than would be expected under a log-normal distribution.
 
 ```{r log probability plot}
 #-----log probability plot----
