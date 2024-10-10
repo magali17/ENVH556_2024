@@ -90,6 +90,15 @@ The purpose of this lab is to work with descriptive statistics and compliance te
 # The DEMS Data       
 The underlying data to be used in the lab is from the DEMS study and is described in [Coble et al 2010](https://academic.oup.com/annweh/article/54/7/747/202635).  We are focusing on the personal data collected by NIOSH between 1998 and 2001.  In this lab we will mostly use the `ecdata` variable which is a measurement of exposure to respirable elemental carbon, also called REC.  The data were collected from workers from a cross-section of jobs at the seven mines open during the data collection.  For further information on this dataset, see the document: *DEMS Personal Data overview* available on the class Canvas site.
 
+
+**Variable names and explanations:**      
+- Facility:
+  - facilityno: Factor variable with levels H6, G7, I8, E13, A15, B16, J18, D21
+  - facility ID: Character variable with values A, B, D, E, G, H, I
+- ecdata: REC (Respirable Elemental Carbon), in µg/m3 (double precision)
+- u_s: Character variable indicating underground (u), surface (s), or mixed (m)
+- job: Integer indicating the job number; job titles were discerned, but crosswalk was not provided
+
 Let's briefly review the data: 
 
 ```{r data.description.1}
@@ -106,6 +115,7 @@ names(DEMS)
 head(DEMS) 
 
 # a basic summary of each variable
+## Question: compare the ecdata mean and median. What does this tell you about the potential distribution of ecdata in terms of normality? 
 summary(DEMS) 
 
 # a different basic summary of each variable from `Hmisc`
@@ -113,22 +123,23 @@ describe(DEMS)
 
 ```
 
-
 # Getting Started  
 This section gives formulas and some basic R commands for descriptive statistics and exceedance probabilities.  It also provides reminders of formulas from lecture you will use in lab.
 
 ## Definitions
 
-* AM = arithmetic mean  
+* AM = arithmetic mean 
+  * MOM = method of moments (lognormal samples)
+  * MLE = maximum likelihood estimate (lognormal samples)
 * GM = geometric mean  
 * SD = standard deviation (on the native scale)
 * GSD = geometric standard deviation
-* MOM = method of moments
-* MLE = maximum likelihood estimate
 * OEL = occupational exposure limit
 * CI = confidence interval
 
 ## Formulas for method of moments vs MLE estimates for the AM  
+
+Methods for estimating AM from a lognormal sample (uses the mean and variance on log-transformed data).
 
 * AM method of moments (MOM) estimate for `ecdata` = $x$: 
 $$\bar{x}_{MOM} = \frac{1}{n} \sum_{i=1}^{n} x_i $$
@@ -138,20 +149,18 @@ $$\bar{x}_{MOM} = \frac{1}{n} \sum_{i=1}^{n} x_i $$
 $$ AM_{MLE}=\exp\big(\mu_y+\frac{\sigma_y^2}{2}\big)$$
 $$ \bar{x}_{MLE}=\exp{\big(\bar{y}+\frac{\frac{N-1}{N}s_y^2)}{2}\big)}$$
 
-## Formulas for the exceedance fraction  
-* **Empiric exceedance fraction**:  For a sample of size *N* where *n* is the number
-exceeding the OEL, calculate
+## Formulas for the exceedance fraction   
+* **Empiric exceedance fraction**:  For a sample of size *N* where *n* is the number exceeding the OEL, calculate
+
 $$f_{OEL}=\frac{n>\mbox{OEL}}{N}$$
-* **Parametric exceedance fraction**:  For a sample, log-transform the data and OEL
-and use the normal distribution to estimate the probability  of exceeding
-ln(OEL):
+
+* **Parametric exceedance fraction**:  For a sample, log-transform the data and OEL and use the normal distribution to estimate the probability  of exceeding ln(OEL):
+
 $$P\big(y>\ln(OEL)\big) =
 \big(1-\Phi(z=\frac{y-\bar{y}}{s_y}>\frac{\ln(OEL)-\bar{y}}{s_y})\big)$$
 
 ## Basic data manipulation and summarization commands   
 (See also Week 1 lab)
-
-(@) **Make a tibble**:  First let's turn our DEMS dataset into a tibble. Tibbles are dataframes of the `tidyverse`, with some functional and aesthetic differences compared to regular data.frames. Tibbles will facilitate our use of `tidyverse` functions.  
 
 (@) **Keep a subset of observations:**  Keep only a subset of the data based on selected jobs (240,110,410,600), underground only ("u"), and `ecdata` being non-missing:
 
@@ -177,6 +186,12 @@ DEMSu <- filter(DEMS,
 DEMSu <- mutate(DEMSu,
                 lnrec = log(ecdata),
                 log10rec = log10(ecdata) )
+
+# check the new data columns
+DEMSu %>%
+  select(ecdata, lnrec, log10rec) %>%
+  head()
+
 ```
 
 (@) **Summarize variables and display key quantities:** This code uses `dplyr`,
@@ -191,15 +206,19 @@ DEMSsummary <- DEMSu %>%
     group_by(job,facilityid) %>%
     summarise(N = n(),
               AM = mean(ecdata),
-              AM_mle = (exp(mean(lnrec)+((N-1)/N)*(sd(lnrec)^2)/2)),
-              ASD = sd(ecdata),
+              # adjusted MLE approach for estimating AM using the log mean and log SD
+              AM_mle = (exp(mean(lnrec)+0.5*((N-1)/N)*(sd(lnrec)^2))),
               GM = geoMean(ecdata),
+              Median = median(ecdata),
+              ASD = sd(ecdata),
               GSD = geoSD(ecdata),
               .groups = "drop") %>% 
     mutate_if(is.double, round, digits = 2) %>% 
     arrange(job, facilityid, desc(AM))
 
 # print summary using kable
+## compare the different estimates of central tendency 
+## question: why do samples with N=1 have AM_mle missing? - you can't take the SD of only one value
 kable(DEMSsummary,
       caption = "Distribution of EC by job and facility",
       digits=1) %>%
@@ -216,8 +235,13 @@ Here are some sample graphical commands: (Plots in this section are not run; his
 
 ```{r hist.in.tidyverse, echo=TRUE,eval=FALSE}
 #-----hist in tidyverse----
+# plots on the native scale - data are right skewed
+ggplot(data = DEMSu, aes(ecdata)) +
+    geom_histogram(colour = "black", 
+                   fill = "white") 
 
-# first define the basic plot using the density scale
+
+# log REC
 p <- ggplot(data = DEMSu, aes(lnrec)) +
     geom_histogram(aes(y = ..density..), 
                    colour = "black", 
@@ -229,12 +253,13 @@ p
 # create dataframe to overlay a normal density curve:
 norm_df <- with(DEMSu %>% drop_na(lnrec), 
            tibble(x = seq(min(lnrec), max(lnrec), length.out = length(lnrec)), 
+                  # calculate the density of a normal distribution for a given set of values
                   y = dnorm(x, mean(lnrec), sd(lnrec)) ) 
            )
 
-# histogram + density w/ transparency + overlaid normal 
+# histogram + density + overlaid normal - these look similar
 p +
-  geom_density(alpha = .2, fill = "red") +
+  geom_density(alpha = .2, linetype=2) +
   geom_line(data = norm_df, aes(x = x, y = y), color = "red")  +
   labs(title = paste("Density Plot of ln(REC)\n","In 4 Underground Jobs"),
        caption = paste("With overlaid normal distribution (red line) with the same mean and SD"),
@@ -248,21 +273,34 @@ p +
 
 ### Q-Q plots (Normal probability plots)
 
+The y-axis shows the sorted values of your data, plotted against the theoretical quantiles on the x-axis.
+
+
 ```{r qqplot.in.tidyverse, echo=TRUE,eval=FALSE}
 #-----qqplot in tidyverse----
 
 # create the base plot, overlay the points and line, and add title
+## using log REC
 ggplot(DEMSu, aes(sample = lnrec)) +
   stat_qq() + 
   stat_qq_line() +
-  labs(title = "Normal Q-Q Plot of ln(REC)\nIn 4 Underground Jobs")
+  labs(title = "Normal Q-Q Plot of ln(REC)\nIn 4 Underground Jobs",
+       x = "Theoretical Quantiles from a Std Normal Distribution",
+       y = "Log REC Conc"
+       )
 
 ```
 
+What does the deviation of the lower tail from the reference line indicates?
+
+```{r}
+# Answer: the distribution of the log-transformed concentrations (ln(REC)) has more low values than would be expected if the data followed a normal distribution (see previous plot).
+
+```
 
 ##  Test the normality of a variable 
 
-The Shapiro-Wilk test evaluates the null hypothesis that the data are normally distributed against the alternative that they aren't.  Unfortunately, it is very easy to reject the null hypothesis using this test, particularly when the sample size is large.  See [this example using simulations](http://emilkirkegaard.dk/en/?p=4452) to get a feeling for the kinds of deviations from normality that give high and statistically significant Shapiro-Wilk tests.  The general advice in using this test is to not over-interpret it.  Look at the data visually and use your judgment about whether they are consistent with a normal distribution.  Ask yourself whether it is just a few values at the tails that deviate, or are there other more important concerns.
+The Shapiro-Wilk test evaluates the null hypothesis that the data are normally distributed against the alternative that they aren't.  Unfortunately, **it is very easy to reject the null hypothesis using this test**, particularly when the sample size is large.  See [this example using simulations](http://emilkirkegaard.dk/en/?p=4452) to get a feeling for the kinds of deviations from normality that give high and statistically significant Shapiro-Wilk tests.  **The general advice in using this test is to not over-interpret it.**  Look at the data visually and use your judgment about whether they are consistent with a normal distribution.  Ask yourself whether it is just a few values at the tails that deviate, or are there other more important concerns.
 
 
 **Interpretation**: If the p-value is less than or equal to the significance level (e.g., p < 0.05), you reject the null hypothesis, suggesting that the data significantly deviates from a normal distribution. This could indicate that the data is skewed, has heavy tails, or contains outliers. 
@@ -275,7 +313,7 @@ shapiro.test(DEMSu$lnrec)
 
 ```
 
-## Take a random sample of data in memory 
+## Take a random sample of data 
 
 * `small<-sample(DEMSu$lnrec,10)` gives a sample of size 10 of the data
 * `half<- sample(DEMSu$lnrec,size=length(DEMSu$lnrec)/2,replace=TRUE)` gives a
@@ -285,6 +323,7 @@ shapiro.test(DEMSu$lnrec)
 #-----samples----
 
 # recall you want to set the seed to make your work reproducible
+## note that different versions of R could theoretically produce different results
 set.seed(502)
 
 # the sample command takes from the vector of data (the first argument), a
@@ -301,9 +340,14 @@ half <- sample(DEMSu$lnrec,
 
 ## Calculate the exceedance fraction and related statistics
 
-Here we get the empiric exceedance fraction, the parametric exceedance probability and show the tools for estimating various confidence limits for percentiles. For these calculations, we'll assume an OEL for REC equal to 200 $\mu g/m^3$.
+Here we get the empiric exceedance fraction, the parametric exceedance probability and show the tools for estimating various confidence limits for percentiles. For these calculations, **we'll assume an OEL for REC equal to 200 $\mu g/m^3$**.
 
 * **Empiric exceedance fraction**: 
+
+Use the *observed data* to estimate the probability of exceeding a certain threshold (log(200) in this case).
+
+This approach makes no distributional assumptions about the data. 
+
 ```{r emp.exc.frac}
 #-----emp exc frac----
 # proportion of samples above a specific value
@@ -313,21 +357,67 @@ sum(DEMSu$ecdata > 200) / length(DEMSu$ecdata)
 
 * **Parametric exceedance fraction**: 
 
-Calculate the proportion of the samples that are greater than a threshold of log(200).
+Fit a statistical distribution (e.g., normal, log-normal) to the data and use the fitted distribution to estimate the probability of exceeding the threshold.
+
+**example of a normal distribution, z-scores, and quantiles**
+
+```{r}
+# Create a sequence of z-scores from -3.5 to 3.5
+z_values <- seq(-3.5, 3.5, length.out = 1000)
+
+# Calculate the density of the normal distribution for these z-scores
+density_values <- dnorm(z_values)
+
+# Create a data frame for plotting
+data <- data.frame(z = z_values, density = density_values)
+
+# Plot the normal distribution
+p <- ggplot(data, aes(x = z, y = density)) +
+  geom_line(color = "blue") +
+  labs(
+    title = "Normal Distribution with Z-scores",
+    x = "Z-score",
+    y = "Density"
+  ) +
+  theme_minimal()
+
+p
+
+# Add shaded regions for specific quantiles
+p <- p + stat_function(
+  fun = dnorm,
+  geom = "area",
+  fill = "lightblue",
+  alpha = 0.5,
+  xlim = c(-1, 1)  # Example for showing the area within 1 SD
+)
+
+
+# Add annotations to show translation of z-scores to quantiles
+p <- p + geom_vline(xintercept = c(-1, 0, 1), linetype = "dashed") +
+  annotate("text", x = -1, y = 0.1, label = "Z = -1\n(16th percentile)", color = "red", size = 3, hjust = 1.2) +
+  annotate("text", x = 0, y = 0.2, label = "Z = 0\n(50th percentile)", color = "red", size = 3, hjust = 0.5) +
+  annotate("text", x = 1, y = 0.1, label = "Z = 1\n(84th percentile)", color = "red", size = 3, hjust = -0.2)
+
+p
+
+```
 
 
 ```{r param.exc.frac}
 #-----param exc frac----
 
-#  1. Convert log(200) into a z-score, to indicate how many standard deviations away from the mean it is. Standardize by subtracting the mean of lnrec and then dividing by its standard deviation.
-# 2. pnorm() returns the probability that a normal random variable is less than or equal to the computed z-score
-# 3. 1-pnmorm() gives the probability that this is greater than a z-score.
+# 1. Convert log(200) into a z-score, to indicate how many standard deviations it is away from the observed log mean.  Standardize by subtracting the mean of lnrec and then dividing by its standard deviation.
+(z_score <- (log(200) - mean(DEMSu$lnrec)) / sd(DEMSu$lnrec))
+# 2. the proportion of the data (or the area under the curve) that lies to the left of the given z-score
+(pnorm_result <- pnorm(z_score))
 
-1 - pnorm((log(200) - mean(DEMSu$lnrec)) / sd(DEMSu$lnrec))
+# 3. the probability that this is greater than a z-score.
+1 - pnorm_result
 
 ```
 
-* **Upper 5^th^ percentile of the distribution and its 70% CI**.  The following describes an approach estimated directly on the log-transformed data and exponentiates.  You can use the `quantileCI` command in the `MKmisc` package. (See https://rdrr.io.)  The `quantile` command in base R can be used to get the upper 5th percentile (or 95th percentile), but there is no clear way to get its CI from the `quantile` command.
+* **95^th^ percentile of the distribution and its 70% CI**.  The following describes an approach estimated directly on the log-transformed data and exponentiates.  You can use the `quantileCI` command in the `MKmisc` package. (See https://rdrr.io.)  The `quantile` command in base R can be used to get the 95th percentile (upper 5th percentile), but there is no clear way to get its CI from the `quantile` command.
 
 ```{r quantile.95+70th.CI}
 #-----quantile 95+70th CI----
@@ -341,10 +431,25 @@ exp(quantile(DEMSu$lnrec, .95))
 
 # now using quantileCI:
 ## function uses bootstrap sampling (sampling with replacement) to calculate an interval. For each resampled dataset, the specified quantile is calculated.The resulting distribution of quantiles is used to determine the confidence interval. 
+### log scale
 quantileCI(DEMSu$lnrec, prob = 0.95, conf.level = 0.7)
+### native scale
 quantileCI(DEMSu$ecdata, prob = 0.95, conf.level = 0.7)
 
 ```
+
+What is the interpretation of these results?
+
+```{r}
+# the point estimate for the 95th percentile is 400 µg/m³, but there is some uncertainty. The interval 349-406 µg/m³ captures where the true 95th percentile is likely to fall with 70% confidence.
+```
+
+How would this range change if the we wanted to have more confidence (have more certainty) of the true 95th percentile?
+
+```{r}
+# The CI would be come wider
+```
+
 
 ## Log probability plots
 
@@ -395,23 +500,28 @@ y <- log(x)
 # the smallest (min) number is 1, the largest (max) number is length(x)
 rx <- rank(x)
 
-# order statistics re-expressed as proportions
+# order statistics re-expressed as proportions 
 p_i <- rx/(length(x)+1)
-# range: 0-0.99
+
+# small values are small proportions, large values produce large proportions
 range(p_i)
 
 
-# corresponding normal quantiles for a distribution with realized mean and
-# variance of y.  Need to use these later for the y axis probabilities.
-# (Surrounding parentheses print these in the output if echo=TRUE)
+# log mean & SD
 (y_bar <- mean(y))
 (sd_y <- sd(y))
 
 # theoretical quantiles of the normal distribution that corresponds to the data on the log scale
 # qnorm() returns z-scores (quantiles) for probabilities
-qy <-qnorm(p_i)*sd_y+y_bar
+z_scores2 <- qnorm(p_i)
 
-#quantiles of the corresponding LN distribution
+summary(z_scores2)
+
+# convert to log concentrations
+qy <- z_scores2*sd_y+y_bar
+# summary(qy)
+
+# native scale concentrations
 qx <- exp(qy)
  
 # create a data frame for plotting
@@ -447,23 +557,20 @@ The **black line** represents the theoretical cumulative distribution function (
 
 **Outliers:** Any significant deviations from the line, especially towards the upper end of the plot, may indicate the presence of outliers or that the data has a heavy tail.
 
-If the points in the lower tail (left side of the plot) lie *above* the reference line, it suggests that the actual data has more values that are smaller than expected under the log-normal distribution.
-
-If the points in the upper tail (right side of the plot) lie *below* the reference line, it suggests that there are fewer extreme values in the dataset than would be expected under a log-normal distribution.
+Points above the reference line suggest the observed values are larger than would be expected for a normal distribution. If they lie below the line, the observed values are smaller than expected. 
 
 ```{r log probability plot}
 #-----log probability plot----
 
 # Shows percentiles of the cumulative normal on the y axis; 
-# axes on the log base 10 scale;
-# coord_fixed assumes both axes are the same scaling (i.e. the aspect ratio for
-# x, qx is the same);
+# coord_fixed assumes both axes are the same scaling (i.e. the aspect ratio for x, qx is the same);
 # annotation_logticks puts in minor ticks in right scaling
 # minor_breaks addresses the unlabeled grid lines
 p <- ggplot(data = pplot_data) +
     geom_point(aes(x,qx), shape = "o", alpha = 0.4) +
     geom_line(aes(qx,qx)) +
     annotation_logticks(sides="b") +
+    # axes on the log base 10 scale;
     scale_x_log10(breaks=c(0.1,0.5,1,5,10,50),
                   limits=c(0.1,50),
                   minor_breaks=c(0.2,1,2,20) ) +
@@ -483,13 +590,11 @@ p
 
 # Practice Session  
 
-1) Plan to use an R project for this lab and make sure it is set up.  You probably will want to use one project for the entire ENVH556 course.
-2) Read in the ‘DEMSCombinedPersonal’ R dataset and keep only measurements from jobs 110, 240, 410 and 600 among underground workers.  (We have selected these particular jobs for simplicity, but feel free to explore additional jobs or other categories of the data if you want to.)  In order to avoid potential confusion later, for this practice session we suggest you also drop any observations that are missing `ecdata`.
-3) Describe REC (varname: `ecdata`)
-4) Determine whether REC in this subset is lognormally distributed.  Explore using histograms, qqplots,  and statistical tests.
-5) Calculate the GM, GSD, and AM (using both method of moments and maximum
-likelihood estimates for the AM) for each group.
-6) For a selected group (i.e. a single job, or for all four if you want): Assume data are lognormal (LN) and an OEL of 200 $\mu g/m^3$ has been determined for REC.
+1) Using the ‘DEMSCombinedPersonal’ R dataset, keep only measurements from jobs 110, 240, 410 and 600 among underground workers.  (We have selected these particular jobs for simplicity, but feel free to explore additional jobs or other categories of the data if you want to.)  In order to avoid potential confusion later, for this practice session we suggest you also drop any observations that are missing `ecdata`.
+2) Describe REC (varname: `ecdata`)
+3) Determine whether REC in this subset is lognormally distributed. Explore using histograms, qqplots,  and statistical tests.
+4) Calculate the GM, GSD, and AM (using both method of moments and maximum likelihood estimates for the AM) for each group.
+5) For a selected group (i.e. a single job, or for all four if you want): Assume data are lognormal (LN) and an OEL of 200 $\mu g/m^3$ has been determined for REC.
     a) Calculate the empiric and parametric exceedance probabilities along with
     the 95^th^ percentile and 70% confidence limits.
     
