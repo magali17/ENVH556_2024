@@ -1,6 +1,6 @@
 ---
 title: "Week 2 Lab:  Compliance -- Descriptive Statistics and exceedance Probabilities"
-author: "Lianne Sheppard for ENVH 556 Autumn 2024"
+author: "Instructors for ENVH 556 Autumn 2024"
 format:
   html:
     df_print: "paged"
