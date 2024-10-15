@@ -103,3 +103,52 @@ It's a good practice to check for updates regularly to ensure you have the lates
      - Click on the file to open it, then select the "Download Raw File" button to download the script.
 3. Replace the existing file in their project directory with the new one.
 
+--- 
+
+## 7. Additional Topics
+
+### How to Create and Add a GitHub Token for Push/Pull Access (e.g., needed on the SPH Server)
+
+To interact with GitHub repositories from your machine (e.g., pushing changes or pulling updates), you need to authenticate using a Personal Access Token (PAT). Follow the steps below to create a token and set it up.
+
+#### Step 1: Generate a GitHub Token 
+1. Log in to your GitHub account at [github.com](https://github.com).
+2. In the top-right corner, click on your profile picture and navigate to **Settings**.
+3. Scroll down and select **Developer settings** in the sidebar.
+4. Click on **Personal access tokens** → **Tokens (classic)** → **Generate new token**.
+5. Enter a **note** (e.g., "Basic Token for Push/Pull").
+6. Set an **expiration** date (choose based on your preference, e.g., 30 days).
+7. Under **Select scopes**, check the following permissions:
+   - `repo` (Full control of private repositories)
+   - `workflow` (Access GitHub Actions if necessary)
+8. Click **Generate token** and **copy** the token to a safe location, as you will not be able to view it again.
+
+####Step 2: Add the Token to Your Git Configuration 
+
+Once the token is generated, you will need to configure Git to use the token for push/pull operations:
+
+1. Open a terminal or command prompt on your machine.
+2. Configure Git to store your credentials by running:
+
+   ```bash
+   git config --global credential.helper store  
+   ```
+   
+This will store your credentials locally and reuse them for future Git commands.
+
+#### Step 3: Test That This Works
+
+1. Make a file change in your repository.
+2. Use the command `git push`. You will be prompted for your GitHub username. Enter it.
+3. When asked for your password, paste the token you copied earlier instead of your GitHub password.
+4. After doing this once, Git will remember your token, so you won't need to re-enter it for future commands.
+
+#### Troubleshooting
+
+1. If your token expires, you will need to generate a new one by following the steps above.
+2. To remove or update your stored credentials, use the following command:
+
+    ```bash
+    git credential-manager-core erase
+    ```
+    
