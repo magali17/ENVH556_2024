@@ -1,6 +1,6 @@
 ---
 title: "Week 7 Lab:  Measurement Error"
-author: "Lianne Sheppard for ENVH 556 Autumn 2024"
+author: "Instructors for ENVH 556 Autumn 2024"
 format:
   html:
     df_print: "paged"

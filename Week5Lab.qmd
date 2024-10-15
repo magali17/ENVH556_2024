@@ -1,6 +1,6 @@
 ---
-title: "Week 5 Lab:  Variance Components"
-author: "Lianne Sheppard for ENVH 556 Autumn 2024"
+title: "Week 5 Lab: Variance Components"
+author: "Instructors for ENVH 556 Autumn 2024"
 format:
   html:
     df_print: "paged"

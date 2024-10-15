@@ -1,6 +1,6 @@
 ---
 title: 'Week 4 Lab: Regression for Prediction'
-author: "Lianne Sheppard for ENVH 556 Winter 2024"
+author: "Instructors for ENVH 556 Winter 2024"
 format:
   html:
     df_print: "paged"
@@ -45,14 +45,11 @@ pacman::p_load(knitr, dplyr, tidyr, purrr, ggplot2, modelr, stringr)
 ```{r directory.organization.read.data, echo=FALSE, warning=FALSE}
 #-----directory organization and read data-----
 
-# specify working directory
-project_path <- getwd()
+# specify data path
+data_path <- "Datasets"
 
 # create "Datasets" directory if one does not already exist    
-dir.create(file.path(project_path,"Datasets"), showWarnings=FALSE, recursive = TRUE)
-
-# specify data path
-data_path <- file.path(project_path,"Datasets")
+dir.create(data_path, showWarnings=FALSE, recursive = TRUE)
 
 # specify the file name and path
 file_name <- "allseasonsR.rds"
@@ -79,7 +76,7 @@ rm(url, file_name, file_path, data_path)
 
 # Purpose
 
-The purpose of this lab is to use principles of “out-of-sample” assessment to validate regression models.   We will use the snapshot data for model validation, run a cross-validation, and write a program to more easily repeat cross-validation procedures. You will use these tools to try to understand the bias-variance trade-off in these data.
+The purpose of this lab is to use principles of **“out-of-sample” assessment** to validate regression models.   We will use the snapshot data for model validation, run a cross-validation, and write a program to more easily repeat cross-validation procedures. You will use these tools to try to understand the bias-variance trade-off in these data.
 
 
 # Getting Started
@@ -106,6 +103,7 @@ fall <- filter(snapshot, season == 2) %>% as_tibble()
 ```{r common model covariates}
 #-----common model covariates-----
 
+# predictors: distance to A1, A1 roads in 50m buffer, A2-3 roads in 400m buffer, pop in 5km buffer, distance to coast, intense land use in 3k km2, distance to commercial area
 covars_common <- c("D2A1", "A1_50", "A23_400",  "Pop_5000", "D2C", "Int_3000", "D2Comm")
 
 ```
@@ -127,7 +125,13 @@ summary(lm_fall <- lm(frml, data = fall))
 
 ```
 
+# --> 
+
 * AIC and BIC:  
+  * Intended to estimate the generalization of a model (model performance) without doing out-of-sample validation (uses the training data). 
+  * Take into account the model fit and complexity by penalizing the addition of parameters, thus added parameters should sufficiently improve the model fit.
+  * Good for comparison across models. 
+  * Lower values indicate a better fit. 
 
 Note, you can provide these functions multiple model objects to facilitate comparisons of AIC or BIC across models fit on the same data.  I only show one model object here.  This has limited utility since there isn't inherent meaning in the AIC or BIC estimates.  Their value is in their comparison across fitted models.
 
@@ -157,7 +161,7 @@ snap2 <- snapshot %>%
 r <- snap2 %>% select(ln_nox, preds_fall) %>% range
 
 # Compare the observations vs. predictions for all seasons, by season 
-ggplot(data = snap2, aes(preds_fall, ln_nox)) +
+ggplot(data = snap2, aes(ln_nox, preds_fall)) +
     geom_point(shape = "o", alpha = 0.6) +
     facet_wrap( ~ seasonfac) +
     lims(x = r, y = r) +
@@ -165,8 +169,8 @@ ggplot(data = snap2, aes(preds_fall, ln_nox)) +
     geom_abline(intercept = 0, slope = 1, color = "blue") +
     geom_smooth(method = "lm", se = FALSE, color = "red") +
     labs(title = "Fall model predictions vs. ln(NOx) by season", 
-         x = "Predicted ln(NOx) (ln(ppb))",
-         y = "Observed ln(NOx) (ln(ppb))",
+         y = "Predicted ln(NOx) (ln(ppb))",
+         x = "Observed ln(NOx) (ln(ppb))",
          caption = "Best fit line is red; 1:1 line is blue") + 
     theme_bw()
 
@@ -241,15 +245,20 @@ model of interest to us, here the intercept only model.  The scope gives the ent
 ```{r fitting.forward.selection}
 #-----fitting forward selection model-----
 
-# Note:  k=0 appears to put no restriction on the forward selection and doesn't
+# trace=0 prints no info while running; larger values give more info
+# k=0 appears to put no restriction on the forward selection and doesn't
 # stop until the full model is incorporated. 
 # Using k=2 is comparable to standard AIC.
 # Using log(n), where n is the number of observations, is comparable to BIC.
-forwardreg_fall <- step(null, scope = list(lower = null, upper = full), 
-                        trace = 0, direction = "forward", k = 0)
+forwardreg_fall <- step(null, 
+                        scope = list(lower = null, upper = full), 
+                        trace = 0, 
+                        direction = "forward", 
+                        k = 0)
 
 # save the ordered list of names for later use, dropping the intercept
-covars_forward <- names(forwardreg_fall$coefficients) %>% setdiff('(Intercept)')
+covars_forward <- names(forwardreg_fall$coefficients) %>%
+  setdiff('(Intercept)')
 
 # show the ordered list
 covars_forward
@@ -665,7 +674,7 @@ r2_plot
 
 # plot with both model based (in sample) RMSE and CV generated RMSE
 rmse_plot <- ggplot(temp) +
-    geom_point(aes(x = n_pred, y = RMSE, color = Source)) + 
+    geom_point(aes(x = n_pred, y = RMSE, color = Source), alpha=0.5) + 
     geom_line(aes(x = n_pred, y = RMSE, color = Source)) +
     xlab("Model Complexity (# of terms)") +
     ylab(bquote(bold(RMSE) (ln(ppb)) )) +

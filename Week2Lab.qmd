@@ -22,7 +22,7 @@ execute:
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
 
-```{r clear.workspace, eval=FALSE, echo=FALSE}
+```{r clear.workspace, echo=FALSE}
 #-----clear workspace----
 
 # Clear workspace of all objects and unload all extra (non-base) packages
@@ -92,12 +92,12 @@ The underlying data to be used in the lab is from the DEMS study and is describe
 
 
 **Variable names and explanations:**      
-- Facility:
-  - facilityno: Factor variable with levels H6, G7, I8, E13, A15, B16, J18, D21
-  - facility ID: Character variable with values A, B, D, E, G, H, I
-- ecdata: REC (Respirable Elemental Carbon), in µg/m3 (double precision)
-- u_s: Character variable indicating underground (u), surface (s), or mixed (m)
-- job: Integer indicating the job number; job titles were discerned, but crosswalk was not provided
+- Facility:     
+  - facilityno: Factor variable with levels H6, G7, I8, E13, A15, B16, J18, D21    
+  - facility ID: Character variable with values A, B, D, E, G, H, I     
+- ecdata: REC (Respirable Elemental Carbon), in µg/m3 (double precision)     
+- u_s: Character variable indicating underground (u), surface (s), or mixed (m)    
+- job: Integer indicating the job number; job titles were discerned, but crosswalk was not provided    
 
 Let's briefly review the data: 
 
@@ -142,11 +142,14 @@ This section gives formulas and some basic R commands for descriptive statistics
 Methods for estimating AM from a lognormal sample (uses the mean and variance on log-transformed data).
 
 * AM method of moments (MOM) estimate for `ecdata` = $x$: 
+
 $$\bar{x}_{MOM} = \frac{1}{n} \sum_{i=1}^{n} x_i $$
 
 * AM maximum likelihood estimate (MLE) for `ecdata` = $x$ using
-`lnrec` = `log(ecdata)` = $y$:
+`lnrec` = `log(ecdata)` = $y$:   
+
 $$ AM_{MLE}=\exp\big(\mu_y+\frac{\sigma_y^2}{2}\big)$$
+
 $$ \bar{x}_{MLE}=\exp{\big(\bar{y}+\frac{\frac{N-1}{N}s_y^2)}{2}\big)}$$
 
 ## Formulas for the exceedance fraction   
@@ -359,7 +362,7 @@ sum(DEMSu$ecdata > 200) / length(DEMSu$ecdata)
 
 Fit a statistical distribution (e.g., normal, log-normal) to the data and use the fitted distribution to estimate the probability of exceeding the threshold.
 
-**example of a normal distribution, z-scores, and quantiles**
+**aside**: example of a normal distribution, z-scores, and quantiles
 
 ```{r}
 # Create a sequence of z-scores from -3.5 to 3.5
@@ -549,7 +552,7 @@ exp_quants <- exp(quants)
 
 ```
 
-This log probability plot assess whether the data follow a specific distribution, in this case, the log-normal distribution.
+This log probability plot assess whether the data follow a specific distribution, in this case, the log-normal distribution. **It should since we simulated these data to be log normal.**
 
 **Consistent deviations in the tails can suggest that the distribution used (log-normal in this case) might not characterize the data best.** 
 
@@ -604,30 +607,25 @@ p
 # Homework Exercises
 
 1) Consider the primary exposure measures of interest to the study, including
-REC, NO_2 and organic carbon.  Choose either the full dataset or a reduced subset, such as the four selected underground jobs.  (Justify your choice as part of your lab write-up.)
-    a) Describe the distribution, out of range and/or missing values for these exposure measures.
-    b) Determine the adequacy of the LN distribution for representing these using
-distribution plots and/or statistical tests.  
-2) Explore potential stratification variables (determinants such as facility, job, location).
-    a) Do the stratified data improve the distributional characteristics?  Does it matter whether you restrict your attention to smaller subgroups of the data, e.g., underground only, specific facilities, specific jobs, or a combination of these?
+REC, NO_2 and organic carbon.  Choose either the full dataset or a reduced subset, such as the four selected underground jobs.  (Justify your choice as part of your lab write-up.)   
+    a) Describe the distribution, out of range and/or missing values for these exposure measures. 
+    b) Determine the adequacy of the LN distribution for representing these using  
+distribution plots and/or statistical tests.   
+2) Explore potential stratification variables (determinants such as facility, job, location). 
+    a) Do the stratified data improve the distributional characteristics?  Does it matter whether you  restrict your attention to smaller subgroups of the data, e.g., underground only, specific facilities, specific jobs, or a combination of these?  
     
 3) Calculate the GM, median, AM (method of moments) and AM (maximum likelihood)
-for REC.
-    a) How do these quantities compare to each other?
-    b) Can you determine any characteristics of the data which help explain the
-differences between these alternative measures of central tendency?
-    c) For at least one stratum that has data that aren't too far off from a
-    lognormal distribution, plot the log probability plot.  Read off the GM and
-    GSD from the log probability plot and compare these to values you estimate
-    directly from the data.
-4) Assuming an OEL for REC of 200 $\mu g/m^3$, calculate the exceedance
-probability for each mine (and/or job) using both empiric and parametric
+for REC.    
+    a) How do these quantities compare to each other?   
+    b) Can you determine any characteristics of the data which help explain the differences between these alternative measures of central tendency?  
+    c) For at least one stratum that has data that aren't too far off from a lognormal distribution, plot the log probability plot.  Read off the GM and GSD from the log probability plot and compare these to values you estimate directly from the data.  
+4) Assuming an OEL for REC of 200 $\mu g/m^3$, calculate the exceedance probability for each mine (and/or job) using both empiric and parametric
 approaches.  In addition, calculate the 95^th^ percentile of the distribution, and
 provide 70% confidence limits on these percentiles.
-    a) What are the differences between the empiric and parametric methods of calculation?
+    a) What are the differences between the empiric and parametric methods of calculation?  
 5) Take random samples of the data (e.g., 50%, 10%, n=9, n=5) and recalculate
-the various summary statistics.
-    a) How does the reduced sample size affect the estimates?  Explain.
+the various summary statistics. 
+    a) How does the reduced sample size affect the estimates?  Explain.   
 
 
 

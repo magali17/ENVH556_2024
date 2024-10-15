@@ -11,11 +11,14 @@ format:
     number_sections: true
     self-contained: true #save images etc. in this file (vs folders)
 execute:
-  echo: true
-
+  echo: true 
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
+
+
+**NOTE: This document was developed in 2021 and has not been updated. You are free to use this document as an additional resource.**
+
 
 ```{r setup, include=FALSE}
 #-----setup-----

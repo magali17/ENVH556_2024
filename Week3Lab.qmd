@@ -1,6 +1,6 @@
 ---
 title: 'Week 3 Lab:  Regression for Association'
-author: "Lianne Sheppard for ENVH 556 Autumn 2024"
+author: "Instructors for ENVH 556 Autumn 2024"
 format:
   html:
     df_print: "paged"
@@ -41,21 +41,18 @@ my_repo <- 'http://cran.r-project.org'
 if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
 
 # Load the other packages, installing as needed.
-pacman::p_load(knitr, dplyr, purrr, ggplot2, egg, multcomp, modelr)
+pacman::p_load(knitr, kableExtra, tidyverse, egg, multcomp, modelr,
+               broom # tidy() # optional
+               )
 
 ```
 
 ```{r directory.organization.read.data, echo=FALSE, warning=FALSE}
 #-----directory organization and read data-----
 
-# specify working directory
-project_path <- getwd()
-
-# create "Datasets" directory if one does not already exist    
-dir.create(file.path(project_path,"Datasets"), showWarnings=FALSE, recursive = TRUE)
 
 # specify data path
-data_path <- file.path(project_path,"Datasets")
+data_path <- file.path("Datasets")
 
 # specify the file name and path
 file_name <- "allseasonsR.rds"
@@ -80,13 +77,31 @@ rm(url, file_name, file_path, data_path)
 
 # Purpose
 
-The purpose of this lab is to get practice using and reporting regression models with a focus on regression for association and some beginning work on regression for prediction.   We will use the snapshot data for this lab.
+The purpose of this lab is to get practice using and reporting regression models with a focus on regression for association and some beginning work on regression for prediction. We will use the snapshot data for this lab.
+
+
+# The Data
+
+These data are described in the [Mercer et al, 2011](https://doi.org/10.1016/j.atmosenv.2011.05.043).  
+
+* air pollution measurements were collected at increasing distances from roadways to capture concentration gradients     
+* 100 locations in LA  
+* 6 measurements per location at: $+-$ 50, 100, 350 m  
+* during summer, fall, winter 
+
+Variables we'll look at:      
+* ID – location ID, integer values between 1 & 152    
+* nox – oxides of nitrogen (NOx) in ppb    
+* log-transformed NOx: ln_nox  
+* season – season as an integer where 0=summer, 1=fall, 2=winter     
+* seasonfac – season transformed to a factor variable for summer, fall, winter    
 
 # Getting Started
 
 This section gives some basic R commands for regression for association and the first steps for evaluating predictions.  
 
 * Summarizing *ln_nox* by season  
+
 
 ```{r summarize.ln_nox}
 #-----summarize ln_nox-----
@@ -95,32 +110,53 @@ This section gives some basic R commands for regression for association and the 
 summary(snapshot$seasonfac)
 
 # descriptive statistics
+## we'll focus on the values shown on the boxplots in the native scale. There are situations where you may instead decide to report log units (e.g., to describe a plot only on log units). 
+
 snapshot_summary <- snapshot %>%     
     group_by(seasonfac) %>%
     summarise(N = n(),
-              Mean = mean(ln_nox), 
-              SD = sd(ln_nox),
+              # option to look at this if you wanted to summarize values on the log scale (in the figure)
+              #Mean_log_scale = mean(ln_nox),
+              #SD_log_scale = sd(ln_nox),
+              
+              Min = min(exp(ln_nox)),
+              Q25 = quantile(exp(ln_nox), 0.25),
+              Median = median(exp(ln_nox)),
+              Q75 = quantile(exp(ln_nox), 0.75),
+              Max = max(exp(ln_nox)),
+              
+              Mean = mean(exp(ln_nox)),
+              SD = sd(exp(ln_nox)),
+              
               GM = exp(mean(ln_nox)), 
               GSD = exp(sd(ln_nox)), 
               .groups = "drop")
 
 # kable table
-kable(snapshot_summary, digits=2)
+kable(snapshot_summary, 
+      caption = "Distribution of NOx concentrations (ppb) by season.",
+      digits=2) %>%
+  kable_styling()
+   
 
 ```
 
 * Commands for season-specific boxplots:
+
 ```{r season-specific boxplots}
 #-----season-specific boxplots-----
-
+# consider updating the 2nd-axis labels. What else might you want to communicate? 
 ggplot(snapshot, aes(x = seasonfac, y = ln_nox, fill = seasonfac)) +
     geom_boxplot() +
     labs(x = "Season", 
-         y = "ln(NOx) (ln(ppb)", 
+         y = "ln(NOx) (ln(ppb))", 
          color = "Season", 
-         fill = "Season") + 
-    theme_article()
-       
+         fill = "Season") +
+   scale_y_continuous(
+        sec.axis = sec_axis(~exp(.), name = "NOx (ppb)")  # Right y-axis with exponentiated values
+    ) +
+    theme_article() 
+
 ```
 
 * Commands for regression: 
@@ -131,6 +167,7 @@ ggplot(snapshot, aes(x = seasonfac, y = ln_nox, fill = seasonfac)) +
 # Common model (Table 4), season-specific LUR
 
 # specify regression model
+# predictors: distance to A1, A1 roads in 50m buffer, A2-3 roads in 400m buffer, pop in 5km buffer, distance to coast, intense land use in 3k km2, distance to commercial area
 frml <- as.formula(ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm)
 
 # summarize the fit of each model
@@ -139,6 +176,30 @@ summary(lm_fall <- lm(frml, data = snapshot, subset = seasonfac == "2Fall"))
 summary(lm_winter <- lm(frml, data = snapshot, subset = seasonfac == "3Winter"))
 
 ```
+
+Let's look at some model output from the summer fit. 
+
+```{r}
+
+# coefficient (point) estimates
+coef(lm_summer)
+
+# this also works: 
+# lm_summer$coefficients
+
+# 95% confidence interval for coefficients
+confint(lm_summer)
+
+# number of observations used to fit the model
+nobs(lm_summer)
+
+# generates a tibble you can manipulate easier. 
+## includes coefficients, SE, p-val 
+lm_summer %>%
+  broom::tidy()
+
+```
+
 
 * Making predictions:
 
@@ -164,13 +225,16 @@ snap2 <- snapshot %>%
 
 # inspect predictions and residuals
 snap2 %>% 
-  dplyr::select(SeasonID = seasonfac, ln_nox, preds_sum, resids_sum, preds_fall,
+  dplyr::select(ID, SeasonID = seasonfac, ln_nox, preds_sum, resids_sum, preds_fall,
                 resids_fall, preds_win, resids_win) %>% 
-  mutate_if(is.double, round, 2)
+  mutate_if(is.double, round, 2) %>%
+  # example location
+  filter(ID==first(ID))
 
 ```
 
 Now we add prediction intervals:
+
 
 ```{r in-sample prediction intervals}
 #-----in-sample prediction intervals-----
@@ -193,6 +257,11 @@ allseas_in <- rbind(summer, fall, winter) %>% as_tibble()
 # now use dplyr to rename the predictions (the predict function gives default
 # variable names)
 allseas_in <- rename(allseas_in, pred_in = fit, lwr_in = lwr, upr_in = upr)
+
+
+allseas_in %>%
+  filter(ID==first(ID)) %>%
+  dplyr::select(ID, season, seasonfac, ln_nox, pred_in, lwr_in, upr_in)
 
 ```
 
@@ -244,51 +313,37 @@ paste("summer out-of-sample R2 (from winter model):  ",
 
 Let's look at what we mean by R^2^ about the best fit line by plotting the data we correlated above and incorporating the best fit lines.
 
-```{r summer.in.and.out.sample, message=FALSE}
-#-----summer in and out of sample-----
+Note that we use `pivot_longer()` to generate a multi-faceted plot. If you only want to display one season, a simpler approach could be used without the need for reshaping the data.
 
-# plot the predictions vs. data for summer, both in-sample and out of sample
+```{r summer.in.and.out.sample, message=FALSE}
+#----- in and out of sample-----
+
+# plot the predictions vs. data for models, both in-sample and out of sample
 
 # get the range of the data to use as limits in the plots
 r <- allseas_both %>% 
-  filter(season == 1) %>% 
   dplyr::select(pred_in, pred_out, ln_nox) %>% 
   range()
 
-# in-sample plot
-p_in <- allseas_both %>%
-    filter(season == 1) %>%
-    ggplot(aes(x = pred_in, y = ln_nox)) +
-    geom_point() +
+allseas_both %>%
+  dplyr::select(ID, seasonfac, ln_nox, pred_in, pred_out) %>%
+  # make long format for plotting
+  pivot_longer(cols = c(pred_in, pred_out), names_to = "prediction_type", values_to = "value") %>%
+  mutate(prediction_type = ifelse(prediction_type=="pred_in", "In-Sample",
+                                  ifelse(prediction_type=="pred_out", "Out-of-Sample", NA))) %>%
+   
+  ggplot(aes(x = ln_nox, y = value, col=seasonfac)) +
+  facet_grid(rows = vars(prediction_type), cols = vars(seasonfac)) +
+  geom_point(alpha=0.4) +
     lims(x = c(r[1], r[2]), y = c(r[1], r[2]) ) +
     coord_fixed() +
-    geom_abline(intercept = 0, slope = 1, color = "blue") +
-    geom_smooth(method = "lm", se = FALSE, color = "red") +
-    labs(title = "In-sample", 
-         x = "In-sample predicted ln(NOx) (ln(ppb))",
-         y = "Observed ln(NOx) (ln(ppb))"
+    geom_abline(intercept = 0, slope = 1) +
+    geom_smooth(method = "lm", se = FALSE) +
+    labs(title = "In-sample and out-of-sample predictions", 
+         y = "predicted ln(NOx) (ln(ppb))",
+         x = "Observed ln(NOx) (ln(ppb))"
          ) + 
     theme_bw()
- 
-# out-of-sample plot (predictions from the winter model)
-p_out <- allseas_both %>%
-    filter(season == 1) %>%
-    ggplot(aes(x=pred_out, y=ln_nox)) +
-    geom_point() +
-    lims(x = c(r[1], r[2]), y = c(r[1], r[2]) ) +
-    coord_fixed() +
-    geom_abline(intercept = 0, slope = 1, color = "blue") +
-    geom_smooth(method = "lm", se = FALSE, color = "red") +
-    labs(title = "Out-of-sample (from winter model)", 
-         x = "Out-of-sample predicted ln(NOx) (ln(ppb))",
-         y = "Observed ln(NOx) (ln(ppb))"
-         ) + 
-    theme_bw()
-
-# combine plots into one display
-ggarrange(p_in, p_out, ncol = 2, 
-          top = "Summer Model ln(NOx) Predictions", 
-          bottom = "Best fit line is red; 1:1 line is blue")
 
 ```
 
@@ -298,13 +353,17 @@ This section covers basic practice to be completed during the lab.
 Perform the following tasks: 
 
 1.	Set up/decide your project for this lab.  
-2.	Read in the snapshot data and get some basic understanding of its structure.  See the lecture `.Rmd` file for some options. 
+
+2.	Read in the snapshot data and get some basic understanding of its structure.   
+
 3.	Summarize *ln_nox*, the outcome variable of interest     
     a.	Summarize by season    
     b.	Can you produce a nice summary figure of the data?  Should they be on the log or the native scale?  Is it useful to put multiple pollutants (NO, NOx, NO2) in the same figure?  
+
 4.	Replicate the season-specific models in Table 4 of [Mercer et al, 2011](https://doi.org/10.1016/j.atmosenv.2011.05.043).  (Only focus on the LUR model results.  Also we’ll talk about cross-validation in an upcoming week so recognize your in-sample R^2^ should be a bit bigger and your RMSE should be a bit smaller than the values in the paper.)  
     a.	Compare your coefficient estimates and standard errors, as well as LUR R^2^ and sample size.  (Note:  You may need to consider rounding in your comparison.)  
     b.	Are all your terms parameterized the same as they are in the paper?  
+
 5.	Use the fall model to predict ln_nox in summer and vice versa.    
     a.	Assess the quality of the predictions.  (Using the information from the lecture on regression for association, compute the R^2^, and plot the predictions and the prediction intervals.)  
     b.	What have you learned?  Does this flipping of models across seasons make sense scientifically?  Why or why not?  
@@ -313,9 +372,12 @@ Perform the following tasks:
 # Homework Exercises  
 
 1.	Describe the NOx variable.  Develop one figure and one table to best capture your data and then write a paragraph describing what these show.  (Doing both is for practice.  In a peer-reviewed paper you will ordinarily only show one of these.)  In the table, you may find it helpful to also include information on the covariates you use in your model(s) in this lab.    
+
 2.	Using the terminology given in lecture, briefly discuss the fall season common LUR model results.  Include in your discussion an interpretation for at least two terms in the fall season model.   
-3.	Focusing on the common models in Table 4 of [Mercer et al, 2011](https://doi.org/10.1016/j.atmosenv.2011.05.043), think about how to use the data from all seasons at once to get season-specific parameter estimates.   What terms do you need to incorporate the interactions?   
+
+3.	Focusing on the common models in Table 4 of [Mercer et al, 2011](https://doi.org/10.1016/j.atmosenv.2011.05.043), think about how to use the data from all seasons at once to get season-specific parameter estimates. What terms do you need to incorporate the interactions?   
     a.  How is your interaction model different from fitting three separate season-specific models?
+
 4.	Make table(s) and/or figure(s) summarizing your results for practice exercise 5.  Discuss.  
 
 # Appendix
