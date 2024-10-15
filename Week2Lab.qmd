@@ -19,7 +19,7 @@ execute:
 
 ---
 
-This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
+This document was rendered on `r format(Sys.time(), '%B %d, %Y')`. 
 
 
 ```{r clear.workspace, echo=FALSE}
