@@ -23,7 +23,7 @@ This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
 
 ```{r clear.workspace, echo=FALSE}
-#-----clear workspace---- 
+#-----clear workspace----
 
 # Clear workspace of all objects and unload all extra (non-base) packages
 rm(list = ls(all = TRUE))
