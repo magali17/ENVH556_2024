@@ -119,11 +119,10 @@ To interact with GitHub repositories from your machine (e.g., pushing changes or
 5. Enter a **note** (e.g., "Basic Token for Push/Pull").
 6. Set an **expiration** date (choose based on your preference, e.g., 30 days).
 7. Under **Select scopes**, check the following permissions:
-   - `repo` (Full control of private repositories)
-   - `workflow` (Access GitHub Actions if necessary)
+   - `repo` (Full control of private repositories) 
 8. Click **Generate token** and **copy** the token to a safe location, as you will not be able to view it again.
 
-####Step 2: Add the Token to Your Git Configuration 
+#### Step 2: Add the Token to Your Git Configuration 
 
 Once the token is generated, you will need to configure Git to use the token for push/pull operations:
 
