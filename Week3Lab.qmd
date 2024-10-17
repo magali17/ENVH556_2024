@@ -50,7 +50,6 @@ pacman::p_load(knitr, kableExtra, tidyverse, egg, multcomp, modelr,
 ```{r directory.organization.read.data, echo=FALSE, warning=FALSE}
 #-----directory organization and read data-----
 
-
 # specify data path
 data_path <- file.path("Datasets")
 
@@ -82,7 +81,7 @@ The purpose of this lab is to get practice using and reporting regression models
 
 # The Data
 
-These data are described in the [Mercer et al, 2011](https://doi.org/10.1016/j.atmosenv.2011.05.043).  
+These snapshot data are described in the [Mercer et al, 2011](https://doi.org/10.1016/j.atmosenv.2011.05.043).  
 
 * air pollution measurements were collected at increasing distances from roadways to capture concentration gradients     
 * 100 locations in LA  
@@ -138,8 +137,10 @@ kable(snapshot_summary,
       digits=2) %>%
   kable_styling()
    
-
 ```
+
+Compare the mean, median, and GMs for each seaason. Are they very different? What might this tell you about the distribution of NOx? 
+
 
 * Commands for season-specific boxplots:
 
@@ -169,6 +170,8 @@ ggplot(snapshot, aes(x = seasonfac, y = ln_nox, fill = seasonfac)) +
 # specify regression model
 # predictors: distance to A1, A1 roads in 50m buffer, A2-3 roads in 400m buffer, pop in 5km buffer, distance to coast, intense land use in 3k km2, distance to commercial area
 frml <- as.formula(ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm)
+
+# note: as.formula() works with strings as well!
 
 # summarize the fit of each model
 summary(lm_summer <- lm(frml, data = snapshot, subset = seasonfac == "1Summer"))
@@ -208,7 +211,8 @@ This gives season-specific predictions in the dataset with all seasons.
 ```{r predictions.with.dplyr}
 #-----predictions with dplyr-----
 
-# this adds model-specific predictions, both in-sample and out-of-sample
+# this adds model-specific predictions. 
+# Note that we are using a season-specific model to predict at all times 
 # however, we don't get the prediction intervals or SEs this way
 snap2 <- snapshot %>% 
     # summer
@@ -225,8 +229,10 @@ snap2 <- snapshot %>%
 
 # inspect predictions and residuals
 snap2 %>% 
-  dplyr::select(ID, SeasonID = seasonfac, ln_nox, preds_sum, resids_sum, preds_fall,
-                resids_fall, preds_win, resids_win) %>% 
+  dplyr::select(ID, SeasonID = seasonfac, ln_nox, 
+                preds_sum, preds_fall, preds_win, 
+                #resids_sum, resids_fall, resids_win
+                ) %>% 
   mutate_if(is.double, round, 2) %>%
   # example location
   filter(ID==first(ID))
@@ -254,11 +260,10 @@ winter <- cbind(snapshot[snapshot$season==3,],predict(lm_winter,interval="predic
 # then combine the dataset into one big tibble
 allseas_in <- rbind(summer, fall, winter) %>% as_tibble()
 
-# now use dplyr to rename the predictions (the predict function gives default
-# variable names)
+# rename the predictions to clarify that these are IN-SAMPLE predictions
 allseas_in <- rename(allseas_in, pred_in = fit, lwr_in = lwr, upr_in = upr)
 
-
+# let's look at an example location
 allseas_in %>%
   filter(ID==first(ID)) %>%
   dplyr::select(ID, season, seasonfac, ln_nox, pred_in, lwr_in, upr_in)
@@ -275,13 +280,13 @@ allseas_in %>%
 
 # get the prediction interval for each season 
 fall_preds_from_summer <- 
-  predict(lm_summer, snapshot[snapshot$season == 2,], interval = "prediction")
+  predict(lm_summer, snapshot[snapshot$seasonfac == "2Fall",], interval = "prediction")
 
 winter_preds_from_fall <- 
-  predict(lm_fall, snapshot[snapshot$season == 3,], interval = "prediction")
+  predict(lm_fall, snapshot[snapshot$seasonfac == "3Winter",], interval = "prediction")
 
 summer_preds_from_winter <- 
-  predict(lm_winter, snapshot[snapshot$season == 1,], interval = "prediction")
+  predict(lm_winter, snapshot[snapshot$seasonfac == "1Summer",], interval = "prediction")
 
 # then combine the dataset into one big tibble and rename variables
 allseas_out <- rbind(summer_preds_from_winter, 
@@ -303,17 +308,25 @@ Now evaluate the quality of the predictions.  This is based on correlation betwe
 
 # summer in-sample
 paste("summer in-sample R2:  ", 
-      with(subset(allseas_both, season == 1), round(cor(ln_nox, pred_in)^2, 3))) 
+      with(subset(allseas_both, seasonfac == "1Summer"), round(cor(ln_nox, pred_in)^2, 3))) 
 
 # summer out-of-sample (from winter model)
 paste("summer out-of-sample R2 (from winter model):  ", 
-      with(subset(allseas_both, season == 1), round(cor(ln_nox, pred_out)^2,3)))
+      with(subset(allseas_both, seasonfac == "1Summer"), round(cor(ln_nox, pred_out)^2,3)))
 
 ```
 
 Let's look at what we mean by R^2^ about the best fit line by plotting the data we correlated above and incorporating the best fit lines.
 
 Note that we use `pivot_longer()` to generate a multi-faceted plot. If you only want to display one season, a simpler approach could be used without the need for reshaping the data.
+
+* x-axis shows observed ln NOx    
+* y-axis shows predicted ln NOx   
+* Columns show the season data we are looking at (e.g., summer)   
+* top row shows results from in-sample predictions 
+* bottom row shows results from out-of-sample predictions (e.g., winter model used to predict during the summer) 
+
+For example, the top left panel shows observed (x-axis) vs predicted (y-axis) summer concentrations when using the summer model to predict summer (in-sample) concentrations
 
 ```{r summer.in.and.out.sample, message=FALSE}
 #----- in and out of sample-----
@@ -346,6 +359,9 @@ allseas_both %>%
     theme_bw()
 
 ```
+
+Why do out-of-sample predictions typically look worse? 
+
 
 # Practice Session
 This section covers basic practice to be completed during the lab.   
