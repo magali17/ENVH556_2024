@@ -15,6 +15,8 @@ execute:
   echo.comments: false
   message: false
   warning: false
+editor_options: 
+  chunk_output_type: console
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
@@ -136,7 +138,17 @@ kable(snapshot_summary,
       caption = "Distribution of NOx concentrations (ppb) by season.",
       digits=2) %>%
   kable_styling()
-   
+  
+
+# compare central tendency measures
+snapshot_summary %>%
+  dplyr::select(seasonfac, Median, Mean, GM) %>%
+  kable(.,
+      caption = "Distribution of NOx concentrations (ppb) by season.",
+      digits=0) %>%
+  kable_styling()
+
+
 ```
 
 Compare the mean, median, and GMs for each seaason. Are they very different? What might this tell you about the distribution of NOx? 
@@ -227,7 +239,7 @@ snap2 <- snapshot %>%
     add_residuals(lm_winter,"resids_win") %>%
     add_predictions(lm_winter,"preds_win")
 
-# inspect predictions and residuals
+# inspect predictions and residuals for one location
 snap2 %>% 
   dplyr::select(ID, SeasonID = seasonfac, ln_nox, 
                 preds_sum, preds_fall, preds_win, 
@@ -241,7 +253,6 @@ snap2 %>%
 
 Now we add prediction intervals:
 
-
 ```{r in-sample prediction intervals}
 #-----in-sample prediction intervals-----
 
@@ -253,9 +264,9 @@ Now we add prediction intervals:
 # the data to generate the model are the same ones to do prediction.  This
 # warning does not appear when the predictions are out of sample (see next
 # chunk).
-summer <- cbind(snapshot[snapshot$season==1,],predict(lm_summer,interval="prediction"))
-fall <- cbind(snapshot[snapshot$season==2,],predict(lm_fall,interval="prediction"))
-winter <- cbind(snapshot[snapshot$season==3,],predict(lm_winter,interval="prediction"))
+summer <- cbind(snapshot[snapshot$seasonfac=="1Summer",],predict(lm_summer,interval="prediction"))
+fall <- cbind(snapshot[snapshot$seasonfac=="2Fall",],predict(lm_fall,interval="prediction"))
+winter <- cbind(snapshot[snapshot$seasonfac=="3Winter",],predict(lm_winter,interval="prediction"))
 
 # then combine the dataset into one big tibble
 allseas_in <- rbind(summer, fall, winter) %>% as_tibble()
