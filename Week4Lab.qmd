@@ -125,8 +125,6 @@ summary(lm_fall <- lm(frml, data = fall))
 
 ```
 
-# --> 
-
 * AIC and BIC:  
   * Intended to estimate the generalization of a model (model performance) without doing out-of-sample validation (uses the training data). 
   * Take into account the model fit and complexity by penalizing the addition of parameters, thus added parameters should sufficiently improve the model fit.
