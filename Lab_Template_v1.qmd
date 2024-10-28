@@ -1,0 +1,184 @@
+---
+title: "Lab Report Template (Version 1)"
+author: "Your Name Here"
+format:
+  html:
+    df_print: "paged"
+    fig_caption: yes
+    toc: true #include a table of contents (optional)
+    toc_depth: 3
+    number_sections: true
+    self-contained: true #save images etc. in this file (vs folders)
+execute:
+  echo: false # hide raw code output
+  cache: false
+  echo.comments: false
+  message: false
+  warning: false
+
+---
+
+`r format(Sys.time(), '%B %d, %Y')`.
+
+---
+
+# Notes on This Document
+
+* This template serves as an example for structuring your lab reports. It is not the only approach for completing assignments successfully.    
+* Refer to the 'Lab Report Guidelines.html' document for detailed requirements on structuring and formatting each section.    
+* Make sure to add comments to your code to aid in transparancy and future replication  
+
+---
+
+```{r}
+# ----- clear work space of all objects and unload all extra (non-base) packages --------------
+rm(list = ls(all = TRUE))
+if (!is.null(sessionInfo()$otherPkgs)) {
+    res <- suppressWarnings(
+        lapply(paste('package:', names(sessionInfo()$otherPkgs), sep=""),
+               detach, character.only=TRUE, unload=TRUE, force=TRUE))
+   
+}
+
+
+# Load pacman into memory, installing as needed
+my_repo <- 'http://cran.r-project.org'
+if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
+
+# ----- load packages with pacman -----
+# Load additional the required packages, as needed
+pacman::p_load(tidyverse)
+
+# ----- load in any required scripts ----- 
+#source("global_functions.R")
+
+```
+
+```{r}
+# ----- code to load data -----
+# Example: my_data <- read.csv("data/my_data_file.csv")
+# Make sure to specify the correct file path
+
+```
+
+```{r}
+# ----- clean data -----
+
+
+```
+
+
+# Introduction    
+
+[Provide background information, a clear statement of objectives, and any relevant hypotheses.]
+
+
+
+In this lab, we aim to....
+
+
+# Methods
+
+[Describe the steps you took to conduct the analysis. Specify each procedure, providing enough information for someone to replicate your work accurately.]
+
+
+
+
+# Results & Discussion 
+
+## Question 1 [Or descriptive header]
+
+[Explain findings and any trends observed in the results. Describe each result in the context of your hypotheses and/or objectives.]
+
+
+We find that......
+
+
+
+Table 1 shows ......
+
+```{r}
+# ----- code to generate table 1 -----
+
+```
+
+We also find that....., as shown in Figure 1.
+
+```{r}
+# ----- code to generate figure 1 -----
+
+
+
+```
+
+
+## Question 2 [Or descriptive header]
+
+Moreover, in analyses evaluating.....we see that.....
+
+```{r}
+# ----- additional analyses ----- 
+
+
+
+
+```
+
+
+
+## Question 3 etc. 
+
+
+```{r}
+# ----- analyses for question 3 -----
+
+
+
+
+```
+
+
+
+# Conclusion
+
+In conclusion...
+
+
+
+# Appendix
+
+## Supplementary Information   
+[Only include additional results or code that directly supports your findings. Each item should have a descriptive label and be referenced in the main text.]
+
+
+
+## Session Information 
+
+```{r session.info}
+# ----- session information ----
+
+# print R session information
+sessionInfo()
+
+```
+
+## Analytic Code 
+
+```{r code.appendix, ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE, , include=TRUE}
+# ----- code appendix ----
+```
+
+## Functions
+
+```{r functions, eval = TRUE}
+# ----- functions ----
+
+# Show the names of all functions defined in the .Rmd
+# (e.g. loaded in the environment)
+lsf.str()
+
+# Show the definitions of all functions loaded into the current environment  
+lsf.str() %>% set_names() %>% map(get, .GlobalEnv)
+
+```
+
