@@ -24,7 +24,7 @@ execute:
 
 # Notes on This Document
 
-* This template is designed as an example for structuring your lab reports. It provides a resource to support your work but is **entirely optional and not the only acceptable format for lab report submissions**.
+* This template is designed as an example for structuring your lab reports. It provides a resource to support your work but is **entirely optional and not the only acceptable format for lab report submissions**. Developing your scientific judgment is a key goal of this class. 
   * For example, you may choose to separate the Results and Discussion into distinct sections if that better suits your analysis and writing style.   
 * Please refer to the 'Lab Report Guidelines.html' document for detailed requirements on structuring and formatting each section.    
 * Make sure to add comments to your code to aid in transparency and future replication   
@@ -32,7 +32,7 @@ execute:
   * this Notes on This Document Section   
   * things in brackets 
   * irrelevant text
-* This document provides suggested paragraph lengths for each section. Academic paragraphs are roughly 100-300 words, but use your judgment — developing scientific judgment is a key goal of this class.
+* This document provides suggested paragraph lengths for each section. Academic paragraphs are roughly 100-300 words, but use your judgment. 
 
 ---
 
