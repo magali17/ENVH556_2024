@@ -24,10 +24,10 @@ execute:
 
 # Notes on This Document
 
-* This template serves as an example for structuring your lab reports. It is not the only approach for completing assignments successfully. 
-  * For example, you may decide to separte the Results and Discussion into separate sections. 
-* Refer to the 'Lab Report Guidelines.html' document for detailed requirements on structuring and formatting each section.    
-* Make sure to add comments to your code to aid in transparancy and future replication   
+* This template is designed as an example for structuring your lab reports. It provides a resource to support your work but is entirely optional and not the only acceptable format for lab report submissions.
+  * For example, you may choose to separate the Results and Discussion into distinct sections if that better suits your analysis and writing style.   
+* Please refer to the 'Lab Report Guidelines.html' document for detailed requirements on structuring and formatting each section.    
+* Make sure to add comments to your code to aid in transparency and future replication   
 * Before using this template, delete: 
   * this Notes on This Document Section   
   * things in brackets 
