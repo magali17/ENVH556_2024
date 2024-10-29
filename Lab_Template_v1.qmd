@@ -24,7 +24,8 @@ execute:
 
 # Notes on This Document
 
-* This template serves as an example for structuring your lab reports. It is not the only approach for completing assignments successfully.    
+* This template serves as an example for structuring your lab reports. It is not the only approach for completing assignments successfully. 
+  * For example, you may decide to separte the Results and Discussion into separate sections. 
 * Refer to the 'Lab Report Guidelines.html' document for detailed requirements on structuring and formatting each section.    
 * Make sure to add comments to your code to aid in transparancy and future replication   
 * Before using this template, delete: 
@@ -73,8 +74,7 @@ pacman::p_load(tidyverse)
 ```
 
 
-# Introduction    
-
+# Introduction        
 [~2-4 paragraphs]
 
 [Provide background information, a clear statement of objectives, and any relevant hypotheses.]
@@ -85,9 +85,9 @@ In this lab, we aim to....
 
 
 # Methods   
-[~1-3 paragraphs]
+[1-3 paragraphs total in the following subsections]
 
-[Describe the steps you took to conduct the analysis. Specify each procedure, providing enough information for someone to replicate your work accurately.]
+[Describe the steps you took to conduct the analysis, providing enough detail for a knowledgeable expert to replicate your approach.]
 
 ## Data Description   
 [~1 paragraph]
