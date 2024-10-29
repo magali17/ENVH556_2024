@@ -1,7 +1,7 @@
 ---
 title: "Week5Lecture: Variance Components"
 author: "Lianne Sheppard for ENVH 556 Autumn 2024"
-date: "Winter 2021; Updated `r format(Sys.time(), '%d %B, %Y')`"
+date: "Fall 2024; Updated `r format(Sys.time(), '%d %B, %Y')`"
 format:
   html:
     df_print: "paged"
@@ -37,6 +37,9 @@ if (!is.null(sessionInfo()$otherPkgs)) {
 # Load pacman into memory, installing as needed
 my_repo <- 'http://cran.r-project.org'
 if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
+
+# NOTE: if you receive an error with e.g., fitVCA(), you may need to reinstall lme4
+# install.packages("lme4", repos = "http://cran.r-project.org", type = "source")
 
 # Load the other packages, installing as needed.
 pacman::p_load(knitr, dplyr, tidyr, modelr, stringr, ggplot2, Hmisc, lme4, VCA, 
@@ -284,7 +287,7 @@ varPlot(form = ln_nox~ group_loc, Data = as.data.frame(fvc) )
 fit_MOM <- anovaVCA(ln_nox ~ group_loc, Data = as.data.frame(fvc) )
 fit_MOM
 
-# note: if you receive an error with fitVCA(), you may need to reinstall lme4
+# NOTE: if you receive an error with fitVCA(), you may need to reinstall lme4
 # install.packages("lme4", repos = "http://cran.r-project.org", type = "source")
 fit_REML <- fitVCA(ln_nox ~ group_loc, Data = as.data.frame(fvc), method = "REML")
 fit_REML
@@ -317,6 +320,7 @@ summary(lmefit_ML)
 
 ```
 
+## Slide 25:  Compile previous snapshot results into a table for comparison
 
 ## Same examples with DEMS 
 
@@ -391,48 +395,7 @@ summary(mixedfit3_ML)
 
 ```
 
-
-## Slide 37:  DEMS V Table 3 Facility A example U1 groups
-
-Verifying:  This result has the same number of observations (108) and mdj groups
-(13) compared to the Stata example from lecture.  My mean is about the same
-(5.85).  This seems to be the same dataset
-
-```{r model.DEMSV_U1}
-#-----model DEMSV_U1-----
-
-DEMSV_U1 <- lmer(ln_ecdata ~  (1|mdj), data = DEMS, REML = TRUE, 
-                 subset = facilityid == "A" & u_s == "u")
-
-summary(DEMSV_U1)
-
-```
-
-## Slides 38:  DEMS V Table 3 Facility A example U2 groups
-
-```{r model.DEMSV_U2}
-#-----model DEMSV_U2-----
-
-DEMSV_U2 <- lmer(ln_ecdata ~  as.factor(group2time) + (1|mdj), data = DEMS, 
-                 REML = TRUE, subset = facilityid == "A" & u_s == "u")
-
-summary(DEMSV_U2)
-
-```
-
-## Slide 39:  DEMS V Table 3 Facility A example U3 groups
-
-```{r model.DEMSV_U3}
-#-----model DEMSV_U3-----
-
-DEMSV_U3 <- lmer(ln_ecdata ~  as.factor(group3area) + (1|mdj), data = DEMS, 
-                 REML = TRUE, subset = facilityid == "A" & u_s == "u")
-
-summary(DEMSV_U3)
-
-```
-
-## Slide 43:  Regression for association with random effects
+## Slide 36:  Regression for association with random effects
 
 Use the snapshot data to compare estimates and SEs for a fixed effect with and
 without random effects
@@ -493,7 +456,7 @@ coef(summary(mixedfit2_REML))
 confint(mixedfit2_REML)
 
 ```
-## Slide 44:  Regression for prediction with random effects
+## Slide 37:  Regression for prediction with random effects
 
 To predict from a mixed model, i.e. a linear model with fixed and random
 effects, you MUST have the same groups as you used to fit your model.  You can't
@@ -563,6 +526,50 @@ summary(p3)
 summary(p2)
 
 ```
+
+
+## DEMS V results moved to extra lecture slides, slides 44-46
+
+### Slide 44:  DEMS V Table 3 Facility A example U1 groups
+
+Verifying:  This result has the same number of observations (108) and mdj groups
+(13) compared to the Stata example from lecture.  My mean is about the same
+(5.85).  This seems to be the same dataset
+
+```{r model.DEMSV_U1}
+#-----model DEMSV_U1-----
+
+DEMSV_U1 <- lmer(ln_ecdata ~  (1|mdj), data = DEMS, REML = TRUE, 
+                 subset = facilityid == "A" & u_s == "u")
+
+summary(DEMSV_U1)
+
+```
+
+## Slides 45:  DEMS V Table 3 Facility A example U2 groups
+
+```{r model.DEMSV_U2}
+#-----model DEMSV_U2-----
+
+DEMSV_U2 <- lmer(ln_ecdata ~  as.factor(group2time) + (1|mdj), data = DEMS, 
+                 REML = TRUE, subset = facilityid == "A" & u_s == "u")
+
+summary(DEMSV_U2)
+
+```
+
+## Slide 46:  DEMS V Table 3 Facility A example U3 groups
+
+```{r model.DEMSV_U3}
+#-----model DEMSV_U3-----
+
+DEMSV_U3 <- lmer(ln_ecdata ~  as.factor(group3area) + (1|mdj), data = DEMS, 
+                 REML = TRUE, subset = facilityid == "A" & u_s == "u")
+
+summary(DEMSV_U3)
+
+```
+
 
 
 # Appendix 
