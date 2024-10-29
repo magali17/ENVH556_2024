@@ -7,7 +7,7 @@ format:
     fig_caption: yes
     toc: true #include a table of contents (optional)
     toc_depth: 3
-    number_sections: true
+    number-sections: true
     self-contained: true #save images etc. in this file (vs folders)
 execute:
   echo: false # hide raw code output
@@ -26,7 +26,12 @@ execute:
 
 * This template serves as an example for structuring your lab reports. It is not the only approach for completing assignments successfully.    
 * Refer to the 'Lab Report Guidelines.html' document for detailed requirements on structuring and formatting each section.    
-* Make sure to add comments to your code to aid in transparancy and future replication  
+* Make sure to add comments to your code to aid in transparancy and future replication   
+* Before using this template, delete: 
+  * this Notes on This Document Section   
+  * things in brackets 
+  * irrelevant text
+
 
 ---
 
@@ -70,6 +75,8 @@ pacman::p_load(tidyverse)
 
 # Introduction    
 
+[~2-4 paragraphs]
+
 [Provide background information, a clear statement of objectives, and any relevant hypotheses.]
 
 
@@ -77,14 +84,22 @@ pacman::p_load(tidyverse)
 In this lab, we aim to....
 
 
-# Methods
+# Methods   
+[~1-3 paragraphs]
 
 [Describe the steps you took to conduct the analysis. Specify each procedure, providing enough information for someone to replicate your work accurately.]
 
+## Data Description   
+[~1 paragraph]
+[Summarize the data used in these analyses.]
 
 
+## Statistical Analyses    
+[~1 paragraph]
 
-# Results & Discussion 
+
+# Results & Discussion  
+[~1-3 paragraphs per question]    
 
 ## Question 1 [Or descriptive header]
 
@@ -139,11 +154,13 @@ Moreover, in analyses evaluating.....we see that.....
 
 
 
-# Conclusion
+# Conclusion    
+[~1 paragraph]
 
 In conclusion...
 
 
+---
 
 # Appendix
 

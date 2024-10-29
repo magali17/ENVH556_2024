@@ -45,14 +45,11 @@ pacman::p_load(knitr, dplyr, tidyr, modelr, stringr, purrr, ggplot2, Hmisc,
 ```{r directory.organization.read.data, echo=FALSE, warning=FALSE}
 #-----directory organization and read data-----
 
-# specify working directory
-project_path <- getwd()
-
 # create "Datasets" directory if one does not already exist    
-dir.create(file.path(project_path,"Datasets"), showWarnings=FALSE, recursive = TRUE)
+dir.create(file.path("Datasets"), showWarnings=FALSE, recursive = TRUE)
 
 # specify data path
-data_path <- file.path(project_path,"Datasets")
+data_path <- file.path("Datasets")
 
 # specify the file name and path
 file_name <- "weldschool.rds"
@@ -77,9 +74,15 @@ rm(url, file_name, file_path, data_path)
 
 # Introduction and Purpose
 
-The purpose of this lab is to practice estimating variance components both by using descriptive statistics as well as through application of random and mixed effect models. In addition, as with all the labs in this course, you should focus on writing up a coherent lab report that addresses the scientific context and scientific questions that can be answered using variance components.
+The purpose of this lab is to **practice estimating variance components both by using descriptive statistics as well as through application of random and mixed effect models**. In addition, as with all the labs in this course, you should focus on writing up a coherent lab report that addresses the scientific context and scientific questions that can be answered using variance components.
 
-In this lab exercise, we will use the Welding School personal survey data. The data are stored in the file named “*weldschool.rds*”. The exposure concentration variables in the dataset consist of *mnconc* and *particulate*, the airborne concentrations of manganese and total particulate, respectively, both in µg/m^3^. The grouping variable is *subjid*. Further description of the variables can be found in the document titled "*Welding School Exposures variables 556 rev021015*," and the background and study design is in the published paper with the file name “*Baker Blood Mn Review*.”
+In this lab exercise, we will use the Welding School personal survey data from the *Baker et al. 2014 Blood Manganese as an Exposure Biomarker Review*. The data are stored in the file named “*weldschool.rds*”. The exposure concentration variables in the dataset consist of:    
+
+* *mnconc*: airborne concentrations of manganese (ug/m^3^)  
+* *particulate*: airborne concentrations of total particulate (µg/m^3^)
+* *subjid*: subject ID is the grouping variable 
+
+Further description of the variables can be found in the document titled "*Welding School Exposures variables 556 rev021015*," and the background and study design is in 
 
 # Getting Started
 
@@ -103,7 +106,7 @@ Below is a summary of R packages. See the *Week5Lecture.Rmd* file for coding exa
 
 The `lmer` function in the `lme4` package looks similar to a standard linear regression model but adds capacity to incorporate structured errors as random effects. You can fit a variety of random effects models, from the simplest (a single random intercept) to more complex models with multiple random effects terms, nested (vs. crossed) terms, and random slope models.
 
-The formula part of the `lmer` command allows random effects to be specified with terms inside parentheses. The vertical bar separates the formula part of the random effect model specification (before "|") from the variable that defines the random effect (after "|").
+The formula part of the `lmer` command allows random effects to be specified with terms inside parentheses. **The vertical bar separates the formula part of the random effect model specification (before "|") from the variable that defines the random effect (after "|")**.
 
 Fitting of `lmer` models is done by maximum likelihood estimation. The random effects and residual (unstructured) error in this model are assumed to have normal distributions. The default estimation uses restricted maximum likelihood, which corrects for the bias in the variance component estimates. However, when comparing models with different numbers of terms, standard maximum likelihood should be used.
 
@@ -121,7 +124,7 @@ Here is a [link](https://stats.stackexchange.com/questions/13166/rs-lmer-cheat-s
 1. Determine your project for this lab.
 
 2. Read in the *weldschool.rds* dataset:
-    a. Become familiar with your data.
+    a. **Become familiar with your data.**
     b. How many observations, students, and quarters are in your dataset? How many observations are there per student (average, minimum, maximum)?
     c. Characterize the outcome variables *mnconc* and *particulate*, airborne measurements of Mn concentration and total particulate, respectively, and all potential covariates.
     d. Get a basic understanding of the distribution of the airborne measurements on both the native and log-transformed scale. What scale do you think you should conduct your variance components analysis on?

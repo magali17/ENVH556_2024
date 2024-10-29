@@ -14,9 +14,6 @@ format:
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
 
-# --> NOTE: HAS RENDERING ISSUE
-
-
 ```{r setup, include=FALSE}
 #-----setup-----
 
@@ -50,14 +47,11 @@ pacman::p_load(knitr, dplyr, tidyr, modelr, stringr, ggplot2, Hmisc, lme4, VCA,
 ```{r directory.organization.and.read.data, echo=FALSE, warning=FALSE}
 #-----directory organization and read data-----
 
-# specify working directory
-project_path <- getwd()
-
 # create "Datasets" directory if one does not already exist    
-dir.create(file.path(project_path,"Datasets"), showWarnings=FALSE, recursive = TRUE)
+dir.create(file.path("Datasets"), showWarnings=FALSE, recursive = TRUE)
 
 # specify data path
-data_path <- file.path(project_path,"Datasets")
+data_path <- file.path("Datasets")
 
 # specify files to read (their names will be used for variable assignment)
 file_names <- c(snapshot = "allseasonsR.rds", DEMS = "DEMSCombinedPersonal.rds")
@@ -290,6 +284,8 @@ varPlot(form = ln_nox~ group_loc, Data = as.data.frame(fvc) )
 fit_MOM <- anovaVCA(ln_nox ~ group_loc, Data = as.data.frame(fvc) )
 fit_MOM
 
+# note: if you receive an error with fitVCA(), you may need to reinstall lme4
+# install.packages("lme4", repos = "http://cran.r-project.org", type = "source")
 fit_REML <- fitVCA(ln_nox ~ group_loc, Data = as.data.frame(fvc), method = "REML")
 fit_REML
 
