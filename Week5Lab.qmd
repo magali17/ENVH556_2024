@@ -77,7 +77,7 @@ rm(url, file_name, file_path, data_path)
 
 The purpose of this lab is to **practice estimating variance components both by using descriptive statistics as well as through application of random and mixed effect models**. In addition, as with all the labs in this course, you should focus on writing up a coherent lab report that addresses the scientific context and scientific questions that can be answered using variance components.
 
-In this lab exercise, we will use the Welding School personal survey data from the *Baker et al. 2014 Blood Manganese as an Exposure Biomarker Review*. The data are stored in the file named “*weldschool.rds*”. The exposure concentration variables in the dataset consist of:    
+In this lab exercise, we will use the Welding School personal survey data from the *Baker et al. 2014 Blood Manganese as an Exposure Biomarker Review*. The data are stored in the file named “**weldschool.rds**”. The exposure concentration variables in the dataset consist of:    
 
 * *mnconc*: airborne concentrations of manganese (ug/m^3^)  
 * *particulate*: airborne concentrations of total particulate (µg/m^3^)
@@ -109,7 +109,7 @@ Below is a summary of R packages. See the *Week5Lecture.Rmd* file for coding exa
 
 The formula part of the `lmer` command allows random effects to be specified with terms inside parentheses. **The vertical bar separates the formula part of the random effect model specification (before "|") from the variable that defines the random effect (after "|")**.
 
-Fitting of `lmer` models is done by maximum likelihood estimation. The random effects and residual (unstructured) error in this model are assumed to have normal distributions. The default estimation uses restricted maximum likelihood, which corrects for the bias in the variance component estimates. However, when comparing models with different numbers of terms, standard maximum likelihood should be used.
+Fitting of `lmer` models is done by maximum likelihood estimation. The random effects and residual (unstructured) error in this model are assumed to have normal distributions. **The default estimation uses restricted maximum likelihood, which corrects for the bias in the variance component estimates**. However, **when comparing models with different numbers of terms, standard maximum likelihood should be used**.
 
 ### `lmer` random effects coding
 
@@ -119,6 +119,8 @@ Here is a [link](https://stats.stackexchange.com/questions/13166/rs-lmer-cheat-s
 * Random slope only:  (0 + X|G)
 * Correlated random slopes and intercepts: (1 + X|G)
 * Independent random slopes and intercepts: (1|G) + (0 + X|G)
+
+*Side Note: Longitudinal models with random slopes and intercepts often allow for correlated slopes and intercepts. In this situation, there will be a third parameter estimated to reflect that. We can force these to be independent, however, in the code.*
 
 # Practice Session
 
@@ -132,21 +134,21 @@ Here is a [link](https://stats.stackexchange.com/questions/13166/rs-lmer-cheat-s
     
 For the rest of the practice session, we will focus on the Mn concentration variable:
 
-3. Try to estimate the variance components within and between subjects "by hand" using `dplyr`.
+3. Try to estimate the variance components within and between subjects "by hand" **using `dplyr`**.
 
-4. Now use `VCA` to estimate the variance components using a method of moments or ANOVA approach.
+4. Now **use `VCA`** to estimate the variance components using a method of moments or ANOVA approach.
     a. Do your estimates agree with those from Step 3? Why or why not?
 
-5. Now use `lmer` to estimate the variance components. (Decide whether you want maximum likelihood or restricted maximum likelihood estimates. Be able to articulate your reason for your choice.)
+5. Now **use `lmer`** to estimate the variance components. (Decide whether you want maximum likelihood or restricted maximum likelihood estimates. Be able to articulate your reason for your choice.)
     a. Do your estimates agree with those from Step 3? Why or why not?
 
-6. Decide whether you should add any fixed effects into your model.
+6. Decide whether you should **add any fixed effects** into your model.
     a. If so, which one(s)? Why? (Note: Make sure to consider science in your answer!)
-    b. Compare the variance components from the models with and without fixed effect(s). What happens to the variance component estimates from Step 5 after you add your selected covariate(s)? Does this make sense to you? (Hint: Consider how your covariate is distributed within and between subjects in the data.)
+    b. **Compare** the variance components from the models with and without fixed effect(s). What happens to the variance component estimates from Step 5 after you add your selected covariate(s)? Does this make sense to you? (Hint: Consider how your covariate is distributed within and between subjects in the data.)
 
 # Homework Exercises
 
-1. Repeat the practice session analysis with particulate concentration. Does this produce any different results? Why or why not?
+1. **Repeat the practice session analysis with particulate concentration**. Does this produce any different results? Why or why not?
 
 2. How do your variance component estimates compare with the DEMS and Snapshot examples we discussed in lecture?
 

@@ -3069,7 +3069,7 @@ vertical-align: -.125em;
 <section id="introduction-and-purpose" class="level1">
 <h1>Introduction and Purpose</h1>
 <p>The purpose of this lab is to <strong>practice estimating variance components both by using descriptive statistics as well as through application of random and mixed effect models</strong>. In addition, as with all the labs in this course, you should focus on writing up a coherent lab report that addresses the scientific context and scientific questions that can be answered using variance components.</p>
-<p>In this lab exercise, we will use the Welding School personal survey data from the <em>Baker et al. 2014 Blood Manganese as an Exposure Biomarker Review</em>. The data are stored in the file named “<em>weldschool.rds</em>”. The exposure concentration variables in the dataset consist of:</p>
+<p>In this lab exercise, we will use the Welding School personal survey data from the <em>Baker et al. 2014 Blood Manganese as an Exposure Biomarker Review</em>. The data are stored in the file named “<strong>weldschool.rds</strong>”. The exposure concentration variables in the dataset consist of:</p>
 <ul>
 <li><em>mnconc</em>: airborne concentrations of manganese (ug/m<sup>3</sup>)<br>
 </li>
@@ -3104,7 +3104,7 @@ vertical-align: -.125em;
 <h3 class="anchored" data-anchor-id="lmer-overview"><code>lmer</code> overview</h3>
 <p><strong>The <code>lmer</code> function in the <code>lme4</code> package looks similar to a standard linear regression model but adds capacity to incorporate structured errors as random effects</strong>. You can fit a variety of random effects models, from the simplest (a single random intercept) to more complex models with multiple random effects terms, nested (vs. crossed) terms, and random slope models.</p>
 <p>The formula part of the <code>lmer</code> command allows random effects to be specified with terms inside parentheses. <strong>The vertical bar separates the formula part of the random effect model specification (before “|”) from the variable that defines the random effect (after “|”)</strong>.</p>
-<p>Fitting of <code>lmer</code> models is done by maximum likelihood estimation. The random effects and residual (unstructured) error in this model are assumed to have normal distributions. The default estimation uses restricted maximum likelihood, which corrects for the bias in the variance component estimates. However, when comparing models with different numbers of terms, standard maximum likelihood should be used.</p>
+<p>Fitting of <code>lmer</code> models is done by maximum likelihood estimation. The random effects and residual (unstructured) error in this model are assumed to have normal distributions. <strong>The default estimation uses restricted maximum likelihood, which corrects for the bias in the variance component estimates</strong>. However, <strong>when comparing models with different numbers of terms, standard maximum likelihood should be used</strong>.</p>
 </section>
 <section id="lmer-random-effects-coding" class="level3">
 <h3 class="anchored" data-anchor-id="lmer-random-effects-coding"><code>lmer</code> random effects coding</h3>
@@ -3115,6 +3115,7 @@ vertical-align: -.125em;
 <li>Correlated random slopes and intercepts: (1 + X|G)</li>
 <li>Independent random slopes and intercepts: (1|G) + (0 + X|G)</li>
 </ul>
+<p><em>Side Note: Longitudinal models with random slopes and intercepts often allow for correlated slopes and intercepts. In this situation, there will be a third parameter estimated to reflect that. We can force these to be independent, however, in the code.</em></p>
 </section>
 </section>
 </section>
@@ -3132,26 +3133,26 @@ vertical-align: -.125em;
 </ol>
 <p>For the rest of the practice session, we will focus on the Mn concentration variable:</p>
 <ol start="3" type="1">
-<li><p>Try to estimate the variance components within and between subjects “by hand” using <code>dplyr</code>.</p></li>
-<li><p>Now use <code>VCA</code> to estimate the variance components using a method of moments or ANOVA approach.</p>
+<li><p>Try to estimate the variance components within and between subjects “by hand” <strong>using <code>dplyr</code></strong>.</p></li>
+<li><p>Now <strong>use <code>VCA</code></strong> to estimate the variance components using a method of moments or ANOVA approach.</p>
 <ol type="a">
 <li>Do your estimates agree with those from Step 3? Why or why not?</li>
 </ol></li>
-<li><p>Now use <code>lmer</code> to estimate the variance components. (Decide whether you want maximum likelihood or restricted maximum likelihood estimates. Be able to articulate your reason for your choice.)</p>
+<li><p>Now <strong>use <code>lmer</code></strong> to estimate the variance components. (Decide whether you want maximum likelihood or restricted maximum likelihood estimates. Be able to articulate your reason for your choice.)</p>
 <ol type="a">
 <li>Do your estimates agree with those from Step 3? Why or why not?</li>
 </ol></li>
-<li><p>Decide whether you should add any fixed effects into your model.</p>
+<li><p>Decide whether you should <strong>add any fixed effects</strong> into your model.</p>
 <ol type="a">
 <li>If so, which one(s)? Why? (Note: Make sure to consider science in your answer!)</li>
-<li>Compare the variance components from the models with and without fixed effect(s). What happens to the variance component estimates from Step 5 after you add your selected covariate(s)? Does this make sense to you? (Hint: Consider how your covariate is distributed within and between subjects in the data.)</li>
+<li><strong>Compare</strong> the variance components from the models with and without fixed effect(s). What happens to the variance component estimates from Step 5 after you add your selected covariate(s)? Does this make sense to you? (Hint: Consider how your covariate is distributed within and between subjects in the data.)</li>
 </ol></li>
 </ol>
 </section>
 <section id="homework-exercises" class="level1">
 <h1>Homework Exercises</h1>
 <ol type="1">
-<li><p>Repeat the practice session analysis with particulate concentration. Does this produce any different results? Why or why not?</p></li>
+<li><p><strong>Repeat the practice session analysis with particulate concentration</strong>. Does this produce any different results? Why or why not?</p></li>
 <li><p>How do your variance component estimates compare with the DEMS and Snapshot examples we discussed in lecture?</p></li>
 <li><p>Report and discuss the results of your analysis of Mn and total particulate for this lab, touching on the following points:</p>
 <ol type="a">
