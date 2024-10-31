@@ -3084,8 +3084,13 @@ vertical-align: -.125em;
 <section id="tools-for-estimating-variance-components" class="level2">
 <h2 class="anchored" data-anchor-id="tools-for-estimating-variance-components">Tools for estimating variance components</h2>
 <p>Below is a summary of R packages. See the <em>Week5Lecture.Rmd</em> file for coding examples.</p>
+<p><strong>There are different ways of estimating variance components.</strong></p>
 <ul>
-<li>Descriptively estimate variance components using <code>dplyr</code></li>
+<li>Descriptively estimate variance components using <code>dplyr</code>
+<ul>
+<li>simple, helps understand the approach intuitively<br>
+</li>
+</ul></li>
 <li>Random effects models only
 <ul>
 <li>ANOVA method of moments using <code>VCA</code></li>
@@ -3093,7 +3098,11 @@ vertical-align: -.125em;
 </ul></li>
 <li>Random effects and mixed models
 <ul>
-<li>ANOVA restricted maximum likelihood using <code>lmer</code> in the <code>lme4</code> package</li>
+<li>ANOVA restricted maximum likelihood using <code>lmer</code> in the <code>lme4</code> package
+<ul>
+<li>What is often used in practice<br>
+</li>
+</ul></li>
 <li>ANOVA maximum likelihood using <code>lmer</code> in the <code>lme4</code> package</li>
 </ul></li>
 </ul>

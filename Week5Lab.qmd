@@ -93,12 +93,16 @@ The companion file *Week5Lecture.Rmd* gives R commands relevant to this lab. The
 
 Below is a summary of R packages. See the *Week5Lecture.Rmd* file for coding examples.
 
+**There are different ways of estimating variance components.**
+
 * Descriptively estimate variance components using `dplyr`
-* Random effects models only
+  * simple, helps understand the approach  intuitively   
+* Random effects models only   
     - ANOVA method of moments using `VCA`
     - ANOVA restricted maximum likelihood using `VCA`
 * Random effects and mixed models
     - ANOVA restricted maximum likelihood using `lmer` in the `lme4` package
+      * What is often used in practice     
     - ANOVA maximum likelihood using `lmer` in the `lme4` package
 
 ## Overview of `lmer` commands
