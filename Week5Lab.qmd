@@ -83,7 +83,7 @@ In this lab exercise, we will use the Welding School personal survey data from t
 * *particulate*: airborne concentrations of total particulate (µg/m^3^)
 * *subjid*: subject ID is the grouping variable 
 
-Further description of the variables can be found in the document titled "*Welding School Exposures variables 556 rev021015*," and the background and study design is in 
+Further description of the variables can be found in the document titled "*Welding School Exposures variables 556 rev021015*."
 
 # Getting Started
 
@@ -105,7 +105,7 @@ Below is a summary of R packages. See the *Week5Lecture.Rmd* file for coding exa
 
 ### `lmer` overview
 
-The `lmer` function in the `lme4` package looks similar to a standard linear regression model but adds capacity to incorporate structured errors as random effects. You can fit a variety of random effects models, from the simplest (a single random intercept) to more complex models with multiple random effects terms, nested (vs. crossed) terms, and random slope models.
+**The `lmer` function in the `lme4` package looks similar to a standard linear regression model but adds capacity to incorporate structured errors as random effects**. You can fit a variety of random effects models, from the simplest (a single random intercept) to more complex models with multiple random effects terms, nested (vs. crossed) terms, and random slope models.
 
 The formula part of the `lmer` command allows random effects to be specified with terms inside parentheses. **The vertical bar separates the formula part of the random effect model specification (before "|") from the variable that defines the random effect (after "|")**.
 

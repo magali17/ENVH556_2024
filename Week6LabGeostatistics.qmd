@@ -461,7 +461,7 @@ To do universal kriging, we also need covariates for the fixed part of the model
 # First we need to fit a new variogram model with the square root of distance
 # from the Meuse River as a covariate.  And estimate its variogram model
 
-# --> clarify why not using log(zinc) ~ 1 like above for OK. dist is the predictor? 
+# unlike OK above, sqrt dist is the predictor here
 v.uk <- variogram(log(zinc)~sqrt(dist), meuse)
 m.uk <- fit.variogram(v.uk, vgm("Exp","Sph","Mat"))
 
@@ -473,8 +473,8 @@ plot(v.uk, model = m.uk)
 # fit the universal kriging model, predicting on the meuse.grid
 lzn.kr <- krige(log(zinc)~sqrt(dist), meuse, meuse.grid, model = m.uk)
 
-# --> clarify why
 # calculate standard errors
+# gives information on the uncertainty of the surface, which may vary across locations (e.g., you could plot this)
 lzn.kr$se = sqrt(lzn.kr$var1.var)
 
 # plot the UK predictions and SEs
@@ -550,12 +550,8 @@ krige.cv.stats <- function(krige.cv.output, description){
 
 # ordinary kriging, 5-fold cross-validation 
 
-# --> clarify why nmax 40 is needed here
 # nmax defaults to all observations used for kriging; this sets it at 40
 meuse.CV5 <- krige.cv2(log(zinc)~1, meuse, model = v.fit, nmax = 40, nfold=5)
-
-
-# --> ERRORS: "...invalid graphics state"
 
 # plot the residuals
 krige.cv.bubble(cv.out = meuse.CV5, 

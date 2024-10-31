@@ -3065,7 +3065,7 @@ vertical-align: -.125em;
 
 </header>
 
-<p>This document was rendered on October 28, 2024.</p>
+<p>This document was rendered on October 31, 2024.</p>
 <section id="introduction-and-purpose" class="level1">
 <h1>Introduction and Purpose</h1>
 <p>The purpose of this lab is to <strong>practice estimating variance components both by using descriptive statistics as well as through application of random and mixed effect models</strong>. In addition, as with all the labs in this course, you should focus on writing up a coherent lab report that addresses the scientific context and scientific questions that can be answered using variance components.</p>
@@ -3076,7 +3076,7 @@ vertical-align: -.125em;
 <li><em>particulate</em>: airborne concentrations of total particulate (µg/m<sup>3</sup>)</li>
 <li><em>subjid</em>: subject ID is the grouping variable</li>
 </ul>
-<p>Further description of the variables can be found in the document titled “<em>Welding School Exposures variables 556 rev021015</em>,” and the background and study design is in</p>
+<p>Further description of the variables can be found in the document titled “<em>Welding School Exposures variables 556 rev021015</em>.”</p>
 </section>
 <section id="getting-started" class="level1">
 <h1>Getting Started</h1>
@@ -3102,7 +3102,7 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="overview-of-lmer-commands">Overview of <code>lmer</code> commands</h2>
 <section id="lmer-overview" class="level3">
 <h3 class="anchored" data-anchor-id="lmer-overview"><code>lmer</code> overview</h3>
-<p>The <code>lmer</code> function in the <code>lme4</code> package looks similar to a standard linear regression model but adds capacity to incorporate structured errors as random effects. You can fit a variety of random effects models, from the simplest (a single random intercept) to more complex models with multiple random effects terms, nested (vs. crossed) terms, and random slope models.</p>
+<p><strong>The <code>lmer</code> function in the <code>lme4</code> package looks similar to a standard linear regression model but adds capacity to incorporate structured errors as random effects</strong>. You can fit a variety of random effects models, from the simplest (a single random intercept) to more complex models with multiple random effects terms, nested (vs. crossed) terms, and random slope models.</p>
 <p>The formula part of the <code>lmer</code> command allows random effects to be specified with terms inside parentheses. <strong>The vertical bar separates the formula part of the random effect model specification (before “|”) from the variable that defines the random effect (after “|”)</strong>.</p>
 <p>Fitting of <code>lmer</code> models is done by maximum likelihood estimation. The random effects and residual (unstructured) error in this model are assumed to have normal distributions. The default estimation uses restricted maximum likelihood, which corrects for the bias in the variance component estimates. However, when comparing models with different numbers of terms, standard maximum likelihood should be used.</p>
 </section>
@@ -3216,69 +3216,68 @@ loaded via a namespace (and not attached):
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----setup-----</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># set knitr options</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># clear work space of all objects and unload all extra (non-base) packages</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>(<span class="at">all =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">sessionInfo</span>()<span class="sc">$</span>otherPkgs)) {</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lapply</span>(<span class="fu">paste</span>(<span class="st">&#39;package:&#39;</span>, <span class="fu">names</span>(<span class="fu">sessionInfo</span>()<span class="sc">$</span>otherPkgs), <span class="at">sep=</span><span class="st">&quot;&quot;</span>),</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>               detach, <span class="at">character.only=</span><span class="cn">TRUE</span>, <span class="at">unload=</span><span class="cn">TRUE</span>, <span class="at">force=</span><span class="cn">TRUE</span>))</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#-----load libraries pacman-----</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># clear work space of all objects and unload all extra (non-base) packages</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>(<span class="at">all =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">sessionInfo</span>()<span class="sc">$</span>otherPkgs)) {</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lapply</span>(<span class="fu">paste</span>(<span class="st">&#39;package:&#39;</span>, <span class="fu">names</span>(<span class="fu">sessionInfo</span>()<span class="sc">$</span>otherPkgs), <span class="at">sep=</span><span class="st">&quot;&quot;</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>               detach, <span class="at">character.only=</span><span class="cn">TRUE</span>, <span class="at">unload=</span><span class="cn">TRUE</span>, <span class="at">force=</span><span class="cn">TRUE</span>))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#-----load libraries pacman-----</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Load pacman into memory, installing as needed</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>my_repo <span class="ot">&lt;-</span> <span class="st">&#39;http://cran.r-project.org&#39;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;pacman&quot;</span>)) {<span class="fu">install.packages</span>(<span class="st">&quot;pacman&quot;</span>, <span class="at">repos =</span> my_repo)}</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Load pacman into memory, installing as needed</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>my_repo <span class="ot">&lt;-</span> <span class="st">&#39;http://cran.r-project.org&#39;</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;pacman&quot;</span>)) {<span class="fu">install.packages</span>(<span class="st">&quot;pacman&quot;</span>, <span class="at">repos =</span> my_repo)}</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the other packages, installing as needed.</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(knitr, dplyr, tidyr, modelr, stringr, purrr, ggplot2, Hmisc, </span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>               lme4, VCA)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">#-----directory organization and read data-----</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co"># create &quot;Datasets&quot; directory if one does not already exist    </span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="st">&quot;Datasets&quot;</span>), <span class="at">showWarnings=</span><span class="cn">FALSE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co"># specify data path</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">&quot;Datasets&quot;</span>)</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co"># specify the file name and path</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>file_name <span class="ot">&lt;-</span> <span class="st">&quot;weldschool.rds&quot;</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>file_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(data_path, file_name)</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the file if it is not already present</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(file_path)) {</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    url <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;https://faculty.washington.edu/sheppard/envh556/Datasets&quot;</span>, </span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>                 file_name, <span class="at">sep =</span> <span class="st">&#39;/&#39;</span>)</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">download.file</span>(<span class="at">url =</span> url, <span class="at">destfile =</span> file_path)</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Output a warning message if the file cannot be found</span></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(file_path)) {</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    weldschool <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(file_path)</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="fu">warning</span>(<span class="fu">paste</span>(<span class="st">&quot;Can&#39;t find&quot;</span>, file_name, <span class="st">&quot;!&quot;</span>))</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co"># remove temporary variables</span></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(url, file_name, file_path, data_path)</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="co">#-----session information----</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="co"># print R session information</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="co">#-----code appendix----</span></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="co">#-----functions----</span></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the names of all functions defined in the .Rmd</span></span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="co"># (e.g. loaded in the environment)</span></span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="fu">lsf.str</span>()</span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the definitions of all functions loaded into the current environment  </span></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="fu">lsf.str</span>() <span class="sc">%&gt;%</span> <span class="fu">set_names</span>() <span class="sc">%&gt;%</span> <span class="fu">map</span>(get, .GlobalEnv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: if you receive an error with e.g., fitVCA(), you may need to reinstall lme4</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;lme4&quot;, repos = &quot;http://cran.r-project.org&quot;, type = &quot;source&quot;)</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the other packages, installing as needed.</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(knitr, dplyr, tidyr, modelr, stringr, purrr, ggplot2, Hmisc, </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>               lme4, VCA)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">#-----directory organization and read data-----</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co"># create &quot;Datasets&quot; directory if one does not already exist    </span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="fu">file.path</span>(<span class="st">&quot;Datasets&quot;</span>), <span class="at">showWarnings=</span><span class="cn">FALSE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co"># specify data path</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">&quot;Datasets&quot;</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co"># specify the file name and path</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>file_name <span class="ot">&lt;-</span> <span class="st">&quot;weldschool.rds&quot;</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>file_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(data_path, file_name)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the file if it is not already present</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(file_path)) {</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    url <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;https://faculty.washington.edu/sheppard/envh556/Datasets&quot;</span>, </span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>                 file_name, <span class="at">sep =</span> <span class="st">&#39;/&#39;</span>)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">download.file</span>(<span class="at">url =</span> url, <span class="at">destfile =</span> file_path)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Output a warning message if the file cannot be found</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(file_path)) {</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    weldschool <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(file_path)</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="fu">warning</span>(<span class="fu">paste</span>(<span class="st">&quot;Can&#39;t find&quot;</span>, file_name, <span class="st">&quot;!&quot;</span>))</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co"># remove temporary variables</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(url, file_name, file_path, data_path)</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co">#-----session information----</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="co"># print R session information</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co">#-----code appendix----</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="co">#-----functions----</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the names of all functions defined in the .Rmd</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="co"># (e.g. loaded in the environment)</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="fu">lsf.str</span>()</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the definitions of all functions loaded into the current environment  </span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="fu">lsf.str</span>() <span class="sc">%&gt;%</span> <span class="fu">set_names</span>() <span class="sc">%&gt;%</span> <span class="fu">map</span>(get, .GlobalEnv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-----functions----</span></span>
