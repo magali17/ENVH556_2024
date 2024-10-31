@@ -8,7 +8,9 @@ format:
     toc: true
     toc_depth: 3
     number_sections: true
-    self-contained: true #save images etc. in this file (vs folders)
+    self-contained: true #save images etc. in this file 
+editor_options: 
+  chunk_output_type: console
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.

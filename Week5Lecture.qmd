@@ -10,6 +10,8 @@ format:
     toc_depth: 3
     number_sections: true
     self-contained: true #save images etc. in this file (vs folders)
+editor_options: 
+  chunk_output_type: console
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
@@ -264,6 +266,7 @@ summary(fixed_ef)
 #-----ANOVA on site-----
 
 # (formerly slide 17):  same in ANOVA
+## The group_loc groups show significantly different mean ln_nox levels, indicating a meaningful relationship between these groupings and log NOx levels.
 anova(fixed_ef)
 
 ```
@@ -272,6 +275,8 @@ anova(fixed_ef)
 
 VCA allows the MOM estimates and easy comparison with REML estimates of variance
 components.
+
+MOM is a simpler, often computationally faster method that may be okay if data are 'simple.'
 
 ```{r VCA.implementation}
 #-----VCA implementation-----
@@ -301,7 +306,7 @@ fit_REML
 
 ## Slides 23 & 24:  Estimation using lme
 
-A key point here that the `lmer` REML estimates are the same as from `VCA`.
+A key point here that the **`lmer` REML estimates are the same as from `VCA`**.
 Discuss why we use ML at all -- basically to easily compare models.  Because REML adjusts for the bias in estimation, we can't compare models fit with REML.
 
 ```{r REML.with.snapshot}
@@ -407,7 +412,7 @@ without random effects
 # linear model:
 lmfit1 <- lm(ln_nox ~ Pop_5000, data = fvc)
 
-#summary(lmfit1)
+# summary(lmfit1)
 
 cat("\nStandard linear model summary, coefficients then their confidence intervals\n")
 coef(summary(lmfit1))
@@ -456,6 +461,7 @@ coef(summary(mixedfit2_REML))
 confint(mixedfit2_REML)
 
 ```
+
 ## Slide 37:  Regression for prediction with random effects
 
 To predict from a mixed model, i.e. a linear model with fixed and random
@@ -514,7 +520,8 @@ p2 <- predict(mixedfit1_REML, newdata)
 # new data, level 0 (fixed effects only)
 p3 <- predict(mixedfit1_REML, newdata, re.form = NA)
 
-# explicitly specify RE model we want
+# explicitly specify RE model we want 
+# --> redundant since mixedfit1_REML already includes (1|group_loc) in the fitted model?
 p4 <- predict(mixedfit1_REML, newdata, re.form = ~(1|group_loc)) 
 
 # verify that p2 and p4 are identical as they are supposed to be

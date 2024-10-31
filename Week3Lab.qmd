@@ -195,7 +195,6 @@ summary(lm_winter <- lm(frml, data = snapshot, subset = seasonfac == "3Winter"))
 Let's look at some model output from the summer fit. 
 
 ```{r}
-
 # coefficient (point) estimates
 coef(lm_summer)
 
