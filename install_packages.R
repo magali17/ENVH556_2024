@@ -55,6 +55,12 @@ if (!(exists("pdflatex_ver") & length(pdflatex_ver) > 0)) {
 ## insall the prior sf package version; the current one has bugs/installation issues on SPH and/or Plasmid servers
 pkg_install("url::https://cran.r-project.org/src/contrib/Archive/sf/sf_1.0-16.tar.gz")
 
+# R versions < 4.4 do not support the most recent version of Matrix (1.7-1), 
+# which requires 4.4 or higher, so install an older version (e.g., on Plasmid)
+if (getRversion() < '4.4') {
+  pkg_install("url::https://cran.r-project.org/src/contrib/Archive/Matrix/Matrix_1.6-5.tar.gz")
+}
+
 pkg_install(c("plyr", "reshape2", "tictoc", "stars", "sp", 
               #"sf", # current version receives errors on some servers
               "hms"))
@@ -90,4 +96,3 @@ pkg_install(c("MKmisc", "tseries", "xts", "lubridate", "tsibble", "pacman"))
 
 # Update tidyverse, if needed
 tidyverse::tidyverse_update()
-
