@@ -347,7 +347,10 @@ vgm_fall <- variogram(ln_nox ~ 1, fall, cloud = TRUE)
 # Smoothed Cloud Variogram using ggplot2
 ggplot(data = vgm_fall, aes(x = dist, y = gamma)) +
   geom_point(shape = 1, alpha = 0.6) +
-  geom_smooth(se = FALSE, color = "red", linetype = "solid") +
+  geom_smooth(se = FALSE, color = "red", linetype = "solid",
+              # make the smooth line less "wiggly" - we care about seeing the overall trend
+              span=0.95
+              ) +
   labs(x = "Distance (meters)", 
        y = "Semi-variance",
        title = "Semi-variogram Cloud with Smoothed Curve") +
@@ -415,7 +418,7 @@ Universal kriging allows us to include covariates for the fixed part of the mode
 
 ### Fitting a Variogram for Universal Kriging
 
-# --> LS: see convergence errors w/ m.uk 
+*Note*: See convergence errors w/ m.uk. You may need to play around with starting values to help with convergence.  
 
 ```{r universal kriging, warning=FALSE}
 # ---- Universal Kriging ----
@@ -523,9 +526,10 @@ krige.cv.stats <- function(krige.cv.output, description) {
 ```
 
 
-#--> LS: verify text 
+To evaluate a covariate for the mean model in universal kriging, we examine the relationship between each variable (e.g., `Pop_5000` - population within 5000 meters) and `ln_nox` (log-transformed NOx levels). If the relationship appears close to linear, we can include this variable a covariate in the mean model without any transformations.
 
-To evaluate a covariate for the mean model in universal kriging, we examine the relationship between `Pop_5000` (population within 5000 meters) and `ln_nox` (log-transformed NOx levels). If the relationship appears close to linear, we can include `Pop_5000` as a covariate in the mean model without any transformations.
+
+*Note*: We only show this once for illustrative purposes. Consider repeating this for other variables to identify whether transformations may be needed. 
 
 ```{r}
 # Plot to evaluate linearity between Pop_5000 and ln_nox
@@ -540,54 +544,40 @@ ggplot(fall, aes(x = Pop_5000, y = ln_nox)) +
 
 Generate cross-validated predictions.
 
-# --> LS: drop note? # Note: `nmax` defaults to using all observations; setting it to 40 limits the max neighbors used.
+For UK, we'll use the covariates reported by Mercer et al. (2011). 
 
 ```{r cross-validation, warning=FALSE}
 # ---- Cross-Validation ----
 
 # Perform Ordinary Kriging (OK) with 5-fold Cross-Validation
-# Note: `nmax` defaults to using all observations; setting it to 40 limits the max neighbors used.
 cv5 <- krige.cv2(ln_nox ~ 1, fall, model = v.fit, 
-                 # nmax = 40, 
                  nfold = 5)
 
-# Plot residuals for OK with 5-fold CV
+# Plot residuals for OK with 5-fold CV (We'll only show this once for illustration. There are better ways of comparing residuals over space from different models in separate plots.)
 krige.cv.bubble(cv.out = cv5, 
                 plot_title = "log(NOx) OK Results: 5-Fold CV Residuals")
 
 # Perform Ordinary Kriging (OK) with Leave-One-Out Cross-Validation (LOOCV)
-cvLOO <- krige.cv2(ln_nox ~ 1, fall, model = v.fit, 
-                   # nmax = 40 
-                   )
+cvLOO <- krige.cv2(ln_nox ~ 1, fall, model = v.fit)
 
-# Plot residuals for OK with LOOCV
-krige.cv.bubble(cvLOO, "log(NOx) OK Results: LOO CV Residuals")
 
 # Perform Universal Kriging (UK) with 5-fold Cross-Validation
-cv5uk <- krige.cv2(ln_nox ~ Pop_5000, fall, 
+cv5uk <- krige.cv2(ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm, fall, 
                    model = m.uk, 
-                   # nmax = 40, 
                    nfold = 5)
 
-# Plot residuals for UK with 5-fold CV
-krige.cv.bubble(cv5uk, "log(NOx) UK on Pop_5000: 5-Fold CV Residuals")
-
 # Perform Universal Kriging (UK) with Leave-One-Out Cross-Validation (LOOCV)
-cvLOOuk <- krige.cv2(ln_nox ~ Pop_5000, fall, 
-                     model = m.uk, 
-                     # nmax = 40
+cvLOOuk <- krige.cv2(ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm, fall, 
+                     model = m.uk
                      )
-
-# Plot residuals for UK with LOOCV
-krige.cv.bubble(cvLOOuk, "log(NOx) UK on Pop_5000: LOO CV Residuals")
 
 # Calculate and compare performance statistics across cross-validation methods
 # Compile results into a summary table
 bind_rows(
   krige.cv.stats(cv5, "OK: 5-Fold CV"),
   krige.cv.stats(cvLOO, "OK: LOO CV"),
-  krige.cv.stats(cv5uk, "UK on Pop_5000: 5-Fold CV"),
-  krige.cv.stats(cvLOOuk, "UK on Pop_5000: LOO CV")
+  krige.cv.stats(cv5uk, "UK: 5-Fold CV"),
+  krige.cv.stats(cvLOOuk, "UK: LOO CV")
 ) %>% 
   kable(caption = "Summary of Kriging Cross-Validation Results for log(NOx)")
 
@@ -605,7 +595,7 @@ This code performs universal kriging with `Pop_5000` as a covariate, predicting 
 # - `st_transform`: Ensures both `fall` and `la_grid` datasets are in the same projection (`lambert_proj`)
 
 kc_la <- krige(
-  ln_nox ~ Pop_5000,                  # Mean model with `Pop_5000` as covariate
+  ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm,                  # Mean model with covariates
   st_transform(fall, lambert_proj),   # Transform `fall` data to Lambert projection
   st_transform(la_grid, lambert_proj),# Transform `la_grid` to Lambert projection
   model = m.uk                        # Use fitted universal kriging variogram model

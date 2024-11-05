@@ -154,10 +154,16 @@ Moreover, in analyses evaluating.....we see that.....
 
 
 
-# Conclusion    
+# Conclusions    
 [~1 paragraph]
 
 In conclusion...
+
+
+
+## Strengths & Limitations
+
+[As relevant]
 
 
 ---
