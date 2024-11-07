@@ -106,7 +106,7 @@ rm(url, file_name, file_path, data_path)
 
 # Introduction, Purpose, and Acknowledgments
 
-The purpose of this lab is to learn about geostatistical models and to further solidify your understanding of regression for predictive modeling. **We will use the MESA Air snapshot data**, as described in [Mercer et al. (2011)](https://doi.org/10.1016/j.atmosenv.2011.05.043). Through this lab, you will gain experience with modern tools for *t he use of geographic (spatial) data in R, creating maps, and adding your data to them**.
+The purpose of this lab is to learn about geostatistical models and to further solidify your understanding of regression for predictive modeling. **We will use the MESA Air snapshot data**, as described in [Mercer et al. (2011)](https://doi.org/10.1016/j.atmosenv.2011.05.043). Through this lab, you will gain experience with modern tools for *the use of geographic (spatial) data in R, creating maps, and adding your data to them**.
 
 **Acknowledgments**: This lab was developed with significant contributions from Brian High, Chris Zuidema, and Dave Slager.
 
@@ -235,13 +235,12 @@ fall <- snapshot %>%
     as.data.frame()
 
 # Convert to sf object, specifying coordinate reference system (CRS)
-fall <- st_as_sf(fall, coords = c('longitude', 'latitude'), crs = latlong_proj)
+fall <- st_as_sf(fall, coords = c('longitude', 'latitude'), crs = latlong_proj) #%>%
+  # # convert to a meters CRS
+  # st_transform(lambert_proj)
 
 # Summarize and view the structure
-fall
-
-# Preview the first 10 raw XY (long-lat) coordinates
-st_coordinates(fall) %>% head(10)
+head(fall)
 
 ```
 
@@ -258,17 +257,18 @@ class(la_grid)
 la_grid <- la_grid %>%
   filter(D2A1 != -Inf) %>%
   select(-lambert_x, -lambert_y) %>%
-  st_as_sf(coords = c('longitude', 'latitude'), crs = latlong_proj)
+  st_as_sf(coords = c('longitude', 'latitude'), crs = latlong_proj)  
 
-# Verify class and summary of the converted object
-class(la_grid)
-la_grid
+# summary of the converted object
+head(la_grid)
 
 # Download the land polygon data as an sf multipolygon
+# the CRS for this is in lat/long degrees
 land <- ne_download(scale = "large", type = "land", category = "physical", returnclass = "sf")
-
+ 
 # Crop the land area to the bounding box of the LA grid to reduce processing time
-land <- suppressWarnings(st_crop(land, st_bbox(la_grid)))
+# have to convert the la_grid to the same degrees as LA
+land <- suppressWarnings(st_crop(land, st_bbox(la_grid)))  
 
 # Visualize cropped land area (optional)
 ggplot(land) + geom_sf()
@@ -338,6 +338,16 @@ g +
 
 ```
 
+**Before we move on, we need to convert these datasets to a meter CRS for distance calculations.**
+
+```{r}
+fall <- st_transform(fall, crs = lambert_proj) 
+
+la_grid <- st_transform(la_grid, crs = lambert_proj) 
+
+```
+
+
 ## Empirical (Data-Driven) Variograms
 
 Variograms help us understand how our variable of interest (e.g., `ln_nox`) varies over space. The following code demonstrates empirical variograms using different methods:
@@ -357,9 +367,11 @@ For details on semi-variance (`gamma`) and distance, refer to this helpful docum
 # Variogram Cloud
 vgm_fall <- variogram(ln_nox ~ 1, fall, cloud = TRUE)
 
-plot(vgm_fall)
+ggplot(vgm_fall, aes(x = dist, y=gamma)) + 
+  geom_point(alpha=0.1) + 
+  labs(x="Distance (meters)")
 
-# Binned Variogram (default)
+# Binned Variogram (default) on a plain plot
 plot(variogram(ln_nox ~ 1, fall))
 
 # Binned Variogram with Point Counts
@@ -396,7 +408,7 @@ To parameterize the structured error in kriging, we need an estimated variogram 
 
 # Estimate the empirical variogram
 ##  By default, the variogram() function limits the maximum lag distance. Increasing the cutoff parameter will allow it to calculate semivariance values over a larger distance, which might help the semivariogram level off if it's naturally reaching a sill
-v <- variogram(ln_nox ~ 1, data=fall, cutoff=30)
+v <- variogram(ln_nox ~ 1, data=fall)
 # as before:
 plot(v)
 
@@ -404,10 +416,7 @@ plot(v)
 v.fit <- fit.variogram(v, vgm(c("Exp", "Sph", "Mat")))
 
 # Display the selected variogram model and its parameters (sill, range, nugget)
-# Note: The spherical model (Sph) was selected with the following parameters:
-#       - Range: 31.69 meters
-#       - Partial sill (structured variance): 0.129
-#       - Nugget (small-scale variability): 0.0195
+# Note: what model is selected? 
 v.fit
 
 # Plot the empirical variogram with the fitted model overlaid
@@ -425,7 +434,10 @@ This code demonstrates ordinary kriging to predict `ln_nox` at new locations (fr
 
 # Ordinary kriging of ln_nox
 # First two arguments: formula and data
-lnox.kr <- krige(ln_nox ~ 1, fall, newdata = la_grid, model = v.fit)
+lnox.kr <- krige(ln_nox ~ 1, 
+                 fall, # CRS in meters
+                 newdata = la_grid, # CRS in meters
+                 model = v.fit)
 
 # Plot kriging predictions
 # var1.pred contains the predicted values
@@ -451,20 +463,21 @@ Universal kriging allows us to include covariates for the fixed part of the mode
 # ---- Universal Kriging ----
 
 # Estimate the variogram with a covariate predictor
-v.uk <- variogram(ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm, fall, 
-                  cutoff=30)
+v.uk <- variogram(ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm, 
+                  fall, # in meters
+                  #cutoff=25e3
+                  )
 
 # plot(v.uk)
 
 # Fit the variogram model with multiple options (Exponential, Spherical, Matern)
-# note that this has convergence issues. we'll try one model instead. you can also give it initial values for range, nugget etc. if you have an understanding of what these might be
+# note that this may have convergence issues. If so, you can try selecting one variogram model instead. You can also give it initial values for range, nugget etc. based on looking at the variogram cloud.
 
-# has convergence issues if you don't extend the variogram() cutoff. 
+# sometimes has convergence issues 
 m.uk <- fit.variogram(v.uk, vgm(c("Exp", "Sph", "Mat")))
 
-# Alternatively, you could fit the variogram with modified initial values
-# m.uk <- fit.variogram(v.uk, vgm("Sph", nugget = 0.02, psill = 3, range = 30))
-# m.uk <- fit.variogram(v.uk, vgm("Sph", nugget = 0.01, psill = 1, range = 50))
+# Alternatively, you could fit the variogram with modified initial values. This still has convergence issues.
+# m.uk <- fit.variogram(v.uk, vgm("Exp", nugget = 0.01, psill = 0.03, range = 15000))
 
 
 # Display the selected variogram model parameters
@@ -499,8 +512,9 @@ We'll fit a model following something similar to the Mercer approach.
 # ---- Universal Kriging Prediction ----
 
 # Fit the universal kriging model and predict on the grid
-lnox.kr <- krige(ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm, fall, 
-                 newdata = la_grid, 
+lnox.kr <- krige(ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm, 
+                 fall, # CRS in meters
+                 newdata = la_grid, # CRS in meters
                  model = m.uk)
 
 # Calculate standard errors to assess prediction uncertainty across locations
@@ -625,10 +639,11 @@ This code performs universal kriging with `Pop_5000` as a covariate, predicting 
 # ----- Krige in LA -----
 
 kc_la <- krige(
-  ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm,                  # Mean model with covariates
-  st_transform(fall, lambert_proj),   # Transform `fall` data to Lambert projection
-  st_transform(la_grid, lambert_proj),# Transform `la_grid` to Lambert projection
-  model = m.uk                        # Use fitted universal kriging variogram model
+  # Mean model with covariates
+  ln_nox ~ D2A1 + A1_50 + A23_400 + Pop_5000 + D2C + Int_3000 + D2Comm,
+  fall, # CRS in meters
+  newdata = la_grid, # CRS in meters
+  model = m.uk # Use fitted UK variogram model
 )
 
 # put these on the native scale
@@ -640,13 +655,19 @@ kc_la$var1.pred <- exp(kc_la$var1.pred)
 
 ## Visualize the Predictions
 
+**Before doing final mapping, we want to reproject back to latitude-longitude.** This will help with the LA grid orientation. 
+
+
+```{r}
+la_grid <- st_transform(la_grid, latlong_proj)
+kc_la <- st_transform(kc_la, latlong_proj)
+
+```
+
 We’ll display kriging predictions for `NOx` on a map. First, we transform the predictions to latitude-longitude coordinates, then join them with `la_grid` to ensure each predicted value aligns with the original coordinates. Finally, we overlay the predictions on a background map.
 
 ```{r plot the grid predictions on the map, warning=FALSE}
 # ----- Plot the Grid Predictions on the Map -----
-
-# Reproject predictions from Lambert to latitude-longitude before plotting
-kc_la <- st_transform(kc_la, latlong_proj)
 
 # Verify that coordinates in `kc_la` and `la_grid` are nearly identical
 # Floating-point precision can cause slight differences, so `all.equal()`, allows for small tolerance levels in comparison, is used instead of `identical()`.
@@ -755,8 +776,7 @@ ggplot() +
 
 ## Ordinary kriging using the residuals from a LUR
 
-The idea is to use a traditional linear model to fit the common model, save the residuals from this model, and then import the residuals into `gstat` and fit an OK model.  This is a homework problem.
-
+The idea is to use a traditional linear model to fit the common model, save the residuals from this model, and then import the residuals into `gstat` and fit an OK model.  
 
 # Practice Session
 
