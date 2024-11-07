@@ -11,6 +11,8 @@ format:
     self-contained: true #save images etc. in this file (vs folders)
 execute:
   echo: true
+editor_options: 
+  chunk_output_type: console
 ---
 
 This document was rendered on `r format(Sys.time(), '%B %d, %Y')`.
@@ -33,9 +35,22 @@ if (!require("pacman")) {
     install.packages("pacman", repos = my_repo)
 }
 
+# **SPH server**: need to install rnaturalearthhires like so on the SPH server
+if (!require("rnaturalearthhires")) {
+    install.packages("rnaturalearthhires", repos = "https://ropensci.r-universe.dev", type = "source")
+}
+
 pacman::p_load(
     tidyverse,                 # Data manipulation and visualization
-    ggspatial,                 # Geospatial extensions for ggplot
+    # takes a while to install on SPH
+    ggspatial,                 # Geospatial extensions for ggplot.  
+    # maptiles and tmap libraries can be used instead of or in combination with ggplot and ggspatial. maptiles offers more tile-based map flexibility; ggspatial provides the ability to annotate maps easily; tmap offers both static and interactive maps
+    
+    terra, # alternative mapping with raster files
+    
+    # need for SPH server?
+    prettymapr,
+    
     rnaturalearth,             # Land features for map layers
     rnaturalearthhires,        # High-resolution land features (remove water locations)
     sf,                        # Handling spatial objects (modern replacement for 'sp')
@@ -46,6 +61,7 @@ pacman::p_load(
     akima,                     # Bivariate interpolation for irregular data
     downloader                 # Downloading files over HTTP/HTTPS
 )
+
 
 # **Mac Users**: If you encounter issues with 'rgdal' on macOS Catalina or newer,
 # you may need to install GDAL via terminal commands. Instructions are available [here](https://medium.com/@egiron/how-to-install-gdal-and-qgis-on-macos-catalina-ca690dca4f91).
@@ -184,8 +200,6 @@ The purpose of this section is to show some `gstat` tools using the snapshot dat
 
 5. **Map the Predictions**: Visualize the kriging predictions on a map. 
 
-
-
 ## Summary & learn about the data
  
 ```{r basics with the dataset}
@@ -296,9 +310,16 @@ g <- ggplot() +
   labs(title = "LA Grid with Map") +
   theme_minimal()
 
+# # alternative background map with the maptiles package
+# tiles <- maptiles::get_tiles(x = st_bbox(la_grid), provider = "OpenStreetMap")
+# g <- ggplot() +
+#   # Add basemap tiles as background
+#   layer_spatial(tiles)
+
 # Plot the LA grid on the map
 g + 
   geom_sf(data = la_grid, alpha = 0.03)
+
 
 # Add NOx data (transformed to original scale) with additional map elements
 g + 
@@ -348,8 +369,9 @@ vgm_fall <- variogram(ln_nox ~ 1, fall, cloud = TRUE)
 ggplot(data = vgm_fall, aes(x = dist, y = gamma)) +
   geom_point(shape = 1, alpha = 0.6) +
   geom_smooth(se = FALSE, color = "red", linetype = "solid",
-              # make the smooth line less "wiggly" - we care about seeing the overall trend
-              span=0.95
+              # making span > 0.75 (default) makes this less wiggly so we can better see the general trend 
+              method = "loess", 
+              span = .8
               ) +
   labs(x = "Distance (meters)", 
        y = "Semi-variance",
@@ -386,6 +408,7 @@ v.fit <- fit.variogram(v, vgm(c("Exp", "Sph", "Mat")))
 v.fit
 
 # Plot the empirical variogram with the fitted model overlaid
+# consider expanding the x-axis here
 plot(v, v.fit)
 
 ```
@@ -601,9 +624,10 @@ kc_la <- krige(
   model = m.uk                        # Use fitted universal kriging variogram model
 )
 
-# View the results; predictions are stored in `var1.pred`
-kc_la
+# put these on the native scale
+kc_la$var1.pred <- exp(kc_la$var1.pred)
 
+# View the results; predictions are stored in `var1.pred`
 
 ```
 
@@ -630,7 +654,7 @@ new_grid <- st_join(la_grid, kc_la, join = st_nearest_feature)
 # new_grid <- st_join(la_grid, kc_la, join = st_equals_exact, par = 1e-10)
 
 # Transform predictions from log scale back to the native scale
-new_grid <- new_grid %>% mutate(NOx = exp(var1.pred))
+new_grid <- new_grid %>% mutate(NOx = var1.pred)
 
 # Verify the join was successful (no NAs in predictions)
 all(!is.na(new_grid$var1.pred))  # Should return "TRUE"
@@ -647,12 +671,15 @@ g +
 
 Now we show an example plotting smooth gridded predictions on the map with polygons.  
 
+**Example using ggplot2::geom_tile()**
+
 ```{r plot smooth grid predictions on the map with polygons}
 # ----- Plot Smooth Gridded Predictions -----
 
 # Convert `new_grid` to a data frame for easier plotting 
 new_grid_df <- as.data.frame(st_coordinates(new_grid))
 new_grid_df$NOx <- new_grid$NOx
+
 
 g + 
   # Set map extent and CRS (bounding box error otherwise results in no background map) 
@@ -667,6 +694,47 @@ g +
   scale_fill_viridis_c(option = "plasma") + 
   labs(title = "Map of Los Angeles with Fall UK Predictions (Smoother)",
        col="NOx (ppb)"
+       ) +
+  theme_minimal()
+
+```
+
+**Alternative example using maptiles and terra (raster)**
+
+```{r}
+# Define the raster resolution (adjust as needed for smoothness)
+resolution <- 0.005
+
+# Create a blank raster template using the bounding box of kc_la and specify resolution and CRS
+# Use `ext()` to get the bounding box in a format `terra` accepts
+kc_rast <- rast(
+  ext(kc_la),            # Set extent based on kc_la's bounding box
+  resolution = resolution,
+  crs = st_crs(kc_la)$wkt  # Use WKT for CRS
+)
+
+# Rasterize the sf object (kc_la) using `var1.pred` as the value to fill the raster
+kc_rast <- rasterize(kc_la, kc_rast, field = "var1.pred")
+
+# Convert raster to a data frame for ggplot2 compatibility
+kc_df <- as.data.frame(kc_rast, xy = TRUE)  # Include coordinates (x, y)
+names(kc_df)[3] <- "var1.pred"  # Rename to match the prediction column
+
+# Plot 
+## background map
+tiles <- maptiles::get_tiles(x = st_bbox(la_grid), provider = "OpenStreetMap")
+# Crop tiles to the bounding box of la_grid. In theory, you shouldn't have to do this, but the reuslting map is too wide. It may occur because of how the tiles are fetched.
+tiles <- crop(tiles, ext(map_bbox$xmin, map_bbox$xmax, map_bbox$ymin, map_bbox$ymax))
+
+ggplot() +
+  # Add basemap tiles as background
+  layer_spatial(tiles)  + 
+  # add the smoothed over predictions
+  geom_raster(data = kc_df, aes(x = x, y = y, fill = var1.pred), alpha=0.6) +
+  # color friendly color scale
+  scale_fill_viridis_c(option = "plasma") + 
+  labs(title = "Map of Los Angeles with Fall UK Predictions (Smoother)",
+       fill="NOx (ppb)"
        ) +
   theme_minimal()
 
