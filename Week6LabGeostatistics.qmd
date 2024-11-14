@@ -307,7 +307,7 @@ map_bbox
 
 # Base map setup with ggplot2 and ggspatial using OSM tiles
 g <- ggplot() +
-  ggspatial::annotation_map_tile(type = "osm", zoom = 10) +
+  ggspatial::annotation_map_tile(type = "osm", zoom = 10, ) +
   labs(title = "LA Grid with Map") +
   theme_minimal()
 
@@ -315,7 +315,7 @@ g <- ggplot() +
 # tiles <- maptiles::get_tiles(x = st_bbox(la_grid), provider = "OpenStreetMap")
 # g <- ggplot() +
 #   # Add basemap tiles as background
-#   layer_spatial(tiles)
+#   ggspatial::layer_spatial(tiles)
 
 # Plot background map and the LA grid (zoom in)
 g + 

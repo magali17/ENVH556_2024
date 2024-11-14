@@ -1,5 +1,5 @@
 ---
-title: "Week 7 Lab:  Measurement Error"
+title: "Week 8 Lab:  Measurement Error"
 author: "Instructors for ENVH 556 Autumn 2024"
 format:
   html:
@@ -8,7 +8,7 @@ format:
     toc: true
     toc_depth: 3
     number_sections: true
-    self-contained: true #save images etc. in this file 
+    self-contained: true 
 editor_options: 
   chunk_output_type: console
 ---
@@ -39,7 +39,7 @@ my_repo <- 'http://cran.r-project.org'
 if (!require("pacman")) {install.packages("pacman", repos = my_repo)}
 
 # Load the other packages, installing as needed.
-pacman::p_load(knitr, dplyr, tidyr, purrr, tictoc, broom, parallel, Hmisc)
+pacman::p_load(tidyverse, knitr, tictoc, broom, parallel, Hmisc)
 
 ```
 
