@@ -54,7 +54,8 @@ We will be using the [School of Public Health Server](https://rstudio.sph.washin
 
 The corresponding datasets can be found at the following locations. The scripts will automatically download these datasets. Alternatively, you can manually download them and place them in the appropriate directories.
 
--   [Seattle mobile monitoring campaign](https://zenodo.org/records/13761282)
+-   [Seattle mobile monitoring campaign](https://zenodo.org/records/14166411)
+-   [California NOx Study](https://zenodo.org/records/13761282) (optional dataset)
 -   [Other datasets](https://faculty.washington.edu/sheppard/envh556/Datasets/)
 
 ### 3.3. Install Dependencies
