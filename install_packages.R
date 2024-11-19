@@ -68,7 +68,11 @@ pkg_install(c("plyr", "reshape2", "tictoc", "stars", "sp",
 pkg_install(c("feasts", "tidyverse", "lubridate", "broom"))
 pkg_install(c("downloader", "knitr", "formatR", "ggrepel", "Hmisc", "EnvStats"))
 pkg_install(c("codetools", "egg", "multcomp", "modelr", "car", "lme4", "VCA"))
-pkg_install(c("parallel", "NADA", "ggmap", "geoR", "maps", "limma"))
+pkg_install(c("parallel", "NADA", #"ggmap", 
+              "geoR", "maps", "limma"))
+
+# Week 6 geostatistics (alternative mapping packages)
+pkg_install(c("ggspatial", "maptiles", "terra", "rnaturalearth", "rnaturalearthhires"))
 
 # pak::pkg_install() won't install foreign, slider and scales, so use base-r:
 if (!requireNamespace("foreign", quietly = TRUE)) install.packages("foreign")

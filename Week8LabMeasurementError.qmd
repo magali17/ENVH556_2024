@@ -46,11 +46,11 @@ pacman::p_load(tidyverse, knitr, tictoc, broom, parallel, Hmisc)
 
 # Introduction and Purpose
 
-The purpose of this lab is to **better understand pure classical and Berkson measurement error**, and **optionally** to 1) replicate the results reported in Szpiro et al (2011) and 2) use the replication process to **gain a deeper understanding of the role of exposure prediction in inference from epidemiological studies**. An additional benefit of this lab is that you will gain some experience with **simulation studies**, a skill that is generally applicable to a wide range of problems.
+The purpose of this lab is to **better understand pure classical and Berkson measurement error**, and **optionally** to 1) **replicate the results reported in Szpiro et al (2011)** and 2) use the replication process to gain a deeper understanding of the role of exposure prediction in inference from epidemiological studies. An additional benefit of this lab is that you will **gain some experience with simulation studies**, a skill that is generally applicable to a wide range of problems.
 
-In this lab exercise, we will start by looking at **pure measurement error** properties. We will simulate exposure and health data in a single population and use this to understand pure Berkson and classical measurement error. After simulating true exposure and three different versions each of pure Berkson and classically mismeasured covariates, we will then condition on these exposures in our health analysis to estimate the health effect parameter β, the effect of exposure on the health measure. The parameter β is our target of inference, so over the multiple (e.g., 1,000) simulations we will store the estimates of this target of inference and then summarize these estimates to draw conclusions about the role of different exposure models on this target. The function we will use for this exercise is `mesim_pure`, found in the file named *mesim_pure.R*. Some sample code for running this program is below.
+In this lab exercise, we will start by looking at **pure measurement error** properties. We will **simulate exposure and health data** in a single population and use this to understand pure Berkson and classical measurement error. After simulating true exposure and **three different versions each of pure Berkson and classically mismeasured covariates**, we will then condition on these exposures in our health analysis to **estimate the health effect parameter β, the effect of exposure on the health measure**. The parameter β is our target of inference, so over the multiple (e.g., 1,000) simulations we will store the estimates of this target of inference and then summarize these estimates to draw conclusions about the role of different exposure models on this target. The function we will use for this exercise is `mesim_pure`, found in the file named *mesim_pure.R*. Some sample code for running this program is below.
 
-As an **optional** additional exercise, we will then generalize this to consider two groups of locations: monitoring (or sampling) locations and subject residence locations. (In an occupational study, we can view these as data that come from two worker cohorts: the worker cohort with exposure monitoring data and the cohort with health outcome data. In the current application, the two are distinct (i.e., mutually exclusive). In other applications, some of the workers with health outcome data also provide exposure data.) We then simulate health outcome data for subjects conditional on the true exposures. We will predict subject exposures using a regression model developed on the monitoring data (i.e., out-of-sample predictions for subjects). We then condition on the exposure predictions in our health analysis to estimate the health effect parameter β, the effect of exposure on the health measure. The parameter β is our target of inference, so over the multiple (e.g., 1,000) simulations we will store the estimates of this target of inference and then summarize these estimates to draw conclusions about the role of different exposure models on this target. The function we will use for this exercise is `me_like`, found in the file named *mesim_like.R*. Some sample code for running this program is below.
+As an **optional** additional exercise, we will then generalize this to consider two groups of locations: monitoring (or sampling) locations and subject residence locations. (In an occupational study, we can view these as data that come from two worker cohorts: the worker cohort with exposure monitoring data and the cohort with health outcome data. In the current application, the two are distinct (i.e., mutually exclusive). In other applications, some of the workers with health outcome data also provide exposure data.) We then **simulate health outcome data for subjects conditional on the true exposures. We will predict subject exposures using a regression model developed on the monitoring data** (i.e., out-of-sample predictions for subjects). We then condition on the exposure predictions in our health analysis to estimate the health effect parameter β, the effect of exposure on the health measure. The parameter β is our target of inference, so over the multiple (e.g., 1,000) simulations we will store the estimates of this target of inference and then summarize these estimates to draw conclusions about the role of different exposure models on this target. The function we will use for this exercise is `me_like`, found in the file named *mesim_like.R*. Some sample code for running this program is below.
 
 **Simulation studies** are a form of experimental study most often used to understand properties of statistical estimators. (Simulations are also used for other purposes, such as in study planning as a tool to estimate study power.) The basic idea behind a simulation study is that data are generated using an assumed **data-generating model**. These data are then used to estimate one or more quantities of interest using one or more approaches to analysis. (The **analysis model(s)** may or may not correspond to the data-generating model; this misalignment can be done on purpose to understand some important feature of the role of data analysis under varying data-generating conditions.) The resulting estimates are then summarized and compared to quantify their properties. The simultaneous strength and weakness of simulation studies is that the true data-generating model is known. Thus, we can evaluate exactly how a statistic performs under a given set of assumptions. Of course, in the real world, we never know whether our assumed model holds.
 
@@ -60,13 +60,13 @@ As an **optional** additional exercise, we will then generalize this to consider
 
 We have written two functions to demonstrate measurement error scenarios:
 
-1. `mesim_pure`: The simpler version to allow some basic understanding of pure Berkson and classical measurement error. It generates true exposure and health outcome data in a group of subjects, along with modifications of the true exposure to give mismeasured exposures, both pure Berkson and pure classical. You will find this on the class web page with the name: *mesim_pure.R*.  
+1. `mesim_pure`: The simpler version to allow some basic understanding of pure Berkson and classical measurement error. It **generates true exposure and health outcome data in a group of subjects, along with modifications of the true exposure to give mismeasured exposures**, both pure Berkson and pure classical. You will find this on the class web page with the name: *mesim_pure.R*.  
 
-2. `mesim_like`: The more complex version is based on the work done by Szpiro et al. It generates the exposure and health data, computes predictions, and estimates the quantities of interest that can be summarized, as described in Szpiro et al. You will find this on the class web page with the name: *mesim_like.R*.
+2. `mesim_like`: The more complex version is based on the work done by Szpiro et al. It generates the exposure and health data, **computes predictions, and estimates the quantities of interest** that can be summarized, as described in Szpiro et al. You will find this on the class web page with the name: *mesim_like.R*.
 
 ## Comments on simulating data
 
-Computer simulations give realizations from probability distributions. They are based on pseudo-random numbers – these numbers are generated by the computer to behave like random numbers, but they are deterministic. Thus, if you want to be able to replicate a specific simulation exactly each time it is run, you set the seed or starting value for the pseudo-random number generator. In R, we use the `set.seed()` command with an arbitrary number inside the parentheses.
+Computer simulations give realizations from probability distributions. They are based on pseudo-random numbers – these numbers are generated by the computer to behave like random numbers, but they are deterministic. Thus, if you want to be able to replicate a specific simulation exactly each time it is run, you set the seed or starting value for the pseudo-random number generator. In R, we **use the `set.seed()` command with an arbitrary number inside the parentheses to support reproducibility**.
 
 ## Outline of the steps to simulate and analyze the data for the pure Berkson and classical measurement error settings 
 
@@ -76,7 +76,7 @@ We use **simulation** to get the statistical properties of our results: To simul
     a. Assume a **cohort of a fixed size**, e.g., `n_subj = 10,000`.
     b. Our **true exposure**, `x`, is built from a model that has 3 covariates and an error term:
         $$x = \alpha_0 + \alpha_1 s_1 + \alpha_2 s_2 + \alpha_3 s_3 + \eta$$
-    c. **Berkson ME exposures**: Exposures with Berkson error allow one to observe part of the true exposure. Connected to our true exposure model, we define `Berk_1` to have 1 covariate ($s_1$), `Berk_2` to have 2 ($s_1$, $s_2$), and `Berk_3` to have 3 ($s_1$, $s_2$, $s_3$):
+    c. **Berkson ME exposures**: Exposures with Berkson error allow one to observe part of the true exposure (**we illustrate that here by only including a subset of the predictors**). Connected to our true exposure model, we define `Berk_1` to have 1 covariate ($s_1$), `Berk_2` to have 2 ($s_1$, $s_2$), and `Berk_3` to have 3 ($s_1$, $s_2$, $s_3$):
        $$
        \begin{align}
        Berk_1 &= \alpha_0 + \alpha_1 s_1 \\
@@ -84,7 +84,7 @@ We use **simulation** to get the statistical properties of our results: To simul
        Berk_3 &= \alpha_0 + \alpha_1 s_1 + \alpha_2 s_2 + \alpha_3 s_3 
        \end{align}
        $$ 
-    d. **Classical ME exposures**: Exposures with classical measurement error have independent noise added to the true exposure. We define `class1` to have additional error added, while `class2` has more added error, and `class3` has even more added error:
+    d. **Classical ME exposures**: Exposures with classical measurement error have independent **noise added to the true exposure**. We define `class1` to have additional error added, while `class2` has more added error, and `class3` has even more added error:
        $$ 
        \begin{align}
        class_1 &= x + e_1 \\
@@ -127,8 +127,8 @@ n_iter <- 10
 tic("single core pure ME processing time")
 
 # Step II:  Iterate
-# lapply runs the function me_pure n_iter times
-# seq_len tells R to index this from 1 to n_iter and is better practice than 1:n_iter
+# lapply runs the function me_pure n_iter times. 
+# For each iteration: for X subjects, generate a true exposure, exposure with measurement error, and an outcome &  
 result_pure_sp <- lapply(seq_len(n_iter), function(x) me_pure(n_subj = 10000)) %>% 
   
   # bind dataframes for each iteration together (Step III)
@@ -136,7 +136,10 @@ result_pure_sp <- lapply(seq_len(n_iter), function(x) me_pure(n_subj = 10000)) %
   
 toc()
 
-# # Bonus topic:  parallel processing
+# see results - each predictor produces slightly different parameters of interest
+result_pure_sp 
+
+# # Bonus topic:  parallel processing - use mclapply() with an mc.cores >1
 # # The above application uses single-core processing.  Multi-core (or parallel)
 # # processing can greatly speed up long programs.  We use the tictoc
 # # function to determine how long a procedure works.  We use multi-core versions
@@ -166,8 +169,7 @@ toc()
 
 ```
 
-The next chunk is to summarize the results using basic descriptive tools and plots.  You should build upon the tools you have learned earlier in the quarter
-to conduct descriptive analyses and develop plots.  See some of the text in the practice session below for some more thoughts on what quantities you want to
+The next chunk is to **summarize the results** using basic descriptive tools and plots.  You should build upon the tools you have learned earlier in the quarter to conduct descriptive analyses and develop plots.  See some of the text in the practice session below for some more thoughts on what quantities you want to
 summarize.  Also refer to the Table and Figures in Szpiro et al 2011.
 
 ```{r summarize.pure.ME.results}
@@ -182,7 +184,8 @@ summarize.  Also refer to the Table and Figures in Szpiro et al 2011.
 # `result_pure_mp` 
 
 res_pure <- result_pure_sp %>% 
-    group_by(predictor) %>% 
+  # for each predictor (i.e., true exposure or exposure with error)  
+  group_by(predictor) %>% 
     summarise(N = n(), 
               `E(b1)` = mean(b1),
               sd_b1 = sd(b1),
@@ -230,8 +233,9 @@ kable(
 
 ## Plots of one dataset showing the best fit lines for true vs. mismeasured exposures
 
-Note:  For clarity of display we are presenting only 1,000 subjects.  However, the sample size of the subject dataset impacts the certainty of the parameter
-estimates, so the slopes shown in this figure have more uncertainty than the slopes estimated in the simulation study with 10,000 subjects.  (Why?)
+Note: For clarity of display we are presenting only 1,000 subjects.  However, the sample size of the subject dataset impacts the certainty of the parameter estimates, so the slopes shown in this figure have more uncertainty than the slopes estimated in the simulation study with 10,000 subjects.  (Why?)
+
+**How do the scatter plots and fitted lines for the true exposure x and y compare to those when x has measurement error?** 
 
 ```{r plot.pure.ME.data, message=FALSE}
 #-----plot pure ME data-----
@@ -250,7 +254,7 @@ coefs_true <- lm(y ~ x, pure_data)$coefficients
 temp <- pure_data %>% 
 
   # make dataset longer
-  pivot_longer(cols = c(contains("Berk_"), contains("class_")), 
+  pivot_longer(cols = c(contains("Berk_"), contains("class_"), "x"), 
                names_to = "error_type", 
                values_to = "error_exposure")
 
@@ -287,6 +291,7 @@ ggplot(data = temp, aes(x = error_exposure, y = y)) +
   theme_bw() + 
   theme(legend.position = "bottom")
   
+
 ```
 
 
@@ -317,7 +322,7 @@ ggplot(data = temp, aes(x = error_exposure, y = y)) +
 2.  **Data analysis**:  For a single cohort, use all exposures in a health
     analyses, one health analysis for each exposure; save health results
     a. First estimate health effect given true exposure
-    b. Then consider health effect estimates conditional on exposures predicted
+    b. Then **consider health effect estimates conditional on exposures predicted**
        using a model developed from the monitor dataset that is representative of
        the subject population.  Consider both the correctly specified exposure
        model (full) and the mis-specified exposure model (reduced).
@@ -402,6 +407,7 @@ locations.
 # Note: if you're using the multicore results, change `result_like_sp` to 
 # `result_like_mp`
 
+# summarize the results across many simulations
 res_like <- result_like_sp %>% 
   group_by(exposure_vars) %>% 
   summarise(N = n(),

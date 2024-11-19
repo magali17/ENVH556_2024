@@ -58,18 +58,25 @@ me_pure_data <- function(n_subj = 10000) {
     # create the subject dataset, using n_subj as supplied in the
     # function's parameter list:
     tibble( 
+        # generate exposure predictors
         s_1 = rnorm(n_subj, sd = sd_s[1]),
         s_2 = rnorm(n_subj, sd = sd_s[2]),
         s_3 = rnorm(n_subj, sd = sd_s[3]),
         
+        # generate the exposure
         x = alpha_0 + alpha[1] * s_1 + alpha[2] * s_2 + alpha[3] * s_3 +
+            # add random noise
             rnorm(n_subj, sd = sd_eta),
+        
+        # association between exposure and outcome, with noise added
         y = beta[1] + beta[2] * x + rnorm(n_subj, sd = sd_eps),
         
+        # estimate the true exposure (with Berkson error)
         Berk_1 = alpha_0 + alpha[1] * s_1,
         Berk_2 = alpha_0 + alpha[1] * s_1 + alpha[2] * s_2,
         Berk_3 = alpha_0 + alpha[1] * s_1 + alpha[2] * s_2 + alpha[3] * s_3,
         
+        # add random noise to the exposure
         class_1 = x       + rnorm(n_subj, sd = sd_e[1]),
         class_2 = class_1 + rnorm(n_subj, sd = sd_e[2]),
         class_3 = class_2 + rnorm(n_subj, sd = sd_e[3])
@@ -81,13 +88,13 @@ me_pure_data <- function(n_subj = 10000) {
 # me_pure function
 me_pure <- function(n_subj = 10000){
     
-    # create dataframe with simulated measurement error
+    # create dataframe with simulated measurement error: true exposure, exposure with error, outcome 
     d <- me_pure_data(n_subj)
     
     # list predictors in d, looking for x, berkson and classical variable names
     predictors <- str_subset(names(d), "x|Berk_|class_")
     
-    # Define a tibble of 4 parameters x 7 models
+    # for each predictor, fit a health model
     ret <- lapply(predictors, function(i) {
         
         # specify formula
