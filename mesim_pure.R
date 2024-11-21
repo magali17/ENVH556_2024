@@ -4,7 +4,9 @@
 #   me_pure
 
 # Load the broom package for the tidy() function
-pacman::p_load(broom, stringr)
+pacman::p_load(broom, stringr,
+               tidyverse
+               )
 
 
 # getMSE function:
@@ -21,31 +23,31 @@ getMSE <- function(obs,pred) {
     return(result)
 }
 
-# make dataframe to simulate pure measurement error
+# simulate true exposure, mismeasured exposure, and the health outcome
+# n_subj = 10000
 me_pure_data <- function(n_subj = 10000) {
     # definition of terms:
-    #   n for sample size (n_subj), referring to subject 
-    #   s for exposure model covariates
+    #   n_subj for subject sample size
+    #   s for exposure model covariates (e.g., distance to road)
     #   y for outcome
-    # the following terms are passed from outside if not using defaults:
-    #   n_subj=10000 (default) is the # subjects
-    # the following terms are set inside the program: (could edit the function to
-    # pass these in from outside)
+    # # sd: define SDs for errors 
     #   sd_eta=4  is the SD for the error in the exposure model
     #   sd_e1=4   is the SD for the extra classical error of exposure
     #   sd_e2=4   is the SD for the extra classical error of exposure
     #   sd_e3=4   is the SD for the extra classical error of exposure
     #   sd_eps=25 is the SD for the error in the disease model
+    # # alpha: exposure model parameters
     #   alpha_0=0 is the intercept parameter in the exposure model
     #   alpha[1]=4is the parameter for s1 in the exposure model
     #   alpha[2]=4is the parameter for s2 in the exposure model
     #   alpha[3]=4is the parameter for s3 in the exposure model
+    # # beta: health model parameter
     #   beta[1]=1   is the intercept in the disease model
     #   beta[2]=2   is the slope in the disease model (called \beta_x in the lab)
-    # define the exposure and health model parameters for fixed effects
-    # define the coefficients alpha and beta (description given above)
+    
+    # define the coefficients alpha (for exposure models) and beta (for health models)
     alpha_0 <- 0
-    alpha <- c(4, 4, 4)
+    alpha <- c(4, 4, 4) 
     beta  <- c(1, 2)
     
     # define the SDs for all the components for the subjects and samples 
@@ -59,8 +61,8 @@ me_pure_data <- function(n_subj = 10000) {
     # function's parameter list:
     tibble( 
         # generate exposure predictors
-        s_1 = rnorm(n_subj, sd = sd_s[1]),
-        s_2 = rnorm(n_subj, sd = sd_s[2]),
+        s_1 = rnorm(n = n_subj, mean = 0, sd = sd_s[1]),
+        s_2 = rnorm(n_subj, sd = sd_s[2]), # mean 0 is the default so excluded below
         s_3 = rnorm(n_subj, sd = sd_s[3]),
         
         # generate the exposure
@@ -85,16 +87,23 @@ me_pure_data <- function(n_subj = 10000) {
 }
 
 
-# me_pure function
+# pure measurement error for ONE simulation with n_subj
+# use this with lapply() to repeat numerous times
 me_pure <- function(n_subj = 10000){
     
-    # create dataframe with simulated measurement error: true exposure, exposure with error, outcome 
+    # simulated true exposures, exposures with error, and outcomes for subjects
     d <- me_pure_data(n_subj)
+    # head(d)
     
     # list predictors in d, looking for x, berkson and classical variable names
     predictors <- str_subset(names(d), "x|Berk_|class_")
+    # predictors
     
     # for each predictor, fit a health model
+    
+    # **NOTE: here, we are using 'MEASURED' (not predicted) exposures like we do in Like (vs Pure) measurement error scenarios**
+    
+    # i=predictors[1]
     ret <- lapply(predictors, function(i) {
         
         # specify formula
@@ -106,9 +115,9 @@ me_pure <- function(n_subj = 10000){
         #compile parameters of interest
         tibble(b1 = tidy(lmfit)$estimate[2],
                seb1 = tidy(lmfit)$std.error[2],
-               R2_W_reg = cor(d[[i]],d$x)^2, 
-               R2_W_MSE = as.numeric(getMSE(d$x, d[[i]])[2]),
-               exp_var = var(d[[i]])
+               R2_W_reg = cor(d[[i]],d$x)^2, # regression-based R2 for exposures
+               R2_W_MSE = as.numeric(getMSE(d$x, d[[i]])[2]), # MSE-based R2 for exposures
+               exp_var = var(d[[i]]) # variability of the exposure
         )
     }) %>% 
         
@@ -118,7 +127,8 @@ me_pure <- function(n_subj = 10000){
         # bind list rows together
         bind_rows(.id = "predictor")
     
-    # Return the dataframe
+    # summarize results for one simulation with n_subj
+    # ret
     return(ret)
 }
 
