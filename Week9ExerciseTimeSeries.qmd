@@ -1,6 +1,6 @@
 ---
 title: "Week 9 Exercise:  Time Series Data and Analysis Strategies"
-author: "Chris Zuidema and Elena Austin for ENVH 556 Autumn 2024"
+author: "Chris Zuidema, Elena Austin, and Instructors for ENVH 556 Autumn 2024"
 format:
   html:
     df_print: "paged"
@@ -49,11 +49,8 @@ pacman::p_load(knitr, dplyr, tidyr, readr, stringr, ggplot2, hms,
 ```{r directory.organization.and.read.data, echo=FALSE, warning=FALSE}
 #-----directory organization and read data-----
 
-# specify working directory
-project_path <- getwd()
-
 # specify data directory
-data_dir <- file.path(project_path, "Datasets", "mobile_monitoring")
+data_dir <- file.path("Datasets", "mobile_monitoring")
 
 # name destination file
 dest <- file.path(data_dir, "Jul10MOV-UP.zip")
@@ -63,7 +60,7 @@ if (!dir.exists(dest)) {
     
   # create "Datasets" and "mobile_monitoring" directories if they do not already
   # exist
-  dir.create(file.path(project_path, "Datasets", "mobile_monitoring"), 
+  dir.create(file.path("Datasets", "mobile_monitoring"), 
              showWarnings = FALSE, recursive = TRUE)
 
   # specify URL of zip file
@@ -109,7 +106,7 @@ Managing dates and times in exposure assessment is a common challenge because th
 
 With direct-reading instruments made all over the world, you'll have the potential to encounter many devices that use different date and time formats. You'll find it advantageous to convert everything to a standardized format, including the time zone. Consistently using a standardized date and time format will make it less likely that you'll interpret a date and time incorrectly.
 
-Date objects in `R` are of class `Date`, and compound date and time ("datetime") objects are of class `POSIXct` (shown as `dttm` when a tibble is printed to the console). Let's take a look at these object types and show their classes:
+Date objects in `R` are of class `Date`, and compound date and time ("datetime") objects are of class `POSIXct`. Let's take a look at these object types and show their classes:
 
 
 ```{r datetime.and.date.objects}
@@ -141,7 +138,7 @@ It is often necessary to define date/time components or the format of a datetime
   * The internal instrument clocks can be different from each other and/or the current time.
   * The instruments may be using different time zones, daylight savings time conventions, or there may be issues with simultaneous measurements on either side of the international date line.
 
-Regardless, it is necessary to ensure a common schedule prior to merging the data. Accounting for these issues during the initial data wrangling will make it easier to handle date and datetime variables throughout your analysis process.
+Regardless, **it is necessary to ensure a common schedule prior to merging the data.** Accounting for these issues during the initial data wrangling will make it easier to handle date and datetime variables throughout your analysis process.
 
 # Identify Files of Interest, Read Files & Wrangle
 
@@ -173,17 +170,19 @@ gps <- read_csv(file.path(data_dir, gps_file)) %>%
    set_names(c("date", "time", "latitude", "longitude", "altitude", "speed")) %>% 
    
    # create datetime column (notice we must specify the timezone)
-   mutate(datetime = as.POSIXct(paste(date, time), tz = "US/Pacific") )
+   mutate(datetime = as.POSIXct(paste(date, time), tz = "US/Pacific"))
 
 # show dataframe
 gps
+
+# and time zone
+tz(gps$datetime)
 
 ```
 
 ## P-Trak
 
-These instruments collect ultrafine particles (UFPs) at 1-second time resolution. In order to capture the change in ultrafine particles, two ultrafine particle counters (P-Trak) instruments were used. One instrument was operated under standard conditions and reported the total particle number concentration
-(in units of particles/cm^3^, #/cm^3^, pt/cm^3^, or 1/cm^3^) for all particles with diameters between 20 nm - 1 um. The second P-Trak operated using a screened inlet. The mesh size used and the number of layers of mesh were selected to intercept the smallest particles as they entered the system and changed the lower particle size to 36 nm. The difference between the unscreened and screened P-Trak instruments provided an estimate the particle concentration of 20-36 nm particles. This was verified using a particle Scanning Mobility Particle Sizer Spectrometer.
+These instruments collect ultrafine particles (UFPs) at 1-second time resolution. In order to capture the change in ultrafine particles, two ultrafine particle counters (P-Trak) instruments were used. One instrument was operated under standard conditions and reported the total particle number concentration (in units of particles/cm^3^, #/cm^3^, pt/cm^3^, or 1/cm^3^) for all particles with diameters between 20 nm - 1 um. The second P-Trak operated using a screened inlet. The mesh size used and the number of layers of mesh were selected to intercept the smallest particles as they entered the system and changed the lower particle size to 36 nm. The difference between the unscreened and screened P-Trak instruments provided an estimate the particle concentration of 20-36 nm particles. This was verified using a particle Scanning Mobility Particle Sizer Spectrometer.
 
 ```{r p.trak, message=FALSE}
 #-----p-trak-----
@@ -220,7 +219,7 @@ ptrak_screen <-  read_tsv(file.path(data_dir, ptrak_screen_file), skip = 29) %>%
           datetime = as.POSIXct(paste(date, time), tz = "US/Pacific") )
 
 
-# show dataframes
+# show dataframes - have PNC measurements every second
 ptrak_noscreen
 ptrak_screen
 
@@ -234,9 +233,10 @@ ptrak_screen
 # get CO2 file name
 co2_file <- str_subset(filenames, "CO2")
 
-# read data, specify time as character because of time parsing issue
+# read data (tab separated values), specify time as character because of time parsing issue
 co2 <- read_tsv(file.path(data_dir, co2_file), skip = 1, 
-                col_types = cols(`System_Time_(h:m:s)` = col_character()) ) %>% 
+                col_types = cols(`System_Time_(h:m:s)` = col_character()) 
+                ) %>% 
    
    # name columns
    setNames(c("date", "time", "co2_conc", "h2o_conc", "temp", "pressure", 
@@ -250,8 +250,11 @@ co2 <- read_tsv(file.path(data_dir, co2_file), skip = 1,
    mutate(time = as_hms(time), 
           datetime = as.POSIXct(paste(date, time), tz = "US/Pacific") )
 
-# show dataframe
-co2
+# show dataframe - have CO2 measurements every second
+head(co2)
+
+str(co2$datetime)
+tz(co2$datetime)
 
 ```
 
@@ -274,7 +277,7 @@ We observe that early rows of the dataset have missing GPS and CO<sub>2</sub> da
 instrument_list <- list(gps = gps, ptrak_noscreen = ptrak_noscreen, 
                         ptrak_screen = ptrak_screen, co2 = co2)
 
-# use `purrr::reduce` to run `full_join()` multiple times on `instrument_list`
+# use `purrr::reduce` to run `full_join()` on listed items 
 all_data <- reduce(instrument_list, full_join) %>% 
    
    # reorder columns so datetime is first
@@ -290,12 +293,17 @@ glimpse(all_data)
 
 ## Plot Data 
 
+### Time Series 
+
 Let's make a quick visualization of the concentration data to get an idea of the data we're working with.
 
 What features do you see?
 
 ```{r plot.data, warning=FALSE}
 #-----plot data-----
+
+# note that these data are all for one day
+plot_date <- first(all_data$date)
 
 # transform data from wide to long for ggplot
 all_data %>% pivot_longer(cols = contains("_conc"), 
@@ -311,9 +319,12 @@ ggplot(aes(x = datetime, y = concentration)) +
   geom_line() +
   
   # specify theme
-  theme_bw()
+  theme_bw() + 
+  labs(title = plot_date)
 
 ```
+
+### Data Availability
 
 Data availability plots can be a useful initial check to visualize what data we have across instruments over time. We show one variable from each dataset. In this case the plot is not very informative because the data are fairly complete and the plot doesn't make it easy to see the limited amount of missing data that are present even though we already observed that there are missing data after merging.
 
@@ -328,7 +339,7 @@ all_data %>%
 
 # make plot
 ggplot(aes(x = datetime, y = measurement, color = factor(measurement)) ) +
-  geom_point(size = 0.5) + 
+  geom_point(size = 0.5, alpha=0.4) + 
   labs(x = "Time", y = "Instrument") + 
   theme_bw() + 
   theme(legend.position = "none")
@@ -383,13 +394,17 @@ lapply(instrument_list, function(i){
    # use list names
    set_names(names(instrument_list))
 
+
+#  Most measuremnets occur every second.
+# note differences in the GPS - a couple of measurements appear to be duplicates. A handful of measurements have larger gaps. 
+
 ```
 
 It seems that some of our missingness is due to instrument reporting. Some measurements did not occur at 1-second intervals. From this we can also see there are duplicate measurements for some instruments (difference of zero seconds).
 
 Lastly, it appears that the GPS instrument was not turned on at the same time as the other instruments (there is no GPS data at the beginning of the `all_data` dataframe). This may be due to the fact that the other instruments were turned on for "warm-up" before the measurement campaign started.
 
-Let's drop data missing the GPS variables for convenience, but is this the best thing to under all circumstances and for all variables?
+**Let's drop data missing the GPS variables for convenience,** but is this the best thing to under all circumstances and for all variables?
 
 ```{r drop.missing.gps}
 #-----drop missing gps-----
@@ -401,8 +416,7 @@ all_data <- drop_na(all_data, latitude, longitude)
 
 # Timeseries Data
 
-Time series data are marked by measurements that are indexed to a time component. There are many `R` standards for time series data: `ts`, `xts`, `data.frame`, `data.table`, `tibble`, `zoo`, `tsibble`, `tibbletime` or `timeSeries`. The package `tsbox` has many useful functions for converting between these
-time series formats.
+Time series data are marked by measurements that are indexed to a time component. **There are many `R` standards for time series data: `ts`, `xts`, `data.frame`, `data.table`, `tibble`, `zoo`, `tsibble`, `tibbletime` or `timeSeries`.** The package `tsbox` has many useful functions for converting between these time series formats.
 
 We've focused most of our effort on `tidyverse` tools this term, so let's concentrate on the `tsibble`, `feasts`, and `slider` package functions.
 
@@ -429,9 +443,11 @@ ts_data <- all_data %>%
   distinct(datetime, .keep_all = TRUE) %>% 
   as_tsibble(index = datetime)
 
+head(ts_data)
+
 ```
 
-Let's also fill the gaps in time. In other words, we have decided in this analysis that the index column `datetime` needs to be unique and complete. In standard time series analyses the time increment between every consecutive observation is the same. Adding these new time rows introduces "explicit" NAs to the data, so you'll then have a choice about if and how to fill in the non-time data. `tidyr::fill()` can help with this task, and the choice of how to fill may be more or less important depending on the time scale you're working on, the amount of missingness, and if there are consecutive measurements missing. Given the small amount of missing and the one-second time scale of the data, it's not unreasonable to introduce a few rows with NAs here.
+**Let's also fill the gaps in time.** In other words, we have decided in this analysis that the index column `datetime` needs to be unique and complete. In standard time series analyses the time increment between every consecutive observation is the same. **Adding these new time rows introduces "explicit" NAs to the data,** so you'll then have a choice about if and how to fill in the non-time data. `tidyr::fill()` can help with this task, and the choice of how to fill may be more or less important depending on the time scale you're working on, the amount of missingness, and if there are consecutive measurements missing. Given the small amount of missing and the one-second time scale of the data, it's not unreasonable to introduce a few rows with NAs here.
 
 ```{r fill.ts}
 #-----fill ts-----
@@ -439,6 +455,10 @@ Let's also fill the gaps in time. In other words, we have decided in this analys
 # count rows before filling
 paste("number of rows before filling gaps:", nrow(ts_data))
 
+# save for calculation below 
+temp <- ts_data
+
+# Turn implicit missing values into explicit missing values (add NAs to data)
 ts_data <- fill_gaps(ts_data) 
   
 # # if you wanted to "fill" the new explicitly missing data with a value drawn
@@ -449,20 +469,44 @@ ts_data <- fill_gaps(ts_data)
 # count rows after filling
 paste("number of rows after filling gaps:", nrow(ts_data))
 
+
+# see what rows were added - these contain NA values other than dates
+differences_df <- anti_join(ts_data, temp)
+head(differences_df)
+
+paste("number of rows added:", nrow(differences_df))
+
 ```
 
 
 # Temporal Autocorrelation
 
-Time series data is often correlated in time - measurements taken close in time to one another are more similar than measurements taken farther apart. An autocorrelation plot helps identify at what lag (or time interval) data are less correlated. In the following plot, the blue lines indicate bounds on the autocorrelation of these data, i.e., which autocorrelations statistically different from zero. At what time do the CO<sub>2</sub> appear less correlated?
+Time series data is often correlated in time - measurements taken close in time to one another are more similar than measurements taken farther apart. **An autocorrelation plot helps identify at what lag (or time interval) data are less correlated.** In the following plot, the blue lines indicate bounds on the autocorrelation of these data, i.e., which autocorrelations statistically different from zero. At what time do the CO<sub>2</sub> appear less correlated?
+
+The Autocorrelation Function (ACF) measures the overall correlation between a time series and its lagged values, including both direct and indirect effects from intermediate lags. In contrast, the Partial Autocorrelation Function (PACF) isolates the direct relationship between a time series and a specific lag, removing the influence of intervening lags. Use the ACF to understand the general structure of dependencies in a time series, and the PACF to determine the number of significant lags for autoregressive models.
 
 ```{r autocorrelation}
 #-----autocorrelation-----
 
-# autocorrelation plot
-ts_data %>% ACF(co2_conc, lag_max = 60) %>% autoplot()
+# autocorrelation plot - shows the overall correlation structure across lags
+## calculates correlation between a conc and its lagged versions (both immediate/direct and indirect)
+
+## ACF measures the linear (Pearson correlation coef, R) correlation between a time series and its lagged versions in a tsibble.  
+
+## plot: A high positive correlation suggests that the values are similar between the time points separated by the lag. Values near zero indicate no correlation at that lag. 
+## The blue dashed line may be the approximate 95% CI where no autocorrelation exists in the data.
+ts_data %>% ACF(co2_conc,  # column used for computation
+                lag_max = 60 # maximum lag at which to calculate the acf
+                ) %>% autoplot()
+
+
 
 # partial autocorrelation plot
+## shows only the correlation between a conc (e.g. at time t) and a lag conc  (e.g. at time t-2), adjusting for the influence of intermediate conc lags(e.g. at time t-1).
+
+## The first lag (lag 1) has a high and statistically significant partial autocorrelation (above the blue dashed line), indicating that the immediate prior value of the time series has a strong direct influence on the current value.
+## After lag 1 (and possibly lag 2 or 4), the partial autocorrelations become less significant (fall within the blue dashed lines). Beyond the first lag, there is thus minimal direct influence of earlier values on the current value once the effects of lag 1 (and other significant lags) are accounted for.
+
 ts_data %>% PACF(co2_conc, lag_max = 60) %>% autoplot()
 
 ```
@@ -470,8 +514,7 @@ ts_data %>% PACF(co2_conc, lag_max = 60) %>% autoplot()
 
 # Temporal Smoothing with New Time Scales -- Moving Averages
 
-A common task with time series data is averaging to different time scales. From the autocorrelation plot above, we can see at a lag of 60 seconds, the CO<sub>2</sub> concentrations are no longer correlated. So let's convert our 1-second data to some longer time scales. One package that helps with averaging
-tasks is `slider`.
+A common task with time series data is averaging to different time scales. From the autocorrelation plot above, we can see at a lag of 60 seconds, the CO<sub>2</sub> concentrations are no longer correlated. **Let's convert our 1-second data to some longer time scales.** One package that helps with averaging tasks is `slider`.
 
 For the first average we'll use the time scale period (minutes) to calculate 1-minute averages. Though with other data, this could also be months, weeks, years, etc. This is a "block average" where the period we are averaging over is based on an attribute of the data. For example, if you wanted monthly averages, this method would be "aware" of the fact there are a different number of days in each month. For the second average (a 2-minute average) we'll demonstrate a moving ("sliding" or "rolling") average, where the number of neighbors before and after a value of interest are used to compute an average.
 
@@ -487,8 +530,8 @@ ts_data <- ts_data %>%
   # left join new 1-minute period values
   left_join(
 
-    # Approach 1:
-    # use `slider` to calculate 1-minute concentrations by period
+    # Approach 1: aggregate data to 1 min averages using fixed period intervals
+    ## returns a dataframe with repeated 1 min avg measures every second
     slide_period_dfr(ts_data, ts_data$datetime, "minute",
                      ~tibble(datetime = floor_date(.x$datetime),
                              co2_conc_one = mean(.x$co2_conc)
@@ -500,9 +543,7 @@ ts_data <- ts_data %>%
   mutate(datetime_one = ymd_hm(format(datetime, "%Y-%m-%d %H:%M"), 
                                tz = "US/Pacific")) %>%
   
-  # Approach 2:
-  # use `slider` to calculate 2 minute moving averages (this works because we've
-  # made sure our datetime index is unique and complete)
+  # Approach 2: calculate moving averages, e.g., 2 minutes to provide a smoothed version of the time series(this works because we've made sure our datetime index is unique and complete)
   mutate(co2_conc_two = slide_dbl(co2_conc, ~mean(.x, na.rm = TRUE), 
                                   .before = 60, .after = 60) ) 
 
@@ -515,6 +556,9 @@ ts_data <- ts_data %>%
 
 # glimpse
 glimpse(ts_data)
+
+# compare a few values. convert to dataframe since R does not round/limit the displayed digits
+head(select(ts_data, contains(c("datetime", "co2"))) %>% as.data.frame())
 
 ```
 
@@ -537,8 +581,7 @@ ts_new <- ts_data %>%
   # rename to get "datetime" variable name back
   rename(datetime = datetime_new) %>% 
   
-  # create variable so new averages are aligned with originals for plots 
-  # (because of `floor_date()` behavior)
+  # create variable so new 5 min averages are aligned (i.e., centered) with originals for plots (because of `floor_date()` behavior)
   mutate(plot_time = datetime + minutes(2) + seconds(30))
   
 # glimpse
@@ -604,33 +647,7 @@ ggplot() +
 
 Our data was from a mobile monitoring campaign - so let's map the concentrations.
 
-Here is a helper function for the `bbox` argument of `get_stamenmap()`. It takes a dataframe, finds the latitude and longitude columns, makes calculations to add a little "extra" space to the plotting area, and outputs an object used to define the extent of the mapping region. You might find it helpful in the future. These operations require `stringr`and `tidyr`.
-
-```{r define.make_bbox.function}
-#-----define make_bbox function-----
-
-# make_bbox <- function(.data, width_extra = 0.0001, height_extra = 0.0005){
-#   
-#   # dependencies
-#   pacman::p_load(stringr, tidyr)
-#   
-#   # find lat and long column names
-#   long <- str_subset(string = names(.data), pattern = "Long|long")
-#   lat <- str_subset(string = names(.data), pattern = "Lat|lat")
-#   
-#   # drop rows with NA
-#   temp <- .data %>% drop_na(all_of(c(long, lat)))
-#   
-#   # create a named vector with the corners of the plotting region
-#   out <- c(left = min(temp[[long]]) + width_extra*min(temp[[long]]),
-#            bottom = min(temp[[lat]]) - height_extra*min(temp[[lat]]),
-#            right = max(temp[[long]]) - width_extra*min(temp[[long]]),
-#            top = max(temp[[lat]]) + height_extra*min(temp[[lat]]) )
-# }
-
-```
-
-In the following chunk we select the data corresponding to the geographic area of interest, define the bounding box (extent of the mapping area), download the stamen map tiles (if they have not already been downloaded), and save the map for later. If the map file has already been downloaded and saved, we can just load the `map.rds` file. This will save you some time and from unnecessarily repeating file downloads as you work to develop your code. Note if you've already downloaded and saved a `map.rds` file, but then you want to modify the underlying map somehow, you'll need to delete the `map.rds` file first (or work interactively within the `if()` statement).
+In the following chunk we select the data corresponding to the geographic area of interest, define the bounding box (extent of the mapping area), and download a background (tile) map.   
 
 ```{r get.map.objects}
 #-----get map objects-----
@@ -658,26 +675,7 @@ bbox <- ts_data %>%
   #make_bbox()
   st_bbox()
 
-# # download stamen map if needed, otherwise just load it from a previous download
-# if (!file.exists(file.path(data_dir, "map.rds"))) {
-#   
-#   # make a map of the base layer of stamen tiles (without showing messages)
-#   #map <- suppressMessages(get_stamenmap(bbox, zoom = 14, maptype = "terrain"))
-#   tiles <- maptiles::get_tiles(x = bbox, provider = "OpenStreetMap")
-#   
-#   map <- ggplot() +
-#     # Add basemap tiles as background
-#     ggspatial::layer_spatial(tiles) + 
-#     theme_minimal()
-#   
-#   # save map to the mobile_monitoring data directory so you don't need to
-#   # download it again
-#   saveRDS(map, file = file.path(data_dir, "map.rds") )
-#   
-#   }
-
-# read map file
-#basemap <- readRDS(file.path(data_dir, "map.rds"))
+# note you could write code to save this tile plot for offline use. This can have technical issues, however, so we won't do that here. 
 
 tiles <- maptiles::get_tiles(x = bbox, provider = "OpenStreetMap", zoom = 12)
 
@@ -685,6 +683,8 @@ basemap <- ggplot() +
     # Add basemap tiles as background
     ggspatial::layer_spatial(tiles) + 
     theme_minimal()
+
+basemap
 
 ```
 
@@ -746,8 +746,7 @@ map_co2
 
 # Background Standardization 
 
-We show different approaches to estimating the background in this section and
-plot them for comparison.
+We show different approaches to estimating the background in this section and plot them for comparison.
 
 ## Rolling Percentile & Rolling Minimum
 
@@ -813,7 +812,7 @@ theme(legend.position = "bottom")
 
 ## Loess Smoother of Background
 
-We can further address the background by smoothing our estimates of background. These background estimates, even when smoothed, appear to be picking up more than background. However, in a later plot we consider the background estimates in the context of the data, which are **much** higher, so the apparent high variation in background isn't that large in the context of the complete CO<sub>2</sub> dataset.
+**We can further smooth our estimates of background.** These background estimates, even when smoothed, appear to be picking up more than background. However, in a later plot we consider the background estimates in the context of the data, which are **much** higher, so the apparent high variation in background isn't that large in the context of the complete CO<sub>2</sub> dataset.
 
 ```{r loess.smooth.of.moving.background}
 #-----loess smooth of moving background-----

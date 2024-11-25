@@ -48,6 +48,14 @@ pacman::p_load(tidyverse, knitr, tictoc, broom, parallel, Hmisc)
 
 The purpose of this lab is to **better understand pure classical and Berkson measurement error**, and optionally to 1) replicate the results reported in Szpiro et al (2011) and 2) use the replication process to gain a deeper understanding of the role of exposure prediction in inference from epidemiological studies. An additional benefit of this lab is that you will **gain some experience with simulation studies**, a skill that is generally applicable to a wide range of problems.
 
+
+In the **pure measurement error (ME)** simulation approach, we directly generate exposures (true and mismeasured) for subjects using predefined pure ME definitions.
+
+In contrast, the **"like" setting** represents a scenario where exposure measurements (whether true or mismeasured) are not available for all subjects. Instead, exposures must be predicted. In this case, we simulate the prediction process by collecting samples from a set of monitoring locations and using these data to estimate exposures at the subject locations. This approach "blends" Berkson and Classical measurement errors.
+
+Using both exposure approaches, we calculate the estimated association between the exposure and outcome of interest. 
+
+
 ## Overview of Pure Berkson and Pure Classical Measurement Error
 
 In this lab, we will focus on pure measurement error properties. The steps are as follows:
@@ -61,11 +69,11 @@ In this lab, we will focus on pure measurement error properties. The steps are a
      - Pure Classical measurement error.
 
 3. **Conduct Health Analysis:**
-   - Use the exposure predictions in a health analysis to estimate the association between the exposure and health outcome $\beta$.
+   - Use the exposures in a health analysis to estimate the association between the exposure and health outcome $\beta$.
 
 4. **Summarize and Analyze $\beta$ :**
    - Store $\beta$ estimates over multiple simulations (e.g., 1,000 repetitions).
-   - Summarize the estimates to evaluate how different exposure models influence this target parameter.
+   - Summarize the estimates to evaluate how different exposure estimates influence this target parameter.
 
 We will use the function provided in the file **mesim_pure.R** to facilitate the exercise. 
 This function generates true exposure and health outcome data in a group of subjects, along with modifications of the true exposure to give mismeasured exposures, both pure Berkson and pure classical.
@@ -84,11 +92,13 @@ As an optional additional exercise, we will explore Berkson-Like and Classical-L
      - A cohort with health outcome data.
    - Note: In the current application, these groups are mutually exclusive, but in other applications, there may be overlap (e.g., workers with health data may also have exposure data).
 
-2. **Simulate Health Outcome Data:**
-   - Generate health outcomes for subjects based on their **true exposures**.
+2. **Simulate Exposure, Health Outcome, and Exposure Monitoring Data:**
+  - Generate true exposure data for subjects given measured covariates      
+  - Generate health outcomes for subjects based on their **true exposures**.
+  - Generate true exposures at monitoring locations given measured covariates
 
-3. **Predict Subject Exposures:**
-   - Use a regression model trained on the monitoring data to **predict exposures for subjects** (i.e., out-of-sample predictions).
+3. **Predict Subject Exposures (i.e., Introduce Measurement Error):**
+   - Use a regression model trained on the monitoring data to **predict exposures for subjects** (i.e., out-of-sample predictions) based on measured exposures and geographic covariates at monitoring locations.
 
 4. **Conduct Health Analysis:**
    - Use the exposure predictions in a health analysis to estimate the association between the exposure and health outcome $\beta$.

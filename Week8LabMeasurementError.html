@@ -3086,10 +3086,13 @@ vertical-align: -.125em;
 
 </header>
 
-<p>This document was rendered on November 21, 2024.</p>
+<p>This document was rendered on November 25, 2024.</p>
 <section id="introduction-and-purpose" class="level1">
 <h1>Introduction and Purpose</h1>
 <p>The purpose of this lab is to <strong>better understand pure classical and Berkson measurement error</strong>, and optionally to 1) replicate the results reported in Szpiro et al (2011) and 2) use the replication process to gain a deeper understanding of the role of exposure prediction in inference from epidemiological studies. An additional benefit of this lab is that you will <strong>gain some experience with simulation studies</strong>, a skill that is generally applicable to a wide range of problems.</p>
+<p>In the <strong>pure measurement error (ME)</strong> simulation approach, we directly generate exposures (true and mismeasured) for subjects using predefined pure ME definitions.</p>
+<p>In contrast, the <strong>“like” setting</strong> represents a scenario where exposure measurements (whether true or mismeasured) are not available for all subjects. Instead, exposures must be predicted. In this case, we simulate the prediction process by collecting samples from a set of monitoring locations and using these data to estimate exposures at the subject locations. This approach “blends” Berkson and Classical measurement errors.</p>
+<p>Using both exposure approaches, we calculate the estimated association between the exposure and outcome of interest.</p>
 <section id="overview-of-pure-berkson-and-pure-classical-measurement-error" class="level2">
 <h2 class="anchored" data-anchor-id="overview-of-pure-berkson-and-pure-classical-measurement-error">Overview of Pure Berkson and Pure Classical Measurement Error</h2>
 <p>In this lab, we will focus on pure measurement error properties. The steps are as follows:</p>
@@ -3108,12 +3111,12 @@ vertical-align: -.125em;
 </ul></li>
 <li><strong>Conduct Health Analysis:</strong>
 <ul>
-<li>Use the exposure predictions in a health analysis to estimate the association between the exposure and health outcome <span class="math inline">\(\beta\)</span>.</li>
+<li>Use the exposures in a health analysis to estimate the association between the exposure and health outcome <span class="math inline">\(\beta\)</span>.</li>
 </ul></li>
 <li><strong>Summarize and Analyze <span class="math inline">\(\beta\)</span> :</strong>
 <ul>
 <li>Store <span class="math inline">\(\beta\)</span> estimates over multiple simulations (e.g., 1,000 repetitions).</li>
-<li>Summarize the estimates to evaluate how different exposure models influence this target parameter.</li>
+<li>Summarize the estimates to evaluate how different exposure estimates influence this target parameter.</li>
 </ul></li>
 </ol>
 <p>We will use the function provided in the file <strong>mesim_pure.R</strong> to facilitate the exercise. This function generates true exposure and health outcome data in a group of subjects, along with modifications of the true exposure to give mismeasured exposures, both pure Berkson and pure classical.</p>
@@ -3136,13 +3139,18 @@ vertical-align: -.125em;
 </ul></li>
 <li>Note: In the current application, these groups are mutually exclusive, but in other applications, there may be overlap (e.g., workers with health data may also have exposure data).</li>
 </ul></li>
-<li><strong>Simulate Health Outcome Data:</strong>
+<li><strong>Simulate Exposure, Health Outcome, and Exposure Monitoring Data:</strong></li>
+</ol>
 <ul>
+<li>Generate true exposure data for subjects given measured covariates<br>
+</li>
 <li>Generate health outcomes for subjects based on their <strong>true exposures</strong>.</li>
-</ul></li>
-<li><strong>Predict Subject Exposures:</strong>
+<li>Generate true exposures at monitoring locations given measured covariates</li>
+</ul>
+<ol start="3" type="1">
+<li><strong>Predict Subject Exposures (i.e., Introduce Measurement Error):</strong>
 <ul>
-<li>Use a regression model trained on the monitoring data to <strong>predict exposures for subjects</strong> (i.e., out-of-sample predictions).</li>
+<li>Use a regression model trained on the monitoring data to <strong>predict exposures for subjects</strong> (i.e., out-of-sample predictions) based on measured exposures and geographic covariates at monitoring locations.</li>
 </ul></li>
 <li><strong>Conduct Health Analysis:</strong>
 <ul>
@@ -3227,7 +3235,7 @@ class_3 &amp;= x + e_1 + e_2 + e_3
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>single core pure ME processing time: 0.356 sec elapsed</code></pre>
+<pre><code>single core pure ME processing time: 0.339 sec elapsed</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># see results - each predictor produces slightly different parameters of interest</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>result_pure_sp </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3576,7 +3584,7 @@ class_3 &amp;= x + e_1 + e_2 + e_3
 <span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>single-core Berkson-like ME timing: 3.557 sec elapsed</code></pre>
+<pre><code>single-core Berkson-like ME timing: 3.364 sec elapsed</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Bonus topic:  parallel processing (see the pure version for explanation)</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># # Multi-core processing - Note: mclapply() does not work in Windows</span></span>
@@ -4169,7 +4177,7 @@ function (n, sd_s, sd_eta, alpha_0, alpha)
             s_1 + alpha[2] * s_2 + alpha[3] * s_3 + rnorm(n, 
             sd = sd_eta))
 }
-&lt;bytecode: 0x1355fce30&gt;
+&lt;bytecode: 0x15137e4a8&gt;
 
 $getMSE
 function (obs, pred) 
@@ -4181,7 +4189,7 @@ function (obs, pred)
     names(result) &lt;- c(&quot;RMSE&quot;, &quot;R2(MSE-based)&quot;)
     return(result)
 }
-&lt;bytecode: 0x122221e08&gt;
+&lt;bytecode: 0x113319190&gt;
 
 $me_like
 function (n_subj = 10000, n_samp = 100, s3_sd1 = 1, s3_sd2 = 0.3) 
@@ -4228,7 +4236,7 @@ function (n_subj = 10000, n_samp = 100, s3_sd1 = 1, s3_sd2 = 0.3)
     }) %&gt;% setNames(exposure_vars) %&gt;% bind_rows(.id = &quot;exposure_vars&quot;)
     return(return_list)
 }
-&lt;bytecode: 0x134c48d28&gt;
+&lt;bytecode: 0x150b103a0&gt;
 
 $me_pure
 function (n_subj = 10000) 
@@ -4244,7 +4252,7 @@ function (n_subj = 10000)
     }) %&gt;% setNames(predictors) %&gt;% bind_rows(.id = &quot;predictor&quot;)
     return(ret)
 }
-&lt;bytecode: 0x1436ea718&gt;
+&lt;bytecode: 0x1124a26e0&gt;
 
 $me_pure_data
 function (n_subj = 10000) 
@@ -4266,7 +4274,7 @@ function (n_subj = 10000)
         rnorm(n_subj, sd = sd_e[1]), class_2 = class_1 + rnorm(n_subj, 
         sd = sd_e[2]), class_3 = class_2 + rnorm(n_subj, sd = sd_e[3]))
 }
-&lt;bytecode: 0x1424c3a78&gt;</code></pre>
+&lt;bytecode: 0x114ad47e0&gt;</code></pre>
 </div>
 </div>
 </section>
