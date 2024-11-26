@@ -274,8 +274,10 @@ We observe that early rows of the dataset have missing GPS and CO<sub>2</sub> da
 #-----merge datasets-----
 
 # create a list of all data to merge 
-instrument_list <- list(gps = gps, ptrak_noscreen = ptrak_noscreen, 
-                        ptrak_screen = ptrak_screen, co2 = co2)
+instrument_list <- list(gps = gps, 
+                        ptrak_noscreen = ptrak_noscreen, 
+                        ptrak_screen = ptrak_screen, 
+                        co2 = co2)
 
 # use `purrr::reduce` to run `full_join()` on listed items 
 all_data <- reduce(instrument_list, full_join) %>% 
@@ -914,6 +916,7 @@ ts_data <- ts_data %>%
          co2_lag = lead(co2_adj), 
          
          # calculate squared difference in consecutive CO2 concentrations
+         # large differences indicate large conc changes over time
          co2_diff_sq = (co2_adj - co2_lag)^2,
          
          # limit extreme values by windsorizing
