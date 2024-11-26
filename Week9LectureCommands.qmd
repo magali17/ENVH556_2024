@@ -1,6 +1,6 @@
 ---
 title: "Week 9 Lecture Commands"
-author: "Lianne Sheppard for ENVH 556 Winter 2024"
+author: "Lianne Sheppard for ENVH 556 Fall 2024"
 format:
   html:
     df_print: "paged"
@@ -45,7 +45,7 @@ pacman::p_load(tseries, xts)
 
 ```
 
-# Slides 8 & 9:  AR(1) process example, $\alpha$=0.5
+# Slides 9 & 10:  AR(1) process example, $\alpha$=0.5
 
 ```{r AR(1) example}
 #---- AR(1) example----
@@ -112,7 +112,7 @@ ts_ex_data %>% PACF(y) %>% autoplot()
 
 ```
 
-# Slide10:  AR(1) process example, $\alpha$=0.9
+# Slide11:  AR(1) process example, $\alpha$=0.9
 
 ```{r AR(1) example2}
 #---- AR(1) example2----
@@ -135,7 +135,7 @@ ts_ex_data %>% PACF(y) %>% autoplot()
 
 ```
 
-# Slide 13:  Moving average example
+# Slide 14:  Moving average example
 
 ```{r MA(2) process example}
 #---- MA(2) process example----
@@ -171,7 +171,7 @@ ts_ex_data %>% PACF(y) %>% autoplot()
 
 ```
 
-# Slide 14:  ARMA(1,1)
+# Data used in Slide 19:  ARMA(1,1)
 
 ```{r ARMA(1,1)}
 #---- ARMA(1,1) ----
@@ -214,7 +214,8 @@ The next chunk shows the slider function and a user-written moving function that
 #---- Time plot with smoother ----
 
 # Using slider function with mean; the lab shows it with the quantile
-ts_ex_data <- ts_ex_data %>%
+# using a new dataset name to keep separate from other examples
+ts_ex_data_slider <- ts_ex_data %>%
   mutate(slide_20 = slide_dbl(ts_ex_data$y, ~mean(.x, na.rm = TRUE), .before = 10, .after = 10) )
 
 
@@ -275,10 +276,10 @@ moving_10th <- function(x, w = 5, side = "centre", na.rm = FALSE) {
 }
 
 # Test rolling background:
-roll10_y <- moving_10th(ts_ex_data$y, w = 10, side = "c")
+roll10_y <- moving_10th(ts_ex_data_slider$y, w = 10, side = "c")
 
 # Show the results on a plot
-ts_ex_data %>%
+ts_ex_data_slider %>%
   bind_cols(roll10_y) %>%
   ggplot(aes(time, y)) +
   geom_point(size = 1, alpha = .5, color = "grey") +
@@ -300,7 +301,7 @@ for how kernel smoothers and loess work.  It is worth taking a look at his
 animated graphics that show the repeated estimation across the length of the
 data.
 
-## Slide 18:  4 example plots with different kernel smoothers
+## Slide 19:  4 example plots with different kernel smoothers
 
 <!--
 # examples below copied from rafalab and edited
@@ -362,7 +363,7 @@ ts_ex_data %>% mutate(smooth = fit_sw$y) %>%
 
 ```
 
-## Slide 20:  loess
+## Slide 21:  loess
 
 Loess is a locally weighted regression model fit over a small span. The default
 in loewss is a 2nd degree polynomial, rather than a linear regression line.
@@ -434,7 +435,7 @@ ts_ex_data %>% mutate(smooth1 = fit1$fitted,
 
 ```
 
-# Slide 21:  Smooth vs. rough decomposition
+# Slide 22:  Smooth vs. rough decomposition
 
 ```{r smooth vs. rough}
 #---- smooth vs. rough ----
@@ -469,7 +470,7 @@ ts_ex_data %>% mutate(smooth1 = fit1$fitted,
 
 ```
 
-# Slide 22:  Differencing
+# Slide 23:  Differencing
 
 ```{r Differencing}
 #---- Differencing ----
@@ -483,17 +484,26 @@ ts_ex_diff <- ts_ex_data %>%
 # plot the first differences and check how smooth they are:
 span = 0.75
 fit1 <- loess(y ~ time, degree=1, span = span, data=ts_ex_data)
-ts_ex_diff %>% mutate(smooth1 = fit1$fitted,
-                      resid1  = y - fit1$fitted) %>%
+fit2 <- loess(diff ~ time, degree=1, span = span, data=ts_ex_diff)
+ts_ex_diff %>% mutate(smooth1 = fit2$fitted,
+                      resid1  = y - fit2$fitted) %>%
   ggplot(aes(time, diff)) +
   geom_point(size = .75, alpha = .5, color = "black") +
   geom_line(aes(time, smooth1), color="red", lty = 1) +
   labs(title = "ARMA(1,1) first differences\n w/ loess smooth (span .75)",
        x = "Time axis",
-       y = "Residual Outcome")
+       y = "Residual First Difference Outcome")
+
+#compare with the original data
+ts_ex_data %>% mutate(smooth1 = fit1$fitted,
+                      resid1  = y - fit1$fitted) %>%
+  ggplot(aes(time, y)) +
+  geom_point(size = .75, alpha = .5, color = "black") +
+  geom_line(aes(time, smooth1), color="red", lty = 1) +
+  labs(title = "ARMA(1,1) time series\n w/ loess smooth (span .75)",
+       x = "Time axis",
+       y = "Outcome y")
 
 ```
 
-# Spline smoothing
 
-TODO:  Use this section to discus the difference between smoothing and regression splines and show some example smooths.
